@@ -1,24 +1,19 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export function middleware(request: NextRequest) {
-  const session = request.cookies.get("zentra_session")?.value;
-  const path = request.nextUrl.pathname;
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 
-  const isProtectedRoute = path.startsWith("/dashboard");
-  const isAuthRoute = path === "/login" || path === "/register";
-
-  if (isProtectedRoute && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+export default clerkMiddleware(async (auth, req) => {
+  const authObj = await auth();
+  if (isProtectedRoute(req) && !authObj.userId) {
+    return authObj.redirectToSignIn();
   }
-
-  if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"]
+  matcher: [
+    // Skip Next.js internals and static files, allowing callback endpoints
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API/TRPC routes
+    "/(api|trpc)(.*)",
+  ],
 };

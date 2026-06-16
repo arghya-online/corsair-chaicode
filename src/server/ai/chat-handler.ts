@@ -168,7 +168,7 @@ export async function runChat(messages: any[], tenant: Tenant) {
       // Empty text is normal when only function calls are returned
     }
 
-    const functionCalls = response.response.functionCalls;
+    const functionCalls = response.response.functionCalls();
 
     const toolCalls = functionCalls?.map((fc: any, index: number) => ({
       id: `call_${Date.now()}_${index}`,

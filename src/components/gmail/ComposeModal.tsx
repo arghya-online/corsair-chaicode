@@ -18,6 +18,7 @@ interface ComposeModalProps {
   onOpenChange: (open: boolean) => void;
   replyTo?: string;
   replySubject?: string;
+  replyBody?: string;
 }
 
 export function ComposeModal({
@@ -25,6 +26,7 @@ export function ComposeModal({
   onOpenChange,
   replyTo = "",
   replySubject = "",
+  replyBody = "",
 }: ComposeModalProps) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
@@ -36,9 +38,9 @@ export function ComposeModal({
     if (open) {
       setTo(replyTo);
       setSubject(replySubject);
-      setBody("");
+      setBody(replyBody);
     }
-  }, [open, replyTo, replySubject]);
+  }, [open, replyTo, replySubject, replyBody]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();

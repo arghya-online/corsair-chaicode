@@ -10,29 +10,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check googlecalendar integration exists
-    const calIntegration = await prisma.corsairIntegration.findFirst({
-      where: { name: "googlecalendar" },
-    });
-
-    if (!calIntegration) {
-      return NextResponse.json(
-        { error: "Google Calendar integration is not configured in the system." },
-        { status: 500 }
-      );
-    }
-
-    // Check if this tenant has an authorized account
+    // Check if Corsair has an authorized account for this tenant and Google Calendar integration
     const hasCalAccount = await prisma.corsairAccount.findFirst({
       where: {
         tenantId: user.id,
-        integrationId: calIntegration.id,
+        integration: {
+          name: "googlecalendar",
+        },
       },
     });
 
     if (!hasCalAccount) {
       return NextResponse.json(
-        { error: "Integration 'googlecalendar' not found. Make sure to connect your Google account first." },
+        { error: "Integration 'googlecalendar' not configured or authorized for this user." },
         { status: 400 }
       );
     }

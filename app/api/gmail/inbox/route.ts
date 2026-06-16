@@ -10,29 +10,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1. Find the Gmail integration UUID in the system
-    const gmailIntegration = await prisma.corsairIntegration.findFirst({
-      where: { name: "gmail" },
-    });
-
-    if (!gmailIntegration) {
-      return NextResponse.json(
-        { error: "Gmail integration is not configured in the system." },
-        { status: 500 }
-      );
-    }
-
-    // 2. Check if Corsair has an authorized account for this tenant and Gmail integration ID
+    // Check if Corsair has an authorized account for this tenant and Gmail integration
     const hasGmailAccount = await prisma.corsairAccount.findFirst({
       where: {
         tenantId: user.id,
-        integrationId: gmailIntegration.id,
+        integration: {
+          name: "gmail",
+        },
       },
     });
 
     if (!hasGmailAccount) {
       return NextResponse.json(
-        { error: "Integration 'gmail' not found. Make sure to create the integration first." },
+        { error: "Integration 'gmail' not configured or authorized for this user." },
         { status: 400 }
       );
     }

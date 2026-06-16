@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, Calendar, MessageCircle, ChevronRight } from "lucide-react";
+import { Mail, Calendar, MessageCircle, RefreshCw, Bell, ShieldCheck, Plus, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface NextEventData {
   summary: string;
@@ -29,216 +30,214 @@ interface StatsData {
 
 interface DashboardStatsProps {
   children: React.ReactNode;
+  firstName: string;
 }
 
-export function DashboardStats({ children }: DashboardStatsProps) {
+export function DashboardStats({ children, firstName }: DashboardStatsProps) {
   const [data, setData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch("/api/dashboard/stats");
+      if (!res.ok) throw new Error("Failed to fetch stats");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error("Failed to load dashboard stats client-side:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/dashboard/stats");
-        if (!res.ok) throw new Error("Failed to fetch stats");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error("Failed to load dashboard stats client-side:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
   }, []);
 
-  const formatEventTime = (event: NextEventData) => {
-    const startStr = event.start?.dateTime ?? event.start?.date;
-    if (!startStr) return "";
-    const startDate = new Date(startStr);
-    return startDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/gmail/refresh", { method: "POST" });
+      if (!res.ok) throw new Error("Failed to sync new messages");
+      toast.success("Workspace synced successfully.");
+      await fetchStats();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message ?? "Failed to sync inbox.");
+    } finally {
+      setSyncing(false);
+    }
   };
 
-  const getEventTimeLeft = (event: NextEventData) => {
+  const getEventTimeText = (event: NextEventData) => {
     const startStr = event.start?.dateTime ?? event.start?.date;
-    if (!startStr) return "";
-    const diff = new Date(startStr).getTime() - new Date().getTime();
+    if (!startStr) return "soon";
+    const startDate = new Date(startStr);
+    const timeStr = startDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const diff = startDate.getTime() - new Date().getTime();
     if (diff <= 0) return "starting now";
-    
     const mins = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(mins / 60);
-    
     if (hours > 0) {
-      return `at ${formatEventTime(event)} (${hours}h ${mins % 60}m remaining)`;
+      return `at ${timeStr} (in ${hours}h ${mins % 60}m)`;
     }
-    return `at ${formatEventTime(event)} (${mins}m remaining)`;
+    return `at ${timeStr} (in ${mins}m)`;
+  };
+
+  // Construct a calm status description
+  const getCalmContext = () => {
+    if (loading) return "Checking your communication and schedule status...";
+    if (!data) return "Zentra is holding space for your focus today.";
+    
+    const unread = data.unreadCount;
+    const events = data.eventsTodayCount;
+    
+    if (unread === 0 && events === 0) {
+      return "All systems are quiet. Your inbox is completely organized, and your schedule is peacefully clear.";
+    }
+    
+    let emailStatus = unread === 1 ? "1 unread item" : `${unread} unread items`;
+    if (unread === 0) emailStatus = "no unread items";
+    
+    let calendarStatus = events === 1 ? "1 event today" : `${events} events today`;
+    if (events === 0) calendarStatus = "no events today";
+    
+    return `Zentra is quietly managing your workspace. Your inbox has ${emailStatus}, and you have ${calendarStatus}.`;
   };
 
   return (
-    <div className="space-y-6">
-      {/* Quick Access Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Gmail Card */}
-        <Link href="/dashboard/gmail" className="block select-none">
-          <div className="bg-white border border-border/80 border-t-4 border-t-peach rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-9.5 h-9.5 rounded-xl flex items-center justify-center bg-peach-soft text-peach-text flex-shrink-0">
-                <Mail className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-sans text-[10.5px] font-medium text-espresso uppercase tracking-wider opacity-85">gmail</p>
-                {loading ? (
-                  <Skeleton className="h-4 w-18 bg-cream-300 mt-1" />
-                ) : (
-                  <p className="font-serif text-[16px] text-espresso mt-0.5">
-                    {data?.unreadCount ?? 0} unread
-                  </p>
-                )}
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-espresso-300 flex-shrink-0" />
-          </div>
-        </Link>
+    <div className="p-8 max-w-6xl mx-auto space-y-8 select-none">
+      {/* ── Top Area: Greeting & Context ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6 select-none">
+        <div className="space-y-2 max-w-2xl">
+          <h1 className="font-serif text-[36px] sm:text-[42px] font-normal tracking-tight text-espresso leading-tight">
+            Good morning, {firstName}.
+          </h1>
+          <p className="font-sans text-[16px] text-espresso-400 leading-relaxed font-normal">
+            {getCalmContext()}
+          </p>
+        </div>
 
-        {/* Calendar Card */}
-        <Link href="/dashboard/calendar" className="block select-none">
-          <div className="bg-white border border-border/80 border-t-4 border-t-sky rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-9.5 h-9.5 rounded-xl flex items-center justify-center bg-sky-soft text-sky-text flex-shrink-0">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-sans text-[10.5px] font-medium text-espresso uppercase tracking-wider opacity-85">calendar</p>
-                {loading ? (
-                  <Skeleton className="h-4 w-18 bg-cream-300 mt-1" />
-                ) : (
-                  <p className="font-serif text-[16px] text-espresso mt-0.5">
-                    {data?.eventsTodayCount ?? 0} events today
-                  </p>
-                )}
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-espresso-300 flex-shrink-0" />
-          </div>
-        </Link>
+        {/* Dynamic Context Date */}
+        <div className="bg-cream-200 border border-border/30 rounded-xl px-4 py-2 flex items-center gap-2 flex-shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-sage animate-pulse" />
+          <span className="font-sans text-[15px] font-medium text-espresso-400">
+            {new Date().toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" })}
+          </span>
+        </div>
+      </div>
 
-        {/* Chat Card */}
-        <Link href="/dashboard/chat" className="block select-none">
-          <div className="bg-white border border-border/80 border-t-4 border-t-lavender rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-9.5 h-9.5 rounded-xl flex items-center justify-center bg-lavender-soft text-lavender-text flex-shrink-0">
-                <MessageCircle className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-sans text-[10.5px] font-medium text-espresso uppercase tracking-wider opacity-85">ai assistant</p>
-                <p className="font-serif text-[16px] text-espresso mt-0.5">ask anything</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-espresso-300 flex-shrink-0" />
-          </div>
+      {/* ── Quick Actions Row ── */}
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          onClick={handleSync}
+          disabled={syncing}
+          className="inline-flex items-center gap-2 bg-white hover:bg-cream-200 text-espresso text-[15px] font-medium px-4 py-2.5 rounded-xl border border-border/30 shadow-card hover:shadow-card-hover transition-all cursor-pointer disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 text-peach ${syncing ? "animate-spin" : ""}`} />
+          Sync Workspace
+        </button>
+        
+        <Link href="/dashboard/gmail" className="inline-flex items-center gap-2 bg-white hover:bg-cream-200 text-espresso text-[15px] font-medium px-4 py-2.5 rounded-xl border border-border/30 shadow-card hover:shadow-card-hover transition-all">
+          <Mail className="w-4 h-4 text-peach" />
+          Write Draft
+        </Link>
+        
+        <Link href="/dashboard/calendar" className="inline-flex items-center gap-2 bg-white hover:bg-cream-200 text-espresso text-[15px] font-medium px-4 py-2.5 rounded-xl border border-border/30 shadow-card hover:shadow-card-hover transition-all">
+          <Calendar className="w-4 h-4 text-peach" />
+          Calendar
         </Link>
       </div>
 
-      {/* Stats Cards and Chat row */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-        {/* Left Side: Real ChatPanel */}
-        <div className="md:col-span-8 bg-white border border-border/80 rounded-3xl overflow-hidden shadow-card md:h-[580px] flex flex-col hover:shadow-card-hover transition-shadow duration-300">
+      {/* ── Center Area: Workspace Grid ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        {/* Left Side: Primary AI Workspace (ChatPanel) */}
+        <div className="lg:col-span-8 bg-white border border-border/30 rounded-[28px] overflow-hidden shadow-card flex flex-col h-[600px] hover:shadow-card-hover transition-shadow duration-300">
           {children}
         </div>
 
-        {/* Right Side: Stats Panel */}
-        <div className="md:col-span-4 flex flex-col gap-4 md:h-[580px]">
-          {/* Card 1: Unread Emails */}
-          <Card className="p-6 bg-white border border-border/80 border-l-4 border-l-peach rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-300 flex flex-col justify-between flex-1 min-h-[145px]">
+        {/* Right Side: Calm Focus / Attention Panel */}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className="bg-cream-200/40 rounded-[28px] p-6 border border-border/20 flex flex-col justify-between h-full space-y-6">
             <div>
-              <span className="font-sans text-[12px] text-espresso-300 uppercase tracking-wider font-medium">
-                unread emails
-              </span>
+              <h2 className="font-serif text-[24px] font-normal text-espresso leading-none mb-6">
+                Attention
+              </h2>
+              
               {loading ? (
-                <div className="mt-4 space-y-2">
-                  <Skeleton className="h-9 w-28 bg-cream-300 rounded" />
-                  <Skeleton className="h-4 w-36 bg-cream-200 rounded" />
+                <div className="space-y-4">
+                  <Skeleton className="h-20 w-full bg-cream-300 rounded-2xl" />
+                  <Skeleton className="h-20 w-full bg-cream-300 rounded-2xl" />
                 </div>
               ) : (
-                <>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-serif text-[42px] font-normal text-espresso leading-none">
-                      {data?.unreadCount ?? 0}
-                    </span>
-                    <span className="font-sans text-[15px] text-espresso-300">emails</span>
-                  </div>
-                  <p className="font-sans text-[13px] text-espresso-300 mt-2">
-                    synced and categorized
-                  </p>
-                </>
-              )}
-            </div>
-          </Card>
+                <div className="space-y-4">
+                  {/* Item 1: Upcoming Event */}
+                  {data?.nextEvent ? (
+                    <div className="p-5 bg-white border border-border/10 rounded-2xl shadow-[0_2px_12px_rgba(28,36,49,0.01)] space-y-2 text-left">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-peach" />
+                        <span className="font-sans text-[15px] font-medium text-espresso-300 uppercase tracking-wider">
+                          Next Connection
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-[18px] text-espresso font-normal leading-snug">
+                        {data.nextEvent.summary}
+                      </h3>
+                      <p className="font-sans text-[15px] text-peach-text">
+                        {getEventTimeText(data.nextEvent)}
+                      </p>
+                    </div>
+                  ) : null}
 
-          {/* Card 2: Sent Today */}
-          <Card className="p-6 bg-white border border-border/80 border-l-4 border-l-blush rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-300 flex flex-col justify-between flex-1 min-h-[145px]">
-            <div>
-              <span className="font-sans text-[12px] text-espresso-300 uppercase tracking-wider font-medium">
-                sent today
-              </span>
-              {loading ? (
-                <div className="mt-4 space-y-2">
-                  <Skeleton className="h-9 w-20 bg-cream-300 rounded" />
-                  <Skeleton className="h-4 w-40 bg-cream-200 rounded" />
-                </div>
-              ) : (
-                <>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-serif text-[42px] font-normal text-espresso leading-none">
-                      {data?.sentCount ?? 0}
-                    </span>
-                    <span className="font-sans text-[15px] text-espresso-300">replies</span>
+                  {/* Item 2: Inbox Status */}
+                  <div className="p-5 bg-white border border-border/10 rounded-2xl shadow-[0_2px_12px_rgba(28,36,49,0.01)] space-y-2 text-left">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${data?.unreadCount && data.unreadCount > 0 ? "bg-peach" : "bg-sage"}`} />
+                      <span className="font-sans text-[15px] font-medium text-espresso-300 uppercase tracking-wider">
+                        Workspace Status
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-[18px] text-espresso font-normal leading-snug">
+                      {data?.unreadCount && data.unreadCount > 0 
+                        ? `${data.unreadCount} unread email${data.unreadCount === 1 ? "" : "s"}`
+                        : "Inbox is fully organized"}
+                    </h3>
+                    <p className="font-sans text-[15px] text-espresso-400">
+                      {data?.unreadCount && data.unreadCount > 0 
+                        ? "Zentra is tracking conversations and preparing smart drafts in the background."
+                        : "No action needed. Zentra is holding drafts for your review."}
+                    </p>
                   </div>
-                  <p className="font-sans text-[13px] text-espresso-300 mt-2">
-                    sent through Zentra assist
-                  </p>
-                </>
-              )}
-            </div>
-          </Card>
 
-          {/* Card 3: Next Event */}
-          <Card className="p-6 bg-white border border-border/80 border-l-4 border-l-sky rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-300 flex flex-col justify-between flex-1 min-h-[145px]">
-            <div>
-              <span className="font-sans text-[12px] text-espresso-300 uppercase tracking-wider font-medium">
-                next event
-              </span>
-              {loading ? (
-                <div className="mt-4 space-y-2">
-                  <Skeleton className="h-6 w-44 bg-cream-300 rounded" />
-                  <Skeleton className="h-4.5 w-36 bg-cream-200 rounded" />
+                  {/* Item 3: Peace of mind card if all clear */}
+                  {(!data?.nextEvent && (!data?.unreadCount || data.unreadCount === 0)) ? (
+                    <div className="p-5 bg-white border border-border/10 rounded-2xl shadow-[0_2px_12px_rgba(28,36,49,0.01)] flex items-start gap-3 text-left">
+                      <ShieldCheck className="w-5 h-5 text-sage flex-shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <h3 className="font-serif text-[18px] text-espresso font-normal">
+                          Quiet Focus
+                        </h3>
+                        <p className="font-sans text-[15px] text-espresso-400 leading-normal">
+                          No urgent connection conflicts or outstanding emails. Zentra is silently maintaining order.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              ) : data?.nextEvent ? (
-                <>
-                  <div className="mt-2 flex flex-col gap-0.5">
-                    <span className="font-serif text-[20px] font-normal text-espresso truncate">
-                      {data.nextEvent.summary}
-                    </span>
-                    <span className="font-sans text-[13px] text-peach-text mt-0.5">
-                      {getEventTimeLeft(data.nextEvent)}
-                    </span>
-                  </div>
-                  <p className="font-sans text-[13px] text-espresso-300 mt-2.5">
-                    synced from Google Calendar
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="mt-3 text-[14px] text-espresso-400 font-sans">
-                    No upcoming events
-                  </div>
-                  <p className="font-sans text-[13px] text-espresso-300 mt-4">
-                    schedule is fully clear
-                  </p>
-                </>
               )}
             </div>
-          </Card>
+
+            {/* Subdued Chief-of-Staff Note */}
+            <div className="border-t border-border/30 pt-4 text-center">
+              <p className="font-sans text-[15px] text-espresso-300 italic">
+                “Zentra quietly manages communication and schedules for you.”
+              </p>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   );

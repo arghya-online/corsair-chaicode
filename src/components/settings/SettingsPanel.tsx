@@ -59,7 +59,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
 
   return (
     <div className="p-7 max-w-5xl mx-auto space-y-6">
-      <h1 className="font-serif text-[22px] text-espresso font-normal mb-7">Settings</h1>
+      <h1 className="font-display text-[22px] text-espresso font-normal mb-7">Settings</h1>
 
       <div className="flex flex-col gap-4 max-w-[560px]">
         {/* Card 1: Account */}

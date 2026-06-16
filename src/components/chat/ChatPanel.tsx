@@ -235,7 +235,7 @@ export function ChatPanel() {
             transition={{ duration: 2, repeat: Infinity }}
           />
           <div>
-            <h1 className="font-serif text-[24px] font-normal text-espresso">
+            <h1 className="font-display text-[24px] font-normal text-espresso">
               Zentra AI
             </h1>
             <p className="font-sans text-[13px] text-espresso-300 mt-0.5">
@@ -277,7 +277,7 @@ export function ChatPanel() {
                 <div className="w-12 h-12 bg-peach-soft text-peach-text rounded-2xl flex items-center justify-center">
                   <MessageCircle className="w-6 h-6 text-peach-text" />
                 </div>
-                <h2 className="font-serif text-[24px] font-normal text-espresso text-center">
+                <h2 className="font-display text-[24px] font-normal text-espresso text-center">
                   Ask about your inbox
                 </h2>
                 <p className="font-sans text-[15px] text-espresso-300 text-center max-w-[320px]">

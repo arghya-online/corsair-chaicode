@@ -18,25 +18,64 @@ export function BentoGrid() {
     },
   };
 
+  const particles = Array.from({ length: 8 });
+
   return (
-    <section id="features" className="py-32 px-6 bg-[#FAF7F2] text-[#1C2431]">
-      <div className="mx-auto max-w-5xl">
+    <section id="features" className="relative py-32 px-6 overflow-hidden select-none text-white">
+      {/* Fallback Background Color */}
+      <div className="absolute inset-0 bg-[#FAF7F2] z-0" />
+      {/* Section Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center z-10"
+        style={{ backgroundImage: "url('/bharat_features.png')" }}
+      />
+      <div className="absolute inset-0 bg-black/25 z-20" />
+
+      {/* Gentle Floating Gold Dust Particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
+        {particles.map((_, i) => (
+          <motion.div
+            key={i}
+            custom={i}
+            variants={{
+              animate: (idx: number) => ({
+                y: ['-10%', '110%'],
+                x: [`${idx * 12}%`, `${idx * 12 + (idx % 2 === 0 ? 5 : -5)}%`],
+                transition: {
+                  duration: 35 + idx * 5,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: idx * -3,
+                }
+              })
+            }}
+            animate="animate"
+            className="absolute w-1.5 h-1.5 rounded-full bg-[#D7A23B]/20"
+            style={{
+              left: `${i * 12}%`,
+              top: `-10px`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative mx-auto max-w-5xl z-40">
         {/* Section Header */}
         <div className="max-w-2xl mb-24 space-y-4">
-          <div className="text-[11px] font-medium tracking-widest text-[#C98A54] uppercase font-mono">
+          <div className="text-[11px] font-medium tracking-widest text-[#F5C77A] uppercase font-mono">
             capabilities
           </div>
-          <h2 className="text-[36px] sm:text-[44px] font-serif font-normal text-[#1C2431] leading-tight">
+          <h2 className="text-[36px] sm:text-[44px] font-serif font-normal text-white leading-tight">
             Designed for quiet efficiency.
           </h2>
-          <p className="text-[15px] text-[#566170] font-sans leading-relaxed max-w-lg font-normal">
+          <p className="text-[15px] text-white/90 font-sans leading-relaxed max-w-lg font-normal">
             Zentra runs silently in the background, keeping your inbox clean and your schedule clear without the clutter of traditional dashboards.
           </p>
         </div>
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          
+
           {/* Card 1: Conversational control console */}
           <motion.div
             variants={cardVariants}
@@ -56,7 +95,7 @@ export function BentoGrid() {
                 Chat with Zentra about your inbox and schedule. Instruct Zentra to summarize threads, list conflicts, and run operations via natural language.
               </p>
             </div>
-            
+
             <div className="pt-8 border-t border-[rgba(28,36,49,0.08)] flex flex-wrap gap-x-8 gap-y-3 text-[12px] text-[#566170] font-sans">
               <div className="flex items-center gap-1.5">
                 <span className="text-[#50684E]">✓</span> Thread summaries

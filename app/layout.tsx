@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import { Inter, DM_Serif_Display } from "next/font/google";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
@@ -30,14 +32,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
+      className={`${inter.variable} ${dmSerif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#FDF8F3] text-[#3D2C1E]" suppressHydrationWarning>
-        <TooltipProvider delay={150}>
-          {children}
-        </TooltipProvider>
-        <Toaster theme="light" toastOptions={{ className: 'font-sans text-[12px]' }} />
+      <body className="min-h-full flex flex-col bg-[#F7F3EC] text-[#111827]" suppressHydrationWarning>
+        <ClerkProvider appearance={{ theme: shadcn }}>
+          <TooltipProvider delay={150}>
+            {children}
+          </TooltipProvider>
+          <Toaster theme="light" toastOptions={{ className: 'font-sans text-[12px]' }} />
+        </ClerkProvider>
       </body>
     </html>
   );

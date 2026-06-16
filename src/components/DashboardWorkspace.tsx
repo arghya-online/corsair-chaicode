@@ -368,7 +368,7 @@ export default function DashboardWorkspace({ user, initialTodos, defaultTab = "h
               <div className="bg-white border border-[#E8E8EC] rounded-[24px] p-6 shadow-[0_4px_20px_rgba(13,13,13,0.02)] space-y-6">
                 <div>
                   <h2 className="text-base font-bold font-display">Configure Connected Accounts</h2>
-                  <p className="text-xs text-[#6B7280]">Link Zentra directly to third-party services using ZCorsAir security layers.</p>
+                  <p className="text-xs text-[#6B7280]">Link Zentra directly to third-party services using CorsAir security layers.</p>
                 </div>
 
                 <div className="space-y-4">

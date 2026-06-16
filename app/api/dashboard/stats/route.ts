@@ -15,16 +15,21 @@ export async function GET(request: NextRequest) {
     let nextEvent = null;
     let eventsTodayCount = 0;
 
-    // Check integration & account config first
-    const [gmailInt, calInt] = await Promise.all([
-      prisma.corsairIntegration.findFirst({ where: { name: "gmail" } }),
-      prisma.corsairIntegration.findFirst({ where: { name: "googlecalendar" } })
-    ]);
+    // Check integration & account config in a single consolidated query
+    const connectedAccounts = await prisma.corsairAccount.findMany({
+      where: {
+        tenantId: user.id,
+        integration: {
+          name: { in: ["gmail", "googlecalendar"] }
+        }
+      },
+      include: {
+        integration: true
+      }
+    });
 
-    const [gmailAcc, calAcc] = await Promise.all([
-      gmailInt ? prisma.corsairAccount.findFirst({ where: { tenantId: user.id, integrationId: gmailInt.id } }) : null,
-      calInt ? prisma.corsairAccount.findFirst({ where: { tenantId: user.id, integrationId: calInt.id } }) : null
-    ]);
+    const gmailAcc = connectedAccounts.find(acc => acc.integration.name === "gmail");
+    const calAcc = connectedAccounts.find(acc => acc.integration.name === "googlecalendar");
 
     const tenant = await getTenant().catch(() => null);
 

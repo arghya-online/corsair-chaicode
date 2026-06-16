@@ -5,10 +5,8 @@ import GoogleCalendar from "@/src/components/GoogleCalendar";
 
 export default async function CalendarPage() {
   const user = await getCurrentUser();
-  if (!user) {
-    redirect("/login");
-  }
-
+  if (!user) redirect("/login");
   return <GoogleCalendar />;
 }
+
 export const dynamic = "force-dynamic";

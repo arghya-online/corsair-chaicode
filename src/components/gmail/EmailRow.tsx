@@ -27,43 +27,45 @@ export function EmailRow({ email, isSelected, onSelect }: EmailRowProps) {
   return (
     <div
       onClick={() => onSelect(email.id)}
-      className={`flex gap-3 items-start px-4 py-3 border-b border-border cursor-pointer transition-colors duration-100 select-none ${
+      className={`flex gap-4 items-start px-6 py-5 border-b border-border/40 cursor-pointer transition-colors duration-150 select-none ${
         isSelected
           ? "bg-cream-200"
           : unread
-          ? "bg-cream-100"
-          : "bg-cream-DEFAULT"
-      } hover:bg-cream-200`}
+          ? "bg-cream-100/50"
+          : "bg-transparent"
+      } hover:bg-cream-200/50`}
     >
       {/* Avatar initials */}
-      <Avatar className="w-7 h-7 flex-shrink-0">
-        <AvatarFallback className={`${color.bg} ${color.text} text-[11px] font-sans font-medium`}>
+      <Avatar className="w-9 h-9 flex-shrink-0 border border-white/60 shadow-sm">
+        <AvatarFallback className={`${color.bg} ${color.text} text-[13px] font-sans font-medium`}>
           {initials || "U"}
         </AvatarFallback>
       </Avatar>
-
+ 
       {/* Main Metadata */}
       <div className="flex-1 min-w-0">
-        <p className={`font-sans text-[12px] text-espresso truncate ${unread ? "font-medium" : "font-normal"}`}>
-          {senderName}
-        </p>
-        <p className="font-sans text-[12px] text-espresso truncate mt-0.5">
+        <div className="flex justify-between items-baseline gap-2">
+          <p className={`font-sans text-[16px] text-espresso truncate ${unread ? "font-semibold text-espresso" : "font-normal text-espresso-400"}`}>
+            {senderName}
+          </p>
+          <p className="font-sans text-[15px] text-espresso-300 whitespace-nowrap flex-shrink-0">
+            {formatEmailDate(email.updatedAt)}
+          </p>
+        </div>
+        <p className={`font-sans text-[16px] text-espresso truncate mt-1.5 ${unread ? "font-medium" : "font-normal"}`}>
           {email.subject}
         </p>
-        <p className="font-sans text-[11px] text-espresso-300 truncate mt-0.5">
+        <p className="font-sans text-[15px] text-espresso-400 truncate mt-1">
           {email.snippet}
         </p>
       </div>
-
+ 
       {/* Side Status Indicators */}
-      <div className="flex flex-col items-end justify-between self-stretch flex-shrink-0 gap-1 pl-1">
-        <p className="font-sans text-[10px] text-espresso-300 whitespace-nowrap">
-          {formatEmailDate(email.updatedAt)}
-        </p>
-        {unread && (
-          <div className="w-1.5 h-1.5 bg-peach rounded-full" />
-        )}
-      </div>
+      {unread && (
+        <div className="flex items-center self-center pl-1 flex-shrink-0">
+          <div className="w-2 h-2 bg-sage rounded-full shadow-sm" />
+        </div>
+      )}
     </div>
   );
 }

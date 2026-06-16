@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { currentUser } from "@clerk/nextjs/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "zentra_auth_secret_key_987654";
 const COOKIE_NAME = "zentra_session";
@@ -97,16 +98,37 @@ export async function signOutAction() {
   }
 }
 
-export async function getCurrentUser() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
-    if (!token) {
-      return null;
+import { cache } from "react";
+
+const getCachedUser = cache(async () => {
+  const clerkUser = await currentUser();
+  if (!clerkUser) {
+    return null;
+  }
+  
+  const email = clerkUser.emailAddresses[0]?.emailAddress;
+  if (!email) {
+    return null;
+  }
+  const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || "User";
+
+  let user = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true
     }
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
+  });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        id: clerkUser.id,
+        email,
+        name,
+      },
       select: {
         id: true,
         email: true,
@@ -114,8 +136,16 @@ export async function getCurrentUser() {
         createdAt: true
       }
     });
-    return user;
+  }
+
+  return user;
+});
+
+export async function getCurrentUser() {
+  try {
+    return await getCachedUser();
   } catch (error) {
+    console.error("Clerk session resolution error in getCurrentUser:", error);
     return null;
   }
 }

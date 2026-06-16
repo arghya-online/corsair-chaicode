@@ -53,24 +53,24 @@ type ViewType = "month" | "week" | "day";
 // ─── Color palette for Google Calendar color IDs ─────────────────────────────
 
 const EVENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  "1": { bg: "bg-[#7986CB]/20", text: "text-[#3F51B5]", border: "border-[#7986CB]" },
-  "2": { bg: "bg-[#33B679]/20", text: "text-[#0B8043]", border: "border-[#33B679]" },
-  "3": { bg: "bg-[#8E24AA]/20", text: "text-[#8E24AA]", border: "border-[#8E24AA]" },
-  "4": { bg: "bg-[#E67C73]/20", text: "text-[#C62828]", border: "border-[#E67C73]" },
-  "5": { bg: "bg-[#F6BF26]/20", text: "text-[#F09300]", border: "border-[#F6BF26]" },
-  "6": { bg: "bg-[#F4511E]/20", text: "text-[#E65100]", border: "border-[#F4511E]" },
-  "7": { bg: "bg-[#039BE5]/20", text: "text-[#0277BD]", border: "border-[#039BE5]" },
-  "8": { bg: "bg-[#616161]/20", text: "text-[#424242]", border: "border-[#616161]" },
-  "9": { bg: "bg-[#3F9142]/20", text: "text-[#1E5C21]", border: "border-[#3F9142]" },
-  "10": { bg: "bg-[#0B8043]/20", text: "text-[#0B8043]", border: "border-[#0B8043]" },
-  "11": { bg: "bg-[#D50000]/20", text: "text-[#D50000]", border: "border-[#D50000]" },
+  "1": { bg: "bg-sky-soft", text: "text-sky-text", border: "border-sky/30" }, // Monsoon Slate
+  "2": { bg: "bg-sage-soft", text: "text-sage-text", border: "border-sage/30" }, // Sage Green
+  "3": { bg: "bg-blush-soft", text: "text-blush-text", border: "border-blush/30" }, // Terracotta Warm
+  "4": { bg: "bg-peach-soft", text: "text-peach-text", border: "border-peach/30" }, // Sandstone Gold
+  "5": { bg: "bg-sage-soft", text: "text-sage-text", border: "border-sage/30" },
+  "6": { bg: "bg-blush-soft", text: "text-blush-text", border: "border-blush/30" },
+  "7": { bg: "bg-sky-soft", text: "text-sky-text", border: "border-sky/30" },
+  "8": { bg: "bg-espresso-100", text: "text-espresso-400", border: "border-espresso-300/30" },
+  "9": { bg: "bg-sage-soft", text: "text-sage-text", border: "border-sage/30" },
+  "10": { bg: "bg-peach-soft", text: "text-peach-text", border: "border-peach/30" },
+  "11": { bg: "bg-blush-soft", text: "text-blush-text", border: "border-blush/30" },
 };
 
 function getEventColor(colorId: string | null) {
   return EVENT_COLORS[colorId ?? ""] ?? {
     bg: "bg-peach-soft",
     text: "text-peach-text",
-    border: "border-peach/40",
+    border: "border-peach/30",
   };
 }
 
@@ -134,8 +134,8 @@ function Toast({ message, type }: { message: string; type: "success" | "error" }
     <div
       role="alert"
       className={`fixed bottom-6 right-6 z-[9999] p-4 rounded-2xl border flex items-center gap-3 shadow-[0_8px_30px_rgba(13,13,13,0.06)] text-xs font-medium animate-fade-in ${type === "success"
-          ? "border-emerald-100 bg-emerald-50 text-emerald-800"
-          : "border-red-100 bg-red-50 text-red-800"
+        ? "border-emerald-100 bg-emerald-50 text-emerald-800"
+        : "border-red-100 bg-red-50 text-red-800"
         }`}
     >
       {type === "success" ? (
@@ -189,7 +189,7 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <button
               onClick={() => onEdit(event)}
-              className="p-2 hover:bg-[#F2F2F5] rounded-lg text-[#6B7280] hover:text-[#F97316] transition-colors cursor-pointer"
+              className="p-2 hover:bg-cream-300 rounded-lg text-espresso-400 hover:text-peach transition-colors cursor-pointer"
               aria-label="Edit event"
             >
               <Edit3 className="w-4 h-4" />
@@ -266,7 +266,7 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
             <div className="space-y-1.5">
               <p className="text-[10px] font-medium uppercase tracking-wider text-[#6B7280]">Organizer</p>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#F97316]/10 flex items-center justify-center text-[#F97316] text-[10px] font-medium flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-peach-soft flex items-center justify-center text-peach-text text-[11px] font-medium flex-shrink-0">
                   {(event.organizer.displayName ?? event.organizer.email)[0].toUpperCase()}
                 </div>
                 <span className="text-xs text-[#0D0D0D]">
@@ -297,10 +297,10 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
                     {att.responseStatus && (
                       <span
                         className={`text-[9px] px-1.5 py-0.5 rounded font-medium uppercase ${att.responseStatus === "accepted"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : att.responseStatus === "declined"
-                              ? "bg-red-50 text-red-600"
-                              : "bg-amber-50 text-amber-700"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : att.responseStatus === "declined"
+                            ? "bg-red-50 text-red-600"
+                            : "bg-amber-50 text-amber-700"
                           }`}
                       >
                         {att.responseStatus === "accepted"
@@ -327,7 +327,7 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
               href={event.htmlLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-[#F97316] font-medium hover:underline mt-2"
+              className="flex items-center gap-2 text-xs text-peach font-medium hover:underline mt-2"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Open in Google Calendar
@@ -364,7 +364,7 @@ interface EventModalProps {
 }
 
 const COLOR_OPTIONS = [
-  { id: "", label: "Default", dot: "bg-[#F97316]" },
+  { id: "", label: "Default", dot: "bg-peach" },
   { id: "1", label: "Lavender", dot: "bg-[#7986CB]" },
   { id: "2", label: "Sage", dot: "bg-[#33B679]" },
   { id: "3", label: "Grape", dot: "bg-[#8E24AA]" },
@@ -476,7 +476,7 @@ function EventModal({ mode, initial, defaultDate, onClose, onSaved, onToast }: E
   };
 
   const inputCls =
-    "w-full rounded-xl border border-[#E8E8EC] bg-[#FAFAFA] py-2.5 px-4 text-xs text-[#0D0D0D] outline-none transition focus:border-[#F97316] focus:bg-white focus:ring-1 focus:ring-[#F97316]";
+    "w-full rounded-xl border border-border/50 bg-cream-50 py-2.5 px-4 text-xs text-espresso outline-none transition focus:border-peach focus:bg-white focus:ring-1 focus:ring-peach";
   const labelCls = "text-[10px] font-medium text-[#6B7280] uppercase tracking-wider block mb-1";
 
   return (
@@ -491,8 +491,8 @@ function EventModal({ mode, initial, defaultDate, onClose, onSaved, onToast }: E
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E8EC]">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#F97316]" />
-            <span className="text-xs font-medium text-[#F97316] uppercase tracking-wider">
+            <Calendar className="w-4 h-4 text-peach" />
+            <span className="text-xs font-medium text-peach uppercase tracking-wider">
               {mode === "create" ? "New Event" : "Edit Event"}
             </span>
           </div>
@@ -526,8 +526,8 @@ function EventModal({ mode, initial, defaultDate, onClose, onSaved, onToast }: E
             <div
               onClick={() => set("allDay", !form.allDay)}
               className={`w-9 h-5 rounded-full border-2 transition-colors flex items-center ${form.allDay
-                  ? "bg-[#F97316] border-[#F97316]"
-                  : "bg-[#E8E8EC] border-[#E8E8EC]"
+                ? "bg-peach border-peach"
+                : "bg-[#E8E8EC] border-[#E8E8EC]"
                 }`}
             >
               <div
@@ -638,8 +638,8 @@ function EventModal({ mode, initial, defaultDate, onClose, onSaved, onToast }: E
                   onClick={() => set("colorId", c.id)}
                   title={c.label}
                   className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-transform hover:scale-110 cursor-pointer ${c.dot} ${form.colorId === c.id
-                      ? "border-[#0D0D0D] scale-110"
-                      : "border-transparent"
+                    ? "border-[#0D0D0D] scale-110"
+                    : "border-transparent"
                     }`}
                 />
               ))}
@@ -660,7 +660,7 @@ function EventModal({ mode, initial, defaultDate, onClose, onSaved, onToast }: E
             onClick={handleSubmit}
             disabled={saving}
             id="event-save-btn"
-            className="bg-[#F97316] text-white hover:bg-[#C2410C] rounded-full px-5 py-2 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+            className="bg-peach text-white hover:bg-peach-dark rounded-full px-5 py-2 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Calendar className="w-3.5 h-3.5" />}
             {mode === "create" ? "Create Event" : "Save Changes"}
@@ -711,11 +711,11 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
   return (
     <div className="flex flex-col h-full">
       {/* Day headers */}
-      <div className="grid grid-cols-7 border-b border-[#E8E8EC]">
+      <div className="grid grid-cols-7 border-b border-border/40">
         {DAYS.map((d) => (
           <div
             key={d}
-            className="py-2 text-center text-[10px] font-medium uppercase tracking-wider text-[#6B7280]"
+            className="py-3 text-center text-[14px] font-medium uppercase tracking-wider text-espresso-400"
           >
             {d}
           </div>
@@ -723,7 +723,7 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
       </div>
 
       {/* Grid cells */}
-      <div className="grid grid-cols-7 flex-1 divide-x divide-y divide-[#E8E8EC]">
+      <div className="grid grid-cols-7 flex-1 divide-x divide-y divide-border/40">
         {cells.map((cell, idx) => {
           const isToday = isSameDay(cell.date, today);
           const cellEvents = events
@@ -737,19 +737,19 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
             <div
               key={idx}
               onClick={() => onDayClick(cell.date)}
-              className={`min-h-[90px] p-1.5 flex flex-col gap-0.5 cursor-pointer transition-colors ${cell.isCurrentMonth
-                  ? "bg-white hover:bg-[#FAFAFA]"
-                  : "bg-[#FAFAFA]/50 hover:bg-[#F2F2F5]/50"
+              className={`min-h-[100px] p-2 flex flex-col gap-1 cursor-pointer transition-colors ${cell.isCurrentMonth
+                ? "bg-white hover:bg-cream-200/20"
+                : "bg-cream-100/30 hover:bg-cream-200/30"
                 }`}
             >
               {/* Day number */}
-              <div className="flex justify-end mb-0.5">
+              <div className="flex justify-end mb-1">
                 <span
-                  className={`text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full transition-colors ${isToday
-                      ? "bg-[#F97316] text-white"
-                      : cell.isCurrentMonth
-                        ? "text-[#0D0D0D]"
-                        : "text-[#6B7280]/40"
+                  className={`text-[15px] font-semibold w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200 ${isToday
+                    ? "bg-peach text-white shadow-sm"
+                    : cell.isCurrentMonth
+                      ? "text-espresso"
+                      : "text-espresso-300/40"
                     }`}
                 >
                   {cell.date.getDate()}
@@ -766,11 +766,11 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
                       e.stopPropagation();
                       onEventClick(ev);
                     }}
-                    className={`w-full text-left text-[10px] font-medium px-1.5 py-0.5 rounded-md truncate border-l-2 cursor-pointer hover:brightness-95 transition-all ${color.bg} ${color.text} ${color.border}`}
+                    className={`w-full text-left text-[12px] font-medium px-2 py-1 rounded-lg truncate border-l-2 cursor-pointer hover:brightness-95 transition-all shadow-[0_1px_3px_rgba(28,36,49,0.01)] ${color.bg} ${color.text} ${color.border}`}
                     title={ev.summary}
                   >
                     {!ev.allDay && ev.start?.dateTime && (
-                      <span className="opacity-70 mr-1">
+                      <span className="opacity-70 mr-1.5 text-[11px]">
                         {formatTime(ev.start.dateTime)}
                       </span>
                     )}
@@ -820,7 +820,7 @@ function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekVi
                 {DAYS[day.getDay()]}
               </span>
               <span
-                className={`mt-0.5 w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium ${isToday ? "bg-[#F97316] text-white" : "text-[#0D0D0D]"
+                className={`mt-0.5 w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium ${isToday ? "bg-peach text-white" : "text-[#0D0D0D]"
                   }`}
               >
                 {day.getDate()}
@@ -935,7 +935,7 @@ function DayView({ date, events, today, onEventClick }: DayViewProps) {
       {/* Day Header */}
       <div className="flex items-center gap-3 px-6 py-4 border-b border-[#E8E8EC] bg-white sticky top-0 z-10">
         <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium ${isToday ? "bg-[#F97316] text-white" : "bg-[#F2F2F5] text-[#0D0D0D]"
+          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium ${isToday ? "bg-peach text-white" : "bg-[#F2F2F5] text-[#0D0D0D]"
             }`}
         >
           {date.getDate()}
@@ -1181,12 +1181,12 @@ export default function GoogleCalendar() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-[#E8E8EC] flex-shrink-0">
         {/* Left: Brand + Title */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#F97316]/10 flex items-center justify-center text-[#F97316] flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-peach-soft flex items-center justify-center text-peach flex-shrink-0">
             <Calendar className="w-4 h-4" />
           </div>
           <div className="text-left">
             <h2 className="text-sm font-medium text-[#0D0D0D] font-display">Google calendar</h2>
-            <p className="text-[10px] text-[#6B7280] font-sans">Live sync · Powered by ZCorsAir integration</p>
+            <p className="text-[10px] text-[#6B7280] font-sans">Live sync · Powered by CorsAir integration</p>
           </div>
         </div>
 
@@ -1199,8 +1199,8 @@ export default function GoogleCalendar() {
                 key={v}
                 onClick={() => setView(v)}
                 className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${view === v
-                    ? "bg-white text-[#0D0D0D] shadow-sm border border-[#E8E8EC]"
-                    : "text-[#6B7280] hover:text-[#0D0D0D]"
+                  ? "bg-white text-[#0D0D0D] shadow-sm border border-[#E8E8EC]"
+                  : "text-[#6B7280] hover:text-[#0D0D0D]"
                   }`}
               >
                 {v}
@@ -1216,7 +1216,7 @@ export default function GoogleCalendar() {
             className="border border-[#E8E8EC] bg-white hover:bg-[#F2F2F5] rounded-xl p-2.5 text-[#6B7280] hover:text-[#0D0D0D] transition-colors cursor-pointer flex items-center gap-1.5"
             title="Sync with Google Calendar"
           >
-            <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin text-[#F97316]" : ""}`} />
+            <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin text-peach" : ""}`} />
             <span className="text-[10px] font-medium uppercase tracking-wider hidden sm:inline">Sync</span>
           </button>
 
@@ -1229,7 +1229,7 @@ export default function GoogleCalendar() {
               setDefaultModalDate(undefined);
               setShowModal(true);
             }}
-            className="bg-[#F97316] hover:bg-[#C2410C] text-white rounded-xl py-2.5 px-4 text-xs font-medium transition-all hover:shadow-[0_4px_12px_rgba(249,115,22,0.2)] flex items-center gap-1.5 cursor-pointer"
+            className="bg-peach hover:bg-peach-dark text-white rounded-xl py-2.5 px-4 text-xs font-medium transition-all shadow-[0_2px_8px_rgba(201,138,84,0.15)] flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">New event</span>
@@ -1256,7 +1256,7 @@ export default function GoogleCalendar() {
           </button>
           <button
             onClick={goToday}
-            className="text-xs font-medium text-[#F97316] hover:underline px-2 py-1 cursor-pointer"
+            className="text-xs font-medium text-peach hover:underline px-2 py-1 cursor-pointer"
           >
             Today
           </button>
@@ -1274,7 +1274,7 @@ export default function GoogleCalendar() {
         {loading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-2 text-xs font-medium text-[#6B7280]">
-              <Loader2 className="w-5 h-5 animate-spin text-[#F97316]" />
+              <Loader2 className="w-5 h-5 animate-spin text-peach" />
               Loading calendar...
             </div>
           </div>
@@ -1284,7 +1284,7 @@ export default function GoogleCalendar() {
         {!loading && error && isConnectError && (
           <div className="flex items-center justify-center h-full p-8">
             <div className="border border-[#E8E8EC] rounded-[24px] p-10 bg-[#FAFAFA] text-center max-w-md space-y-5 shadow-sm">
-              <div className="w-14 h-14 rounded-full bg-[#F97316]/10 flex items-center justify-center mx-auto text-[#F97316]">
+              <div className="w-14 h-14 rounded-full bg-peach-soft flex items-center justify-center mx-auto text-peach">
                 <Calendar className="w-7 h-7" />
               </div>
               <div className="space-y-2">
@@ -1292,13 +1292,13 @@ export default function GoogleCalendar() {
                   Connect Google calendar
                 </h4>
                 <p className="text-xs text-[#6B7280] leading-relaxed">
-                  Authorize Zentra to sync and manage your Google calendar events, meetings, and schedules through the secure ZCorsAir integration engine.
+                  Authorize Zentra to sync and manage your Google calendar events, meetings, and schedules through the secure CorsAir integration engine.
                 </p>
               </div>
               <a
                 href="/api/connect?plugin=googlecalendar"
                 id="connect-calendar-btn"
-                className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#C2410C] text-white rounded-full px-6 py-3 text-xs font-medium transition hover:shadow-[0_4px_12px_rgba(249,115,22,0.2)]"
+                className="inline-flex items-center gap-2 bg-peach hover:bg-peach-dark text-white rounded-full px-6 py-3 text-xs font-medium transition hover:shadow-[0_4px_12px_rgba(201,138,84,0.15)]"
               >
                 <Calendar className="w-4 h-4" />
                 Authorize Google calendar

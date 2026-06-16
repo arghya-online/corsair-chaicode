@@ -15,12 +15,12 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-cream-DEFAULT">
+    <div className="flex min-h-screen" style={{ background: "#F7F3EC" }}>
       {/* Sidebar Navigation */}
       <Sidebar user={user} />
 
       {/* Main Content Area */}
-      <main className="ml-14 flex-1 min-h-screen relative bg-cream-DEFAULT overflow-x-hidden">
+      <main className="ml-[240px] flex-1 min-h-screen relative overflow-x-hidden dashboard-surface">
         <PageTransition>{children}</PageTransition>
       </main>
     </div>

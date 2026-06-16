@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@clerk/nextjs": "^7.5.3",
+    "@clerk/ui": "^1.17.0",
     "@corsair-dev/cli": "^0.1.19",
     "@corsair-dev/github": "^0.1.10",
     "@corsair-dev/gmail": "^0.1.4",
