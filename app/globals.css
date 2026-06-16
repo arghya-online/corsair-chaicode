@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #FAF7F2;
+  --foreground: #1C2431;
+  --card: rgba(255, 255, 255, 0.72);
+  --card-foreground: #1C2431;
+  --border: rgba(28, 36, 49, 0.08);
+  --input: rgba(28, 36, 49, 0.08);
+  --ring: rgba(201, 138, 84, 0.25);
+  --primary: #1C2431;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F4EFE7;
+  --secondary-foreground: #1C2431;
+  --muted: #EFE7DB;
+  --muted-foreground: #8A918F;
+  --accent: #F4EFE7;
+  --accent-foreground: #1C2431;
+  --destructive: #A85A3A;
+  --destructive-foreground: #FFFFFF;
+  --radius: 0.75rem;
+}
+
+@theme {
+  --color-cream: #FAF7F2;
+  --color-cream-50: #FFFDF9;
+  --color-cream-100: #FAF7F2;
+  --color-cream-200: #F4EFE7;
+  --color-cream-300: #EFE7DB;
+
+  --color-peach: #C98A54;
+  --color-peach-soft: rgba(201, 138, 84, 0.12);
+  --color-peach-text: #A85A3A;
+  --color-peach-dark: #B87443;
+
+  --color-blush: #A85A3A;
+  --color-blush-soft: rgba(168, 90, 58, 0.12);
+  --color-blush-text: #A85A3A;
+
+  --color-lavender: #D7A23B;
+  --color-lavender-soft: rgba(215, 162, 59, 0.12);
+  --color-lavender-text: #D7A23B;
+
+  --color-sage: #50684E;
+  --color-sage-soft: rgba(80, 104, 78, 0.12);
+  --color-sage-text: #50684E;
+
+  --color-butter: #D7A23B;
+  --color-butter-soft: rgba(215, 162, 59, 0.12);
+  --color-butter-text: #D7A23B;
+
+  --color-sky: #5B7B7C;
+  --color-sky-soft: rgba(91, 123, 124, 0.12);
+  --color-sky-text: #5B7B7C;
+
+  --color-espresso: #1C2431;
+  --color-espresso-600: #1C2431;
+  --color-espresso-400: #566170;
+  --color-espresso-300: #8A918F;
+  --color-espresso-100: rgba(28, 36, 49, 0.08);
+
+  --color-sandstone: #C98A54;
+  --color-terracotta: #A85A3A;
+  --color-copper: #B87443;
+  --color-saffron: #D7A23B;
+  --color-banyan: #50684E;
+  --color-monsoon: #5B7B7C;
+
+  --font-sans: var(--font-sans), sans-serif;
+  --font-serif: var(--font-serif), serif;
+
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 4px 12px -1px rgba(28, 36, 49, 0.04), 0 2px 6px -2px rgba(28, 36, 49, 0.04);
+  --shadow-focus: 0 0 0 3px rgba(201, 138, 84, 0.25);
+}
+
+body {
+  background-color: #FAF7F2;
+  color: #1C2431;
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(201, 138, 84, 0.18);
+  color: #1C2431;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(201, 138, 84, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Base custom classes & animations from existing code */
+@keyframes breathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 80px rgba(244, 98, 42, 0.22), 0 0 160px rgba(244, 98, 42, 0.08);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    box-shadow: 0 0 100px rgba(244, 98, 42, 0.32), 0 0 200px rgba(244, 98, 42, 0.12);
+  }
+}
+
+@keyframes orbit1 {
+  0% { transform: rotate(0deg) translateX(140px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(140px) rotate(-360deg); }
+}
+
+@keyframes orbit2 {
+  0% { transform: rotate(120deg) translateX(190px) rotate(-120deg); }
+  100% { transform: rotate(480deg) translateX(190px) rotate(-480deg); }
+}
+
+@keyframes orbit3 {
+  0% { transform: rotate(240deg) translateX(240px) rotate(-240deg); }
+  100% { transform: rotate(600deg) translateX(240px) rotate(-600deg); }
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.animate-orbit-1 {
+  animation: orbit1 25s linear infinite;
+}
+
+.animate-orbit-2 {
+  animation: orbit2 32s linear infinite;
+}
+
+.animate-orbit-3 {
+  animation: orbit3 40s linear infinite;
+}
+
+.animate-flow-dash {
+  stroke-dasharray: 6 4;
+  animation: flow 1.5s linear infinite;
+}

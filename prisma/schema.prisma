@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// Corsair Native Tables (Mapped to local DB)
+// ==========================================
+
+model CorsairIntegration {
+  id        String           @id
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  name      String
+  config    Json             @default("{}")
+  dek       String?
+  accounts  CorsairAccount[]
+
+  @@map("corsair_integrations")
+}
+
+model CorsairAccount {
+  id            String             @id
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  tenantId      String             @map("tenant_id")
+  integrationId String             @map("integration_id")
+  config        Json               @default("{}")
+  dek           String?
+  integration   CorsairIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  entities      CorsairEntity[]
+  events        CorsairEvent[]
+
+  @@map("corsair_accounts")
+}
+
+model CorsairEntity {
+  id         String         @id
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId  String         @map("account_id")
+  entityId   String         @map("entity_id")
+  entityType String         @map("entity_type")
+  version    String
+  data       Json           @default("{}")
+  account    CorsairAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("corsair_entities")
+}
+
+model CorsairEvent {
+  id        String         @id
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId String         @map("account_id")
+  eventType String         @map("event_type")
+  payload   Json           @default("{}")
+  status    String?
+  account   CorsairAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("corsair_events")
+}
+
+// ==========================================
+// Kairova Application Tables
+// ==========================================
+
+model User {
+  id        String              @id @default(uuid())
+  email     String              @unique
+  name      String?
+  password  String?
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime            @updatedAt @map("updated_at") @db.Timestamptz
+  accounts  ConnectedAccount[]
+  workflows WorkflowExecution[]
+  chats     AgentConversation[]
+
+  @@map("users")
+}
+
+model ConnectedAccount {
+  id                String    @id @default(uuid())
+  userId            String    @map("user_id")
+  provider          String    // e.g. "google"
+  providerAccountId String    @map("provider_account_id") // e.g. email address or google sub
+  accessToken       String?   @map("access_token")
+  refreshToken      String?   @map("refresh_token")
+  expiresAt         DateTime? @map("expires_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("connected_accounts")
+}
+
+model EmailClassification {
+  id         String   @id @default(uuid())
+  emailId    String   @unique @map("email_id") // Google Message ID
+  threadId   String?  @map("thread_id")
+  subject    String?
+  sender     String?
+  snippet    String?
+  category   String   // URGENT, NEEDS_REPLY, MEETING_RELATED, WAITING_FOR_RESPONSE, LOW_PRIORITY
+  reason     String?  // AI explanation for priority category
+  receivedAt DateTime @map("received_at") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("email_classifications")
+}
+
+model WorkflowExecution {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  command   String
+  status    String   // PENDING, RUNNING, COMPLETED, FAILED
+  steps     Json     @default("[]") // array of execution steps
+  result    Json?    // output details
+  error     String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("workflow_executions")
+}
+
+model AgentConversation {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  messages  Json     @default("[]") // array of messages
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("agent_conversations")
+}
+
+model WebhookLog {
+  id        String   @id @default(uuid())
+  eventType String   @map("event_type")
+  payload   Json     @default("{}")
+  processed Boolean  @default(false)
+  error     String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("webhook_logs")
+}
+
+model Todo {
+  id        String   @id @default(uuid())
+  text      String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("todos")
+}
