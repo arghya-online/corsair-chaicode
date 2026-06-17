@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/src/actions/auth";
-import Sidebar from "@/src/components/layout/Sidebar";
+import { DashboardShell } from "@/src/components/layout/DashboardShell";
 import PageTransition from "@/src/components/layout/PageTransition";
 
 export default async function DashboardLayout({
@@ -15,14 +15,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: "#F7F3EC" }}>
-      {/* Sidebar Navigation */}
-      <Sidebar user={user} />
-
-      {/* Main Content Area */}
-      <main className="ml-[240px] flex-1 min-h-screen relative overflow-x-hidden dashboard-surface">
-        <PageTransition>{children}</PageTransition>
-      </main>
-    </div>
+    <DashboardShell user={user}>
+      <PageTransition>{children}</PageTransition>
+    </DashboardShell>
   );
 }

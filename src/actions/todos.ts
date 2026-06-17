@@ -2,10 +2,17 @@
 
 import prisma from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getCurrentUser } from "@/src/actions/auth";
 
 export async function getTodos() {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return [];
+    }
+
     return await prisma.todo.findMany({
+      where: { userId: user.id },
       orderBy: {
         createdAt: "desc",
       },
@@ -18,10 +25,16 @@ export async function getTodos() {
 
 export async function addTodoAction(text: string) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
     const todo = await prisma.todo.create({
       data: {
         text,
         completed: false,
+        userId: user.id,
       },
     });
     revalidatePath("/");
@@ -34,6 +47,18 @@ export async function addTodoAction(text: string) {
 
 export async function toggleTodoAction(id: string, completed: boolean) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const existing = await prisma.todo.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return { success: false, error: "Todo not found or unauthorized" };
+    }
+
     const todo = await prisma.todo.update({
       where: { id },
       data: { completed },
@@ -48,6 +73,18 @@ export async function toggleTodoAction(id: string, completed: boolean) {
 
 export async function deleteTodoAction(id: string) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const existing = await prisma.todo.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return { success: false, error: "Todo not found or unauthorized" };
+    }
+
     await prisma.todo.delete({
       where: { id },
     });

@@ -84,7 +84,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="py-36 px-4 sm:px-6 md:px-8 bg-[#F7F3EC] select-none border-t border-[rgba(17,24,39,0.06)]">
+    <section id="features" className="py-36 px-4 sm:px-6 md:px-8 bg-transparent select-none">
       <div className="mx-auto max-w-6xl space-y-48">
 
         {/* Section Header */}

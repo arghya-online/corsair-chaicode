@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Mail,
   Calendar,
@@ -10,13 +11,20 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
-  AlertCircle,
   ChevronRight,
-  Plug,
+  Plus,
+  Search,
+  Zap,
+  TrendingUp,
+  Clock,
+  MapPin,
+  Users
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ComposeModal } from "@/src/components/gmail/ComposeModal";
+import { EventModal } from "@/src/components/shared/EventModal";
 
 interface NextEventData {
   summary: string;
@@ -37,41 +45,55 @@ interface OverviewClientProps {
   firstName: string;
 }
 
-function getGreeting(firstName: string) {
-  const h = new Date().getHours();
-  const time = h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
-  return `Good ${time}, ${firstName}.`;
-}
-
-function getEventTimeText(event: NextEventData) {
-  const startStr = event.start?.dateTime ?? event.start?.date;
-  if (!startStr) return "soon";
-  const startDate = new Date(startStr);
-  const timeStr = startDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  const diff = startDate.getTime() - Date.now();
-  if (diff <= 0) return "starting now";
-  const mins = Math.floor(diff / 60000);
-  const hours = Math.floor(mins / 60);
-  return hours > 0
-    ? `${timeStr} · in ${hours}h ${mins % 60}m`
-    : `${timeStr} · in ${mins}m`;
-}
-
-
 export function OverviewClient({ firstName }: OverviewClientProps) {
+  const router = useRouter();
   const [data, setData] = useState<StatsData | null>(null);
+  const [recentEmails, setRecentEmails] = useState<any[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+
+  // Modals state
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [eventOpen, setEventOpen] = useState(false);
 
   const fetchStats = async () => {
     try {
       const res = await fetch("/api/dashboard/stats");
       if (res.ok) setData(await res.json());
     } catch { /* silent */ }
-    finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchStats(); }, []);
+  const fetchRecentEmails = async () => {
+    try {
+      const res = await fetch("/api/gmail/inbox");
+      if (res.ok) {
+        const d = await res.json();
+        setRecentEmails((d.messages ?? []).slice(0, 4));
+      }
+    } catch { /* silent */ }
+  };
+
+  const fetchCalendarEvents = async () => {
+    try {
+      const res = await fetch("/api/calendar/events");
+      if (res.ok) {
+        const d = await res.json();
+        setCalendarEvents(d.slice(0, 4));
+      }
+    } catch { /* silent */ }
+  };
+
+  const loadAllData = async () => {
+    setLoading(true);
+    await Promise.all([fetchStats(), fetchRecentEmails(), fetchCalendarEvents()]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadAllData();
+  }, []);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -79,7 +101,7 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
       const res = await fetch("/api/gmail/refresh", { method: "POST" });
       if (!res.ok) throw new Error("Sync failed");
       toast.success("Workspace synced.");
-      await fetchStats();
+      await loadAllData();
     } catch (err: any) {
       toast.error(err.message ?? "Sync failed.");
     } finally {
@@ -87,407 +109,391 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
     }
   };
 
+  const handleAiCommandSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aiPrompt.trim()) return;
+    router.push(`/dashboard/assistant?prompt=${encodeURIComponent(aiPrompt.trim())}`);
+  };
+
   const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric",
+    weekday: "long", month: "long", day: "numeric", year: "numeric"
   });
+
+  const getGreetingText = () => {
+    const hrs = new Date().getHours();
+    if (hrs < 12) return `Good morning, ${firstName}.`;
+    if (hrs < 17) return `Good afternoon, ${firstName}.`;
+    return `Good evening, ${firstName}.`;
+  };
 
   const gmailConnected = data?.gmailConnected ?? false;
   const calConnected = data?.calendarConnected ?? false;
-  const bothConnected = gmailConnected && calConnected;
-  const noneConnected = !gmailConnected && !calConnected;
+
+  const quickPrompts = [
+    "Summarize urgent emails",
+    "Show calendar conflicts",
+    "Draft reply to Vikram",
+    "Prepare workspace brief"
+  ];
 
   return (
-    <div className="min-h-screen p-8 max-w-[960px] mx-auto">
+    <div className="min-h-screen px-6 sm:px-8 py-10 max-w-[1280px] mx-auto w-full space-y-10">
 
-      {/* ── Greeting ──────────────────────────────────────────────── */}
+      {/* ─── 1. Greeting Header ─── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        className="mb-8 flex items-start justify-between"
+        transition={{ duration: 0.4 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
       >
         <div>
-          <p className="font-sans text-[13px] text-espresso-300 mb-1 tabular-nums">{today}</p>
-          <h1 className="font-display text-[42px] font-normal text-espresso leading-[1.1] tracking-[-0.02em]">
-            {getGreeting(firstName)}
+          <span className="text-[11px] font-bold text-[#C67B3D] tracking-[0.15em] uppercase block mb-1">
+            {today}
+          </span>
+          <h1 className="text-[36px] sm:text-[46px] font-serif font-normal tracking-tight text-[#111827] leading-tight">
+            {getGreetingText()}
           </h1>
-          <p className="font-sans text-[14px] text-espresso-400 mt-1.5">
+          <p className="text-[13.5px] text-[#64748B] mt-1">
             {loading
-              ? "Loading your workspace..."
-              : noneConnected
-              ? "Connect Gmail and Calendar to get started."
-              : `${!gmailConnected ? "Gmail not connected. " : ""}${!calConnected ? "Calendar not connected." : "Zentra is watching over your workspace."}`}
+              ? "Configuring your workspace data..."
+              : gmailConnected && calConnected
+                ? "All channels synchronized. Zentra AI is watching over your inbox and schedule."
+                : "Link your Google integrations to enable full AI assistance."}
           </p>
         </div>
 
-        {gmailConnected && (
+        <div className="flex items-center gap-3">
           <button
             onClick={handleSync}
-            disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-espresso-100 font-sans text-[13px] font-medium text-espresso hover:bg-cream-200 transition-all shadow-sm disabled:opacity-50 flex-shrink-0"
+            disabled={syncing || loading}
+            className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-white border border-[rgba(17,24,39,0.08)] hover:bg-[#F7F2EA] font-sans text-[12.5px] font-semibold text-[#111827] transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-peach ${syncing ? "animate-spin" : ""}`} />
-            Sync
+            <RefreshCw className={`w-3.5 h-3.5 text-[#C67B3D] ${syncing ? "animate-spin" : ""}`} />
+            Sync Workspace
           </button>
-        )}
+        </div>
       </motion.div>
 
-      {/* ── Integration Status Banner ─────────────────────────────── */}
-      <AnimatePresence>
-        {!loading && !bothConnected && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="mb-8"
-          >
-            {/* Full setup prompt when nothing is connected */}
-            {noneConnected ? (
-              <div className="bg-white border border-espresso-100 rounded-2xl p-7 text-center shadow-sm">
-                <div className="w-12 h-12 rounded-2xl bg-peach-soft flex items-center justify-center mx-auto mb-4">
-                  <Plug className="w-5 h-5 text-peach" />
-                </div>
-                <h2 className="font-display text-[24px] text-espresso font-normal mb-1.5">
-                  Connect your accounts
-                </h2>
-                <p className="font-sans text-[14px] text-espresso-400 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Zentra needs access to Gmail and Google Calendar to manage your workspace.
-                </p>
-                <div className="flex items-center justify-center gap-3 flex-wrap">
-                  <a
-                    href="/api/connect?plugin=gmail"
-                    className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-espresso text-white font-sans text-[13px] font-medium hover:bg-espresso/90 transition-colors"
-                  >
-                    <Mail className="w-4 h-4" />
-                    Connect Gmail
-                  </a>
-                  <a
-                    href="/api/connect?plugin=googlecalendar"
-                    className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl border border-espresso-100 bg-white text-espresso font-sans text-[13px] font-medium hover:bg-cream-200 transition-colors"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Connect Calendar
-                  </a>
-                </div>
+      {/* ─── 2. Floating Quick Actions ─── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          {
+            title: "New Email",
+            desc: "Draft message",
+            color: "rgba(198, 123, 61, 0.08)",
+            icon: Mail,
+            action: () => setComposeOpen(true)
+          },
+          {
+            title: "New Event",
+            desc: "Schedule slot",
+            color: "rgba(91, 122, 140, 0.08)",
+            icon: Calendar,
+            action: () => setEventOpen(true)
+          },
+          {
+            title: "Ask AI",
+            desc: "Ask anything about your inbox or calendar",
+            color: "rgba(109, 138, 104, 0.08)",
+            icon: Sparkles,
+            action: () => router.push("/dashboard/assistant")
+          },
+          {
+            title: "Search",
+            desc: "Command menu",
+            color: "rgba(17, 24, 39, 0.04)",
+            icon: Search,
+            action: () => window.dispatchEvent(new CustomEvent("open-zentra-command"))
+          }
+        ].map((act, index) => {
+          const Icon = act.icon;
+          return (
+            <motion.button
+              key={act.title}
+              onClick={act.action}
+              whileHover={{ y: -3, boxShadow: "0 12px 30px rgba(0,0,0,0.04)" }}
+              className="p-5 rounded-[20px] bg-white border border-[rgba(17,24,39,0.06)] flex items-start gap-4 text-left transition-all duration-300 shadow-xs cursor-pointer group"
+            >
+              <div
+                style={{ backgroundColor: act.color }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              >
+                <Icon className="w-4.5 h-4.5 text-[#111827] group-hover:text-[#C67B3D] transition-colors" />
               </div>
+              <div>
+                <p className="font-sans text-[13.5px] font-bold text-[#111827] leading-tight">
+                  {act.title}
+                </p>
+                <p className="font-sans text-[11px] text-[#64748B] mt-0.5">
+                  {act.desc}
+                </p>
+              </div>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* ─── 3. AI Centerpiece Command Center ─── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        style={{
+          background: "linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(30,41,59,0.98) 100%)",
+        }}
+        className="p-8 sm:p-10 rounded-[24px] shadow-[0_30px_70px_rgba(0,0,0,0.12)] border border-[#1e293b] text-white relative overflow-hidden"
+      >
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-[400px] h-[300px] rounded-full bg-[#C67B3D]/10 blur-[100px] pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10">
+              <Sparkles className="w-3.5 h-3.5 text-[#C67B3D]" />
+              <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">AI Assistant</span>
+            </div>
+            <h2 className="text-[24px] font-serif font-normal text-white">
+              How can I help today?
+            </h2>
+          </div>
+        </div>
+
+        {/* Input Form */}
+        <form onSubmit={handleAiCommandSubmit} className="relative z-10 flex gap-3 max-w-4xl">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              placeholder="Ask Zentra to draft an email, check calendar overlaps, or summarize recent notifications..."
+              className="w-full bg-white/10 hover:bg-white/12 focus:bg-white/15 border border-white/10 focus:border-[#C67B3D] text-white rounded-xl py-3.5 pl-4 pr-12 text-[14px] placeholder-white/40 outline-none transition-all"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!aiPrompt.trim()}
+            className="px-6 rounded-xl bg-white hover:bg-[#F7F2EA] text-[#111827] hover:text-[#C67B3D] text-[13px] font-bold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <span>Ask AI</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </form>
+
+        {/* Suggestion pills */}
+        <div className="relative z-10 flex flex-wrap gap-2 mt-5">
+          {quickPrompts.map((pill) => (
+            <button
+              key={pill}
+              type="button"
+              onClick={() => setAiPrompt(pill)}
+              className="text-[11.5px] text-white/70 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg px-3 py-1 transition-all cursor-pointer"
+            >
+              {pill}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ─── 4. Metrics Grid ─── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+        {/* Metric 1: Unread */}
+        <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Inbox</span>
+            <Mail className="w-4.5 h-4.5 text-[#C67B3D]" />
+          </div>
+          {loading ? (
+            <Skeleton className="h-9 w-12 bg-cream-200 rounded mb-1" />
+          ) : (
+            <div className="flex items-baseline gap-2">
+              <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
+                {gmailConnected ? data?.unreadCount ?? 0 : "—"}
+              </span>
+              <span className="text-[12px] text-[#64748B]">priorities unread</span>
+            </div>
+          )}
+          <p className="text-[12px] text-[#64748B] mt-2">
+            {gmailConnected ? "Connected to Gmail." : "Connect Gmail to index messages."}
+          </p>
+        </div>
+
+        {/* Metric 2: Events */}
+        <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Today's Schedule</span>
+            <Calendar className="w-4.5 h-4.5 text-[#C67B3D]" />
+          </div>
+          {loading ? (
+            <Skeleton className="h-9 w-12 bg-cream-200 rounded mb-1" />
+          ) : (
+            <div className="flex items-baseline gap-2">
+              <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
+                {calConnected ? data?.eventsTodayCount ?? 0 : "—"}
+              </span>
+              <span className="text-[12px] text-[#64748B]">Events today</span>
+            </div>
+          )}
+          <p className="text-[12px] text-[#64748B] mt-2">
+            {calConnected && data?.nextEvent ? `Next: "${data.nextEvent.summary}"` : "No upcoming conflicts."}
+          </p>
+        </div>
+
+        {/* Metric 3: Integrations */}
+        <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Connected Apps</span>
+            <ShieldCheck className="w-4.5 h-4.5 text-[#6D8A68]" />
+          </div>
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-[#64748B]">Gmail</span>
+              <span className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${gmailConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}>
+                {gmailConnected ? "Connected" : "Offline"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-[#64748B]">Google Calendar</span>
+              <span className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${calConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}>
+                {calConnected ? "Connected" : "Offline"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ─── 5. Dynamic Activity & Timeline ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        {/* Left: Recent Activity Feed (Span 7) */}
+        <div className="lg:col-span-7 space-y-4 text-left">
+          <h3 className="font-serif text-[20px] font-normal text-[#111827]">
+            Inbox priorities
+          </h3>
+
+          <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs space-y-4">
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-12 w-full bg-cream-200 rounded" />
+                ))}
+              </div>
+            ) : !gmailConnected ? (
+              <div className="py-12 text-center text-[#64748B]">
+                <Mail className="w-8 h-8 mx-auto mb-2 text-[#64748B]/40" />
+                <p className="text-[13px] font-bold">Gmail not connected</p>
+                <p className="text-[12px] text-[#64748B] mt-1">Connect your Gmail integration to view recent threads.</p>
+                <a href="/api/connect?plugin=gmail" className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold">
+                  Connect Gmail
+                </a>
+              </div>
+            ) : recentEmails.length === 0 ? (
+              <p className="text-[13px] text-[#64748B] italic py-8 text-center">No recent priorities detected.</p>
             ) : (
-              /* Partial connection — show individual banners */
-              <div className="space-y-3">
-                {!gmailConnected && (
-                  <div className="flex items-center justify-between gap-4 bg-white border border-espresso-100 rounded-2xl px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-peach-soft flex items-center justify-center flex-shrink-0">
-                        <Mail className="w-4 h-4 text-peach" />
-                      </div>
-                      <div>
-                        <p className="font-sans text-[13px] font-semibold text-espresso">Gmail not connected</p>
-                        <p className="font-sans text-[12px] text-espresso-300">Connect to read, draft, and organize emails.</p>
-                      </div>
-                    </div>
-                    <a
-                      href="/api/connect?plugin=gmail"
-                      className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-espresso text-white font-sans text-[12px] font-medium hover:bg-espresso/90 transition-colors"
+              <div className="divide-y divide-[rgba(17,24,39,0.06)]">
+                {recentEmails.map((email) => {
+                  const unread = email.labelIds.includes("UNREAD");
+                  const sender = email.from.split("<")[0].replace(/"/g, "").trim() || "Unknown";
+                  return (
+                    <Link
+                      href={`/dashboard/communications?folder=inbox`}
+                      key={email.id}
+                      className="flex justify-between items-start py-3.5 group hover:bg-[#F7F2EA]/20 px-2 rounded-xl transition-all"
                     >
-                      Connect Gmail
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                )}
-                {!calConnected && (
-                  <div className="flex items-center justify-between gap-4 bg-white border border-espresso-100 rounded-2xl px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-sky-soft flex items-center justify-center flex-shrink-0">
-                        <Calendar className="w-4 h-4 text-sky" />
+                      <div className="min-w-0 flex-1 pr-4">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={`text-[12.5px] ${unread ? "font-bold text-[#111827]" : "text-[#64748B]"}`}>
+                            {sender}
+                          </span>
+                          {unread && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C67B3D]" />
+                          )}
+                        </div>
+                        <p className={`text-[12px] truncate ${unread ? "font-semibold text-[#111827]" : "text-[#64748B]"}`}>
+                          {email.subject}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] truncate mt-0.5">
+                          {email.snippet}
+                        </p>
                       </div>
-                      <div>
-                        <p className="font-sans text-[13px] font-semibold text-espresso">Calendar not connected</p>
-                        <p className="font-sans text-[12px] text-espresso-300">Connect to see events and schedule meetings.</p>
-                      </div>
-                    </div>
-                    <a
-                      href="/api/connect?plugin=googlecalendar"
-                      className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-espresso-100 bg-white text-espresso font-sans text-[12px] font-medium hover:bg-cream-200 transition-colors"
-                    >
-                      Connect Calendar
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                )}
+                      <ChevronRight className="w-4 h-4 text-[#64748B]/30 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 self-center" />
+                    </Link>
+                  );
+                })}
               </div>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Main Content ──────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-5">
-
-        {/* Left: Nav Cards ─────────────────────────────────────── */}
-        <div className="col-span-7 space-y-4">
-
-          {/* Live Stats Row — only shown when connected */}
-          {(gmailConnected || calConnected) && (
-            <div className="grid grid-cols-2 gap-3 mb-2">
-              {/* Unread */}
-              <Link href="/dashboard/communications" className="group">
-                <div className="card-premium p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-8 h-8 rounded-xl bg-peach-soft flex items-center justify-center">
-                      <Mail className="w-4 h-4 text-peach" />
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  {loading ? (
-                    <Skeleton className="h-8 w-10 bg-cream-300 mb-1 rounded" />
-                  ) : gmailConnected ? (
-                    <p className="font-display text-[30px] text-espresso leading-none mb-0.5">
-                      {data?.unreadCount ?? 0}
-                    </p>
-                  ) : (
-                    <p className="font-display text-[16px] text-espresso-300 leading-none mb-0.5">—</p>
-                  )}
-                  <p className="font-sans text-[11px] text-espresso-400">Unread emails</p>
-                </div>
-              </Link>
-
-              {/* Events */}
-              <Link href="/dashboard/calendar" className="group">
-                <div className="card-premium p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-8 h-8 rounded-xl bg-sky-soft flex items-center justify-center">
-                      <Calendar className="w-4 h-4 text-sky" />
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  {loading ? (
-                    <Skeleton className="h-8 w-10 bg-cream-300 mb-1 rounded" />
-                  ) : calConnected ? (
-                    <p className="font-display text-[30px] text-espresso leading-none mb-0.5">
-                      {data?.eventsTodayCount ?? 0}
-                    </p>
-                  ) : (
-                    <p className="font-display text-[16px] text-espresso-300 leading-none mb-0.5">—</p>
-                  )}
-                  <p className="font-sans text-[11px] text-espresso-400">Events today</p>
-                </div>
-              </Link>
-            </div>
-          )}
-
-          {/* Primary Navigation Cards */}
-          <h2 className="font-display text-[20px] text-espresso font-normal">
-            Your workspace
-          </h2>
-
-          <div className="space-y-2.5">
-            {/* Communications */}
-            <Link href="/dashboard/communications" className="group block">
-              <div className="card-premium p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-peach-soft flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-[18px] h-[18px] text-peach" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-sans text-[14px] font-semibold text-espresso">Communications</p>
-                    {!loading && !gmailConnected && (
-                      <span className="font-sans text-[10px] bg-cream-300 text-espresso-400 rounded-full px-2 py-0.5 border border-espresso-100">
-                        Not connected
-                      </span>
-                    )}
-                    {!loading && gmailConnected && data && data.unreadCount > 0 && (
-                      <span className="font-sans text-[10px] font-semibold bg-peach text-white rounded-full px-2 py-0.5">
-                        {data.unreadCount} unread
-                      </span>
-                    )}
-                  </div>
-                  <p className="font-sans text-[12px] text-espresso-400">
-                    Read emails, draft replies, and manage your inbox
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </div>
-            </Link>
-
-            {/* Calendar */}
-            <Link href="/dashboard/calendar" className="group block">
-              <div className="card-premium p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-sky-soft flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-[18px] h-[18px] text-sky" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-sans text-[14px] font-semibold text-espresso">Calendar</p>
-                    {!loading && !calConnected && (
-                      <span className="font-sans text-[10px] bg-cream-300 text-espresso-400 rounded-full px-2 py-0.5 border border-espresso-100">
-                        Not connected
-                      </span>
-                    )}
-                    {!loading && calConnected && data && data.eventsTodayCount > 0 && (
-                      <span className="font-sans text-[10px] font-semibold bg-sky text-white rounded-full px-2 py-0.5">
-                        {data.eventsTodayCount} today
-                      </span>
-                    )}
-                  </div>
-                  <p className="font-sans text-[12px] text-espresso-400">
-                    View events, schedule meetings, and plan your week
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </div>
-            </Link>
-
-            {/* Assistant */}
-            <Link href="/dashboard/assistant" className="group block">
-              <div className="card-premium p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-peach-soft flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-[18px] h-[18px] text-peach" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[14px] font-semibold text-espresso mb-0.5">
-                    Zentra AI
-                  </p>
-                  <p className="font-sans text-[12px] text-espresso-400">
-                    Ask about your inbox, draft emails, summarize threads, schedule meetings
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </div>
-            </Link>
           </div>
         </div>
 
-        {/* Right: Status + Upcoming ────────────────────────────── */}
-        <div className="col-span-5 space-y-4">
+        {/* Right: Schedule Timeline (Span 5) */}
+        <div className="lg:col-span-5 space-y-4 text-left">
+          <h3 className="font-serif text-[20px] font-normal text-[#111827]">
+            Today's schedule
+          </h3>
 
-          {/* Integration Status */}
-          <div>
-            <h2 className="font-display text-[20px] text-espresso font-normal mb-3">
-              Integrations
-            </h2>
-            <div className="card-premium overflow-hidden hover:transform-none hover:shadow-card hover:border-border/50">
-              {/* Gmail Row */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-espresso-100">
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-espresso-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-sans text-[13px] font-medium text-espresso">Gmail</p>
-                    <p className="font-sans text-[11px] text-espresso-300">
-                      {loading ? "Checking..." : gmailConnected ? "Connected and syncing" : "Not connected"}
-                    </p>
-                  </div>
-                </div>
-                {loading ? (
-                  <Skeleton className="w-16 h-6 rounded-lg bg-cream-300" />
-                ) : gmailConnected ? (
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-sage" />
-                    <span className="font-sans text-[11px] font-medium text-sage">Active</span>
-                  </div>
-                ) : (
-                  <a
-                    href="/api/connect?plugin=gmail"
-                    className="font-sans text-[11px] font-semibold text-peach hover:text-peach-dark transition-colors flex items-center gap-1"
-                  >
-                    Connect
-                    <ArrowRight className="w-3 h-3" />
-                  </a>
-                )}
+          <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs space-y-4">
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-12 w-full bg-cream-200 rounded" />
+                ))}
               </div>
+            ) : !calConnected ? (
+              <div className="py-12 text-center text-[#64748B]">
+                <Calendar className="w-8 h-8 mx-auto mb-2 text-[#64748B]/40" />
+                <p className="text-[13px] font-bold">Calendar not connected</p>
+                <p className="text-[12px] text-[#64748B] mt-1">Connect your Google Calendar integration to view schedules.</p>
+                <a href="/api/connect?plugin=googlecalendar" className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold">
+                  Connect Calendar
+                </a>
+              </div>
+            ) : calendarEvents.length === 0 ? (
+              <div className="py-8 text-center text-[#64748B] text-[13px] italic">
+                No events scheduled for today.
+              </div>
+            ) : (
+              <div className="space-y-3.5 relative pl-4 border-l border-[rgba(198,123,61,0.2)]">
+                {calendarEvents.map((ev, idx) => {
+                  const startStr = ev.start?.dateTime ?? ev.start?.date;
+                  const timeLabel = startStr
+                    ? new Date(startStr).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+                    : "All Day";
+                  return (
+                    <div key={ev.id} className="relative space-y-1">
+                      {/* Timeline dot */}
+                      <span className="absolute -left-[20.5px] top-1.5 w-2 h-2 rounded-full bg-[#C67B3D] border border-white" />
 
-              {/* Calendar Row */}
-              <div className="flex items-center justify-between px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-espresso-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-sans text-[13px] font-medium text-espresso">Google Calendar</p>
-                    <p className="font-sans text-[11px] text-espresso-300">
-                      {loading ? "Checking..." : calConnected ? "Connected and syncing" : "Not connected"}
-                    </p>
-                  </div>
-                </div>
-                {loading ? (
-                  <Skeleton className="w-16 h-6 rounded-lg bg-cream-300" />
-                ) : calConnected ? (
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-sage" />
-                    <span className="font-sans text-[11px] font-medium text-sage">Active</span>
-                  </div>
-                ) : (
-                  <a
-                    href="/api/connect?plugin=googlecalendar"
-                    className="font-sans text-[11px] font-semibold text-peach hover:text-peach-dark transition-colors flex items-center gap-1"
-                  >
-                    Connect
-                    <ArrowRight className="w-3 h-3" />
-                  </a>
-                )}
+                      <div className="text-[11.5px] text-[#C67B3D] font-bold">{timeLabel}</div>
+                      <p className="text-[13px] font-bold text-[#111827] leading-snug">
+                        {ev.summary}
+                      </p>
+                      {ev.location && (
+                        <p className="text-[11px] text-[#64748B] flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {ev.location}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
-
-          {/* Upcoming Event — only if calendar connected */}
-          {(loading || calConnected) && (
-            <div>
-              <h2 className="font-display text-[20px] text-espresso font-normal mb-3">
-                Upcoming
-              </h2>
-              {loading ? (
-                <Skeleton className="h-28 w-full rounded-2xl bg-cream-300" />
-              ) : data?.nextEvent ? (
-                <Link href="/dashboard/calendar" className="block">
-                  <div className="card-premium p-5 group">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="w-2 h-2 rounded-full bg-peach animate-pulse" />
-                      <span className="font-sans text-[10px] font-medium text-espresso-300 uppercase tracking-widest">
-                        Next event
-                      </span>
-                    </div>
-                    <h3 className="font-display text-[18px] text-espresso font-normal leading-snug mb-1">
-                      {data.nextEvent.summary}
-                    </h3>
-                    <p className="font-sans text-[12px] text-peach font-medium">
-                      {getEventTimeText(data.nextEvent)}
-                    </p>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-espresso-100">
-                      <p className="font-sans text-[11px] text-espresso-300">Open in Calendar</p>
-                      <ChevronRight className="w-3.5 h-3.5 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                </Link>
-              ) : (
-                <div className="card-premium p-5 hover:transform-none hover:shadow-card hover:border-border/50">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-5 h-5 text-sage flex-shrink-0" />
-                    <div>
-                      <p className="font-sans text-[13px] font-medium text-espresso">No upcoming events</p>
-                      <p className="font-sans text-[12px] text-espresso-300">Your schedule is clear.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Ask AI Shortcut */}
-          <Link href="/dashboard/assistant" className="block group">
-            <div className="border border-dashed border-espresso-100/60 rounded-2xl p-5 bg-[#FFFDF9] hover:border-peach/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-peach-soft flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-peach" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-sans text-[13px] font-semibold text-espresso">Ask Zentra AI</p>
-                  <p className="font-sans text-[11px] text-espresso-300">
-                    Summarize, draft, or schedule — just ask.
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-espresso-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </div>
-            </div>
-          </Link>
         </div>
+
       </div>
+
+      {/* ─── Shared Modals ─── */}
+      <ComposeModal open={composeOpen} onOpenChange={setComposeOpen} />
+
+      <EventModal
+        open={eventOpen}
+        onOpenChange={setEventOpen}
+        mode="create"
+        onSaved={loadAllData}
+      />
+
     </div>
   );
 }

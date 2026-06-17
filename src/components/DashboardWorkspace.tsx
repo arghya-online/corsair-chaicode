@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { signOutAction } from "@/src/actions/auth";
 import DashboardTodos from "./DashboardTodos";
-import ChatPanel from "./chat/ChatPanel";
+import { AssistantClient } from "./chat/AssistantClient";
 import GmailInbox from "./GmailInbox";
 import GoogleCalendar from "./GoogleCalendar";
 
@@ -278,7 +278,7 @@ export default function DashboardWorkspace({ user, initialTodos, defaultTab = "h
           {activeTab === "chat" && (
             <div className="h-full flex flex-col items-center justify-center p-4 md:p-8 animate-fade-in relative">
               <div className="w-full max-w-4xl h-full flex flex-col justify-between">
-                <ChatPanel />
+                <AssistantClient />
               </div>
             </div>
           )}

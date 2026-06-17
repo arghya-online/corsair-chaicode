@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "zentra_auth_secret_key_987654";
 const COOKIE_NAME = "zentra_session";
@@ -101,19 +101,14 @@ export async function signOutAction() {
 import { cache } from "react";
 
 const getCachedUser = cache(async () => {
-  const clerkUser = await currentUser();
-  if (!clerkUser) {
+  const { userId } = await auth();
+  if (!userId) {
     return null;
   }
-  
-  const email = clerkUser.emailAddresses[0]?.emailAddress;
-  if (!email) {
-    return null;
-  }
-  const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || "User";
 
+  // 1. Try to find the user in the database locally first
   let user = await prisma.user.findUnique({
-    where: { email },
+    where: { id: userId },
     select: {
       id: true,
       email: true,
@@ -122,20 +117,51 @@ const getCachedUser = cache(async () => {
     }
   });
 
+  // 2. Only if the user is not found, fetch registration details from Clerk API
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        id: clerkUser.id,
-        email,
-        name,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true
-      }
+    const clerkUser = await currentUser();
+    if (!clerkUser) {
+      return null;
+    }
+    
+    const email = clerkUser.emailAddresses[0]?.emailAddress;
+    if (!email) {
+      return null;
+    }
+    const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || "User";
+
+    // Check if user exists by email first (for native signups or seeded accounts migrating to Clerk)
+    const existingByEmail = await prisma.user.findUnique({
+      where: { email },
     });
+
+    if (existingByEmail) {
+      // Migrate the existing user record's ID to match their Clerk ID
+      user = await prisma.user.update({
+        where: { email },
+        data: { id: clerkUser.id },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true
+        }
+      });
+    } else {
+      user = await prisma.user.create({
+        data: {
+          id: clerkUser.id,
+          email,
+          name,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true
+        }
+      });
+    }
   }
 
   return user;
@@ -144,7 +170,16 @@ const getCachedUser = cache(async () => {
 export async function getCurrentUser() {
   try {
     return await getCachedUser();
-  } catch (error) {
+  } catch (error: any) {
+    // Rethrow Next.js dynamic rendering errors so the build system marks the route as dynamic on demand
+    if (
+      error instanceof Error &&
+      (error.message.includes("Dynamic server usage") ||
+        (error as any).digest === "DYNAMIC_SERVER_USAGE" ||
+        (error as any).code === "DYNAMIC_SERVER_USAGE")
+    ) {
+      throw error;
+    }
     console.error("Clerk session resolution error in getCurrentUser:", error);
     return null;
   }

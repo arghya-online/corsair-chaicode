@@ -24,30 +24,30 @@ export function Nav({ user }: NavProps) {
  
         {/* Center: Links */}
         <nav className="hidden md:flex items-center gap-8 lg:gap-10">
-          <a
-            href="#features"
+          <Link
+            href="/features"
             className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium tracking-wide"
           >
             Features
-          </a>
-          <a
-            href="#workflow"
+          </Link>
+          <Link
+            href="/how-it-works"
             className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium tracking-wide"
           >
             How It Works
-          </a>
-          <a
-            href="#pricing"
+          </Link>
+          <Link
+            href="/pricing"
             className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium tracking-wide"
           >
             Pricing
-          </a>
-          <a
-            href="#about"
+          </Link>
+          <Link
+            href="/about"
             className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium tracking-wide"
           >
             About
-          </a>
+          </Link>
         </nav>
  
         {/* Right: Actions (Clerk Auth Controls integrated) */}
@@ -105,34 +105,34 @@ export function Nav({ user }: NavProps) {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="absolute top-20 left-4 right-4 bg-white/95 backdrop-blur-lg border border-[rgba(17,24,39,0.08)] rounded-3xl p-6 shadow-xl flex flex-col gap-4 md:hidden">
-          <a
-            href="#features"
+          <Link
+            href="/features"
             onClick={() => setMobileMenuOpen(false)}
             className="text-[16px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium"
           >
             Features
-          </a>
-          <a
-            href="#workflow"
+          </Link>
+          <Link
+            href="/how-it-works"
             onClick={() => setMobileMenuOpen(false)}
             className="text-[16px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium"
           >
             How It Works
-          </a>
-          <a
-            href="#pricing"
+          </Link>
+          <Link
+            href="/pricing"
             onClick={() => setMobileMenuOpen(false)}
             className="text-[16px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium"
           >
             Pricing
-          </a>
-          <a
-            href="#about"
+          </Link>
+          <Link
+            href="/about"
             onClick={() => setMobileMenuOpen(false)}
             className="text-[16px] font-sans text-[#5F6B7A] hover:text-[#C1783F] transition-colors font-medium"
           >
             About
-          </a>
+          </Link>
           <hr className="border-[rgba(17,24,39,0.08)] my-2" />
           <div className="flex flex-col gap-3">
             <Show when="signed-out">

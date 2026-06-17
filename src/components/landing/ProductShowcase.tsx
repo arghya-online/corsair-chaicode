@@ -7,7 +7,7 @@ export function ProductShowcase() {
   const [imgFailed, setImgFailed] = useState(false);
 
   return (
-    <section className="py-36 px-4 sm:px-6 md:px-8 bg-[#F7F3EC] select-none text-center">
+    <section className="py-36 px-4 sm:px-6 md:px-8 bg-transparent select-none text-center">
       <div className="mx-auto max-w-[1400px] flex flex-col items-center">
 
         {/* Section Header */}

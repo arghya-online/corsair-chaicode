@@ -54,6 +54,14 @@ export async function POST(req: NextRequest) {
     let conversation;
 
     if (conversationId) {
+      // Ensure the conversation exists and belongs to the authenticated user
+      const existing = await prisma.agentConversation.findFirst({
+        where: { id: conversationId, userId: user.id },
+      });
+      if (!existing) {
+        return NextResponse.json({ error: "Conversation not found or unauthorized" }, { status: 404 });
+      }
+
       // Update existing conversation
       conversation = await prisma.agentConversation.update({
         where: { id: conversationId },

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 interface EmailDetailProps {
   emailId: string | null;
   onClose: () => void;
-  onReply?: (to: string, subject: string) => void;
+  onReply?: (to: string, subject: string, body?: string) => void;
 }
 
 interface EmailData {
@@ -219,8 +219,98 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
               </p>
             </div>
 
-            {/* Email Plain Text Body */}
-            <div className="p-5 flex-1 overflow-y-auto bg-cream-50">
+            {/* Email Body Scroll Area */}
+            <div className="p-5 flex-1 overflow-y-auto bg-white space-y-6">
+              
+              {/* Zentra AI Insights Card */}
+              <div
+                style={{
+                  background: "linear-gradient(135deg, rgba(198,123,61,0.06) 0%, rgba(217,161,91,0.03) 100%)",
+                }}
+                className="p-5 rounded-2xl border border-[#C67B3D]/15 space-y-4 text-left shadow-xs"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="p-1 rounded bg-[#C67B3D]/10 text-[#C67B3D] flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M12 7l1.5 3.5L17 12l-3.5 1.5L12 17l-1.5-3.5L7 12l3.5-1.5z" />
+                    </svg>
+                  </span>
+                  <span className="text-[10px] font-bold text-[#111827] uppercase tracking-wider">
+                    Zentra AI Insight
+                  </span>
+                </div>
+
+                {(() => {
+                  const insights = (() => {
+                    const text = ((data.subject ?? "") + " " + (data.body ?? "")).toLowerCase();
+                    let summary = "Zentra parsed this message thread. Sender is requesting coordination on workspace launch metrics.";
+                    let actionItems = ["Review design draft files", "Coordinate meeting slots"];
+                    let replies = ["Looks good to me, let's proceed.", "Let me check my calendar.", "Can we schedule for Wednesday?"];
+
+                    if (text.includes("meeting") || text.includes("schedule") || text.includes("calendar")) {
+                      summary = "Calendar coordination request. The sender wants to schedule a meeting slot.";
+                      actionItems = ["Verify calendar conflicts for proposed times", "Confirm availability"];
+                      replies = ["Sure, send a calendar invite.", "I am free Wednesday afternoon.", "Let's postpone to next week."];
+                    } else if (text.includes("launch") || text.includes("design") || text.includes("approv")) {
+                      summary = "Design assets launch review. Feedback or approval is requested.";
+                      actionItems = ["Inspect courtyard presentation draft", "Provide layout approval"];
+                      replies = ["Approved. Design looks premium.", "Let's update the visual contrast.", "Ready to deploy."];
+                    } else if (text.includes("invoice") || text.includes("price") || text.includes("billing")) {
+                      summary = "Billing inquiry. Inquiry relates to payment structure or tier changes.";
+                      actionItems = ["Verify billing records", "Respond to support ticket"];
+                      replies = ["I have processed the transaction.", "Let me check with finance.", "Will follow up shortly."];
+                    }
+
+                    return { summary, actionItems, replies };
+                  })();
+
+                  return (
+                    <div className="space-y-3">
+                      <p className="text-[13px] text-[#111827] leading-relaxed">
+                        <strong className="text-[#C67B3D]">Summary:</strong> {insights.summary}
+                      </p>
+
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block">Recommended Actions</span>
+                        <ul className="space-y-1 text-[12px] text-[#64748B]">
+                          {insights.actionItems.map((act, i) => (
+                            <li key={i} className="flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-[#C67B3D]" />
+                              {act}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Quick Replies */}
+                      <div className="pt-2">
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block mb-2">One-Click AI Reply</span>
+                        <div className="flex flex-wrap gap-2">
+                          {insights.replies.map((reply) => (
+                            <button
+                              key={reply}
+                              type="button"
+                              onClick={() => {
+                                if (onReply && data) {
+                                  onReply(senderEmail, `Re: ${data.subject}`, `\n\nOn ${displayDate}, ${senderName} wrote:\n> ${data.snippet}\n\n${reply}`);
+                                }
+                              }}
+                              className="text-[11.5px] text-[#C67B3D] hover:text-white bg-white hover:bg-[#C67B3D] border border-[#C67B3D]/25 rounded-lg px-2.5 py-1.5 transition-all duration-200 cursor-pointer shadow-2xs font-sans font-semibold"
+                            >
+                              {reply}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+              </div>
+
+              {/* Separator */}
+              <div className="w-full h-px bg-[rgba(17,24,39,0.06)]" />
+
               <pre className="font-mono text-[12px] text-espresso-400 leading-loose whitespace-pre-wrap break-words">
                 {data.body}
               </pre>

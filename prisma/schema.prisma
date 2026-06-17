@@ -81,6 +81,7 @@ model User {
   accounts  ConnectedAccount[]
   workflows WorkflowExecution[]
   chats     AgentConversation[]
+  todos     Todo[]
 
   @@map("users")
 }
@@ -156,10 +157,12 @@ model WebhookLog {
 
 model Todo {
   id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
   text      String
   completed Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("todos")
 }
