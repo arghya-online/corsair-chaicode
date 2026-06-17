@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       message: `Synced ${count} event(s).`,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : undefined;
+    const message = err instanceof Error ? (err as Error).message : undefined;
     if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

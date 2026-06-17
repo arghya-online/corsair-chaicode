@@ -175,7 +175,7 @@ function ComposeModal({
       onSent();
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : undefined;
+      const message = err instanceof Error ? (err as Error).message : undefined;
       onToast(message ?? "Failed to send email.", "error");
     } finally {
       setSending(false);
@@ -306,7 +306,11 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
         setDetail(d);
       })
       .catch((err: unknown) =>
-        setError(err instanceof Error ? err.message : "Failed to load message"),
+        setError(
+          err instanceof Error
+            ? (err as Error).message
+            : "Failed to load message",
+        ),
       )
       .finally(() => setLoading(false));
   }, [emailId]);
@@ -496,7 +500,7 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
       if (!res.ok) throw new Error(data.error ?? "Failed to load inbox");
       setMessages(data.messages ?? []);
     } catch (err: unknown) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -518,7 +522,7 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
       );
       await fetchInbox(debouncedQuery);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : undefined;
+      const message = err instanceof Error ? (err as Error).message : undefined;
       showToast(message ?? "Refresh failed.", "error");
     } finally {
       setRefreshing(false);

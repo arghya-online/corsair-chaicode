@@ -27,7 +27,10 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     const response = NextResponse.redirect(
-      new URL(`/dashboard?oauth_error=${encodeURIComponent(error)}`, request.url)
+      new URL(
+        `/dashboard?oauth_error=${encodeURIComponent(error)}`,
+        request.url,
+      ),
     );
     response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
     return response;
@@ -35,7 +38,7 @@ export async function GET(request: NextRequest) {
 
   if (!code || !state) {
     const response = NextResponse.redirect(
-      new URL("/dashboard?oauth_error=missing_code", request.url)
+      new URL("/dashboard?oauth_error=missing_code", request.url),
     );
     response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
     return response;
@@ -43,7 +46,7 @@ export async function GET(request: NextRequest) {
 
   if (!storedState || storedState !== state) {
     const response = NextResponse.redirect(
-      new URL("/dashboard?oauth_error=invalid_state", request.url)
+      new URL("/dashboard?oauth_error=invalid_state", request.url),
     );
     response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
     return response;
@@ -59,19 +62,19 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.redirect(
       new URL(
         `/dashboard?oauth_success=${encodeURIComponent(result.plugin)}`,
-        request.url
-      )
+        request.url,
+      ),
     );
     response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
     return response;
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = err instanceof Error ? (err as Error).message : String(err);
     console.error("[/api/auth] OAuth callback error:", message);
     const response = NextResponse.redirect(
       new URL(
         `/dashboard?oauth_error=${encodeURIComponent(message)}`,
-        request.url
-      )
+        request.url,
+      ),
     );
     response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
     return response;

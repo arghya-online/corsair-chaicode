@@ -252,7 +252,7 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
       setSentSuccess(true);
       toast.success("Email sent successfully via Gmail API!");
     } catch (err: unknown) {
-      toast.error(err.message ?? "Email send failed");
+      toast.error((err as Error).message ?? "Email send failed");
     } finally {
       setSending(false);
     }
@@ -419,7 +419,7 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
       setDeleted(true);
       toast.success("Event cancelled successfully.");
     } catch (err: unknown) {
-      toast.error(err.message ?? "Cancel event failed");
+      toast.error((err as Error).message ?? "Cancel event failed");
     } finally {
       setDeleting(false);
     }

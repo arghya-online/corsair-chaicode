@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ event: result, success: true });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : undefined;
+    const message = err instanceof Error ? (err as Error).message : undefined;
     if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

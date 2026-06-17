@@ -679,7 +679,7 @@ export default function GoogleCalendar() {
       if (!res.ok) throw new Error(data.error ?? "Failed to load events");
       setEvents(data.events ?? []);
     } catch (err: unknown) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -698,7 +698,7 @@ export default function GoogleCalendar() {
       toast.success(data.message ?? `Synced ${data.count} events.`);
       await fetchEvents();
     } catch (err: unknown) {
-      toast.error(err.message ?? "Sync failed.");
+      toast.error((err as Error).message ?? "Sync failed.");
     } finally {
       setSyncing(false);
     }
@@ -717,7 +717,7 @@ export default function GoogleCalendar() {
       setSelectedEvent(null);
       setEvents((evs) => evs.filter((e) => e.id !== ev.id));
     } catch (err: unknown) {
-      toast.error(err.message ?? "Failed to delete event.");
+      toast.error((err as Error).message ?? "Failed to delete event.");
     }
   };
 

@@ -24,7 +24,7 @@ export async function GET(_req: NextRequest) {
       messages: conversation.messages as any[],
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : undefined;
+    const message = err instanceof Error ? (err as Error).message : undefined;
     console.error("[/api/chat/history GET]", err);
     return NextResponse.json(
       { error: message ?? "Failed to load history" },
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: conversation.id, saved: true });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : undefined;
+    const message = err instanceof Error ? (err as Error).message : undefined;
     console.error("[/api/chat/history POST]", err);
     return NextResponse.json(
       { error: message ?? "Failed to save history" },
@@ -121,7 +121,7 @@ export async function DELETE(_req: NextRequest) {
 
     return NextResponse.json({ cleared: true });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : undefined;
+    const message = err instanceof Error ? (err as Error).message : undefined;
     console.error("[/api/chat/history DELETE]", err);
     return NextResponse.json(
       { error: message ?? "Failed to clear history" },

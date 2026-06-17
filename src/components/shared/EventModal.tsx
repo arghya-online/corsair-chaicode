@@ -173,7 +173,7 @@ export function EventModal({
       onSaved();
       onOpenChange(false);
     } catch (err: unknown) {
-      toast.error(err.message ?? "Failed to save event.");
+      toast.error((err as Error).message ?? "Failed to save event.");
     } finally {
       setSaving(false);
     }

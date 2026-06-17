@@ -26,7 +26,7 @@ async function main() {
     );
     if (intRes.rows.length === 0) {
       console.error(
-        "❌ No 'googlecalendar' integration found in corsair_integrations table.",
+        " No 'googlecalendar' integration found in corsair_integrations table.",
       );
       console.log(
         "   → Run: pnpm corsair setup --plugin=googlecalendar client_id=... client_secret=...",
@@ -42,7 +42,7 @@ async function main() {
     );
     if (accRes.rows.length === 0) {
       console.error(
-        "❌ No accounts found for googlecalendar. OAuth not completed.",
+        " No accounts found for googlecalendar. OAuth not completed.",
       );
       console.log("   → Run: pnpm corsair auth --plugin=googlecalendar");
       console.log(
@@ -82,7 +82,7 @@ async function main() {
       );
     }
   } catch (err: unknown) {
-    console.error("❌ getMany failed:", err.message);
+    console.error(" getMany failed:", (err as Error).message);
     console.error("   Full error:", JSON.stringify(err, null, 2));
   }
 
@@ -123,14 +123,14 @@ async function main() {
         });
         console.log("✅ Test event deleted successfully");
       } catch (delErr: any) {
-        console.error("❌ Delete failed:", delErr.message);
+        console.error("Delete failed:", (delErr as Error).message);
       }
     }
   } catch (err: unknown) {
     console.error(
-      "❌ CREATE FAILED — this is the root cause of the agent error:",
+      " CREATE FAILED — this is the root cause of the agent error:",
     );
-    console.error("   Message:", err.message);
+    console.error("   Message:", (err as Error).message);
     console.error("   Full error:", JSON.stringify(err, null, 2));
   }
 

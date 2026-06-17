@@ -240,7 +240,7 @@ export const calendarToolImplementations: Record<
           .slice(0, 10);
         return { events: items, count: items.length, source: "db_fallback" };
       } catch {
-        return { error: err.message ?? "Failed to fetch events" };
+        return { error: (err as Error).message ?? "Failed to fetch events" };
       }
     }
   },
@@ -263,7 +263,7 @@ export const calendarToolImplementations: Record<
         count: items.length,
       };
     } catch (err: unknown) {
-      return { error: err.message ?? "Search failed" };
+      return { error: (err as Error).message ?? "Search failed" };
     }
   },
 
@@ -338,7 +338,7 @@ export const calendarToolImplementations: Record<
       };
     } catch (err: unknown) {
       return {
-        error: err.message ?? "Failed to create event",
+        error: (err as Error).message ?? "Failed to create event",
         details: String(err),
       };
     }
@@ -356,7 +356,7 @@ export const calendarToolImplementations: Record<
         message: `✅ Event has been deleted from your Google Calendar.`,
       };
     } catch (err: unknown) {
-      return { error: err.message ?? "Failed to delete event" };
+      return { error: (err as Error).message ?? "Failed to delete event" };
     }
   },
 
@@ -374,7 +374,9 @@ export const calendarToolImplementations: Record<
 
       return { availability: result };
     } catch (err: unknown) {
-      return { error: err.message ?? "Failed to fetch availability" };
+      return {
+        error: (err as Error).message ?? "Failed to fetch availability",
+      };
     }
   },
 };

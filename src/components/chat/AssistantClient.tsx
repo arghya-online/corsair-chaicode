@@ -225,7 +225,7 @@ function AssistantClientInner() {
       console.error(err);
       const errMessage: Message = {
         role: "assistant",
-        content: `⚠️ ${err.message ?? "Something went wrong. Please check your system configuration."}`,
+        content: ` ${(err as Error).message ?? "Something went wrong. Please check your system configuration."}`,
       };
       const withError = [...updatedMessages, errMessage];
       setMessages(withError);

@@ -76,7 +76,7 @@ export function ComposeModal({
       onOpenChange(false);
     } catch (err: unknown) {
       console.error(err);
-      const message = err instanceof Error ? err.message : undefined;
+      const message = err instanceof Error ? (err as Error).message : undefined;
       toast.error(message ?? "Failed to send. Please try again.");
     } finally {
       setSending(false);

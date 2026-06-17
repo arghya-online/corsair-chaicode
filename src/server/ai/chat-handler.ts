@@ -140,16 +140,16 @@ async function generateContentWithRetry(
   } catch (err: unknown) {
     const errMsg = String(err);
     const isRateLimit =
-      err.status === 429 ||
+      (err as any).status === 429 ||
       errMsg.includes("429") ||
-      err.message?.includes("429") ||
-      err.message?.toLowerCase().includes("quota") ||
-      err.message?.toLowerCase().includes("limit") ||
-      err.message?.toLowerCase().includes("exhausted");
+      (err as Error).message?.includes("429") ||
+      (err as Error).message?.toLowerCase().includes("quota") ||
+      (err as Error).message?.toLowerCase().includes("limit") ||
+      (err as Error).message?.toLowerCase().includes("exhausted");
 
     if (isRateLimit && retries > 0) {
       console.warn(
-        `[Gemini 429] Rate limited. Retrying in ${delay}ms... (${retries} retries left). Error: ${err.message ?? errMsg}`,
+        `[Gemini 429] Rate limited. Retrying in ${delay}ms... (${retries} retries left). Error: ${(err as Error).message ?? errMsg}`,
       );
       await new Promise((resolve) => setTimeout(resolve, delay));
       return generateContentWithRetry(
@@ -222,7 +222,7 @@ export async function runChat(messages: any[], tenant: Tenant) {
           ? await fn(tenant, args)
           : { error: `Unknown tool: ${call.function?.name}` };
       } catch (err: unknown) {
-        result = { error: err.message };
+        result = { error: (err as Error).message };
       }
       convo.push({
         role: "tool",

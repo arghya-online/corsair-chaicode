@@ -113,7 +113,7 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
       toast.success("Workspace synced.");
       await loadAllData();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : undefined;
+      const message = err instanceof Error ? (err as Error).message : undefined;
       toast.error(message ?? "Sync failed.");
     } finally {
       setSyncing(false);
