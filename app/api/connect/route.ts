@@ -3,22 +3,24 @@ import { generateOAuthUrl } from "corsair/oauth";
 import { corsair } from "@/src/server/corsair";
 import { getCurrentUser } from "@/src/actions/auth";
 
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth`;
-
 export async function GET(request: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const plugin = new URL(request.url).searchParams.get("plugin");
+  const requestUrl = new URL(request.url);
+  const origin = requestUrl.origin;
+  const redirectUri = `${origin}/api/auth`;
+
+  const plugin = requestUrl.searchParams.get("plugin");
   if (!plugin) {
     return NextResponse.json({ error: "Missing plugin param" }, { status: 400 });
   }
 
   const { url, state } = await generateOAuthUrl(corsair, plugin, {
     tenantId: user.id,
-    redirectUri: REDIRECT_URI,
+    redirectUri,
   });
 
   const response = NextResponse.redirect(url);

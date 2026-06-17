@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { processOAuthCallback } from "corsair/oauth";
 import { corsair } from "@/src/server/corsair";
 
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth`;
 
 function escapeHtml(value: string): string {
   return value
@@ -14,7 +13,11 @@ function escapeHtml(value: string): string {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const requestUrl = new URL(request.url);
+  const origin = requestUrl.origin;
+  const redirectUri = `${origin}/api/auth`;
+
+  const { searchParams } = requestUrl;
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const error = searchParams.get("error");
@@ -56,7 +59,7 @@ export async function GET(request: NextRequest) {
     const result = await processOAuthCallback(corsair, {
       code,
       state,
-      redirectUri: REDIRECT_URI,
+      redirectUri,
     });
 
     const response = NextResponse.redirect(
