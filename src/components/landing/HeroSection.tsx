@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import { Show } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 interface HeroSectionProps {
   user: {
@@ -52,7 +52,7 @@ export function HeroSection({ user }: HeroSectionProps) {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto px-6">
-            <Show when="signed-out">
+            <SignedOut>
               <Link
                 href="/register"
                 className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
@@ -65,15 +65,15 @@ export function HeroSection({ user }: HeroSectionProps) {
               >
                 Sign In
               </Link>
-            </Show>
-            <Show when="signed-in">
+            </SignedOut>
+            <SignedIn>
               <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
               >
                 Open Dashboard
               </Link>
-            </Show>
+            </SignedIn>
           </div>
 
           {/* Trust Row */}

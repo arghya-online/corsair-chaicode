@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import UpgradeModal from "@/src/components/shared/UpgradeModal";
-import { signOutAction } from "@/src/actions/auth";
+import { useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
 
 interface SettingsPanelProps {
@@ -24,6 +24,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
     calendar: boolean;
   } | null>(null);
   const [loadingConnections, setLoadingConnections] = useState(true);
+  const { signOut } = useClerk();
 
   useEffect(() => {
     async function fetchStatus() {
@@ -48,7 +49,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
   const handleSignOut = async () => {
     setSigningOut(true);
     try {
-      await signOutAction();
+      await signOut({ redirectUrl: "/" });
       toast.success("Signed out successfully.");
     } catch {
       toast.error("Failed to sign out.");

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { LogoMark } from "@/src/components/shared/LogoMark";
 import { Menu, X } from "lucide-react";
-import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 interface NavProps {
   user?: any;
@@ -52,7 +52,7 @@ export function Nav({ user }: NavProps) {
  
         {/* Right: Actions (Clerk Auth Controls integrated) */}
         <div className="hidden md:flex items-center gap-6">
-          <Show when="signed-out">
+          <SignedOut>
             <Link
               href="/login"
               className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
@@ -65,8 +65,8 @@ export function Nav({ user }: NavProps) {
             >
               Sign Up
             </Link>
-          </Show>
-          <Show when="signed-in">
+          </SignedOut>
+          <SignedIn>
             <Link
               href="/dashboard"
               className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
@@ -76,22 +76,22 @@ export function Nav({ user }: NavProps) {
             <div className="flex items-center justify-center border-l border-[rgba(17,24,39,0.12)] pl-4">
               <UserButton />
             </div>
-          </Show>
+          </SignedIn>
         </div>
 
         {/* Mobile menu trigger */}
         <div className="md:hidden flex items-center gap-4">
-          <Show when="signed-out">
+          <SignedOut>
             <Link
               href="/login"
               className="text-[13px] font-sans font-medium bg-[#111827] text-white px-4 py-1.5 rounded-full"
             >
               Sign In
             </Link>
-          </Show>
-          <Show when="signed-in">
+          </SignedOut>
+          <SignedIn>
             <UserButton />
-          </Show>
+          </SignedIn>
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-[#111827] hover:text-[#C1783F] transition-colors focus:outline-none"
@@ -135,7 +135,7 @@ export function Nav({ user }: NavProps) {
           </Link>
           <hr className="border-[rgba(17,24,39,0.08)] my-2" />
           <div className="flex flex-col gap-3">
-            <Show when="signed-out">
+            <SignedOut>
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
@@ -150,8 +150,8 @@ export function Nav({ user }: NavProps) {
               >
                 Sign Up
               </Link>
-            </Show>
-            <Show when="signed-in">
+            </SignedOut>
+            <SignedIn>
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
@@ -159,7 +159,7 @@ export function Nav({ user }: NavProps) {
               >
                 Go to Dashboard
               </Link>
-            </Show>
+            </SignedIn>
           </div>
         </div>
       )}
