@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Mail, Calendar, Loader2, Link2 } from "lucide-react";
+import { Mail, Calendar, Loader2, Link2, Edit2, Check, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import UpgradeModal from "@/src/components/shared/UpgradeModal";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { updateUsernameAction } from "@/src/actions/auth";
 
 interface SettingsPanelProps {
   user: {
@@ -25,6 +27,44 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
   } | null>(null);
   const [loadingConnections, setLoadingConnections] = useState(true);
   const { signOut } = useClerk();
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(user.name || "");
+  const [savingName, setSavingName] = useState(false);
+
+  useEffect(() => {
+    setEditedName(user.name || "");
+  }, [user.name]);
+
+  const handleSaveName = async () => {
+    if (!editedName.trim()) {
+      toast.error("Name cannot be empty.");
+      return;
+    }
+    setSavingName(true);
+    try {
+      const res = await updateUsernameAction(editedName.trim());
+      if (res.success) {
+        toast.success("Name updated successfully.");
+        setIsEditingName(false);
+      } else {
+        toast.error(res.error || "Failed to update name.");
+      }
+    } catch (err: any) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setSavingName(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSaveName();
+    } else if (e.key === "Escape") {
+      setEditedName(user.name || "");
+      setIsEditingName(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchStatus() {
@@ -69,13 +109,59 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             <CardTitle className="font-sans text-[13px] font-medium text-espresso">Account</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex justify-between items-center border-b border-border/50 py-3">
+            <div className="flex justify-between items-center border-b border-border/50 py-3 min-h-[48px]">
               <span className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide">
                 Name
               </span>
-              <span className="font-sans text-[13px] text-espresso font-medium">
-                {user.name || "Console User"}
-              </span>
+              {isEditingName ? (
+                <div className="flex items-center gap-2 w-full max-w-[280px]">
+                  <Input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={savingName}
+                    className="font-sans text-[13px] h-8 text-espresso font-medium py-1 px-2.5 bg-white border border-border"
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleSaveName}
+                    disabled={savingName}
+                    className="p-1.5 rounded-full hover:bg-sage-soft text-sage-text hover:text-sage-text/80 transition-colors duration-200 disabled:opacity-50 cursor-pointer"
+                    aria-label="Save name"
+                  >
+                    {savingName ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-espresso-300" />
+                    ) : (
+                      <Check className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditedName(user.name || "");
+                      setIsEditingName(false);
+                    }}
+                    disabled={savingName}
+                    className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors duration-200 disabled:opacity-50 cursor-pointer"
+                    aria-label="Cancel editing"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <span className="font-sans text-[13px] text-espresso font-medium">
+                    {editedName || "Console User"}
+                  </span>
+                  <button
+                    onClick={() => setIsEditingName(true)}
+                    className="p-1.5 rounded-full hover:bg-espresso/5 text-espresso-300 hover:text-espresso transition-colors duration-200 cursor-pointer"
+                    aria-label="Edit name"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="flex justify-between items-center border-b border-border/50 py-3">
               <span className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide">
