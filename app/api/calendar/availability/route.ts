@@ -26,12 +26,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ availability: result });
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/availability GET]", err);
     return NextResponse.json(
-      { error: err.message ?? "Failed to fetch availability" },
+      { error: message ?? "Failed to fetch availability" },
       { status: 500 },
     );
   }

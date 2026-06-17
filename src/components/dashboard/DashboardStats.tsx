@@ -73,7 +73,8 @@ export function DashboardStats({ children, firstName }: DashboardStatsProps) {
       await fetchStats();
     } catch (err: unknown) {
       console.error(err);
-      toast.error(err.message ?? "Failed to sync inbox.");
+      const message = err instanceof Error ? err.message : undefined;
+      toast.error(message ?? "Failed to sync inbox.");
     } finally {
       setSyncing(false);
     }

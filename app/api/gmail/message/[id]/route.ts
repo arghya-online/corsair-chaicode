@@ -57,12 +57,13 @@ export async function GET(
       threadId: full?.threadId ?? null,
     });
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/gmail/message/[id]]", err);
     return NextResponse.json(
-      { error: err.message ?? "Internal server error" },
+      { error: message ?? "Internal server error" },
       { status: 500 },
     );
   }

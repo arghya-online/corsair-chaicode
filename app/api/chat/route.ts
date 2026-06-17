@@ -139,12 +139,13 @@ You have access to the following capabilities:
     const result = await runChat([systemMessage, ...trimmedMessages], tenant);
     return NextResponse.json(result);
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/chat] error:", err);
     return NextResponse.json(
-      { error: err.message ?? "Internal error" },
+      { error: message ?? "Internal error" },
       { status: 500 },
     );
   }

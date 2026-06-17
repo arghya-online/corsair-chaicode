@@ -58,12 +58,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ event: result, success: true });
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/events/[eventId] PUT]", err);
     return NextResponse.json(
-      { error: err.message ?? "Failed to update event" },
+      { error: message ?? "Failed to update event" },
       { status: 500 },
     );
   }
@@ -91,12 +92,13 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/events/[eventId] DELETE]", err);
     return NextResponse.json(
-      { error: err.message ?? "Failed to delete event" },
+      { error: message ?? "Failed to delete event" },
       { status: 500 },
     );
   }

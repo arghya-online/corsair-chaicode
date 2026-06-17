@@ -29,12 +29,13 @@ export async function POST(request: NextRequest) {
       message: `Synced ${count} event(s).`,
     });
   } catch (err: unknown) {
-    if (err.message === "Not authenticated") {
+    const message = err instanceof Error ? err.message : undefined;
+    if (message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/sync POST]", err);
     return NextResponse.json(
-      { error: err.message ?? "Sync failed" },
+      { error: message ?? "Sync failed" },
       { status: 500 },
     );
   }

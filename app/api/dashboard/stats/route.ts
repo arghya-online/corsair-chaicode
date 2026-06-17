@@ -29,10 +29,12 @@ export async function GET(request: NextRequest) {
     });
 
     const gmailAcc = connectedAccounts.find(
-      (acc: any) => acc.integration.name === "gmail",
+      (acc: { integration: { name: string } }) =>
+        acc.integration.name === "gmail",
     );
     const calAcc = connectedAccounts.find(
-      (acc: any) => acc.integration.name === "googlecalendar",
+      (acc: { integration: { name: string } }) =>
+        acc.integration.name === "googlecalendar",
     );
 
     const tenant = await getTenant().catch(() => null);

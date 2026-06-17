@@ -207,7 +207,8 @@ export default function CommunicationsPage() {
       toast.success("Inbox synced.");
       await fetchEmails(debouncedQuery);
     } catch (err: unknown) {
-      toast.error(err.message ?? "Sync failed.");
+      const message = err instanceof Error ? err.message : undefined;
+      toast.error(message ?? "Sync failed.");
     } finally {
       setRefreshing(false);
     }
