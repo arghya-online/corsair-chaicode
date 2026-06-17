@@ -22,8 +22,11 @@ export async function GET(request: NextRequest) {
 
     if (!hasGmailAccount) {
       return NextResponse.json(
-        { error: "Integration 'gmail' not configured or authorized for this user." },
-        { status: 400 }
+        {
+          error:
+            "Integration 'gmail' not configured or authorized for this user.",
+        },
+        { status: 400 },
       );
     }
 
@@ -69,7 +72,7 @@ export async function GET(request: NextRequest) {
     const sorted = Array.from(seen.values()).sort(
       (a, b) =>
         new Date(b.updatedAt ?? b.createdAt).getTime() -
-        new Date(a.updatedAt ?? a.createdAt).getTime()
+        new Date(a.updatedAt ?? a.createdAt).getTime(),
     );
 
     // Shape the response — pull fields from either top-level or nested `data`
@@ -89,14 +92,14 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ messages });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/gmail/inbox]", err);
     return NextResponse.json(
       { error: err.message ?? "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

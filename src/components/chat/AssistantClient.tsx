@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Trash2,
-  Plus
+  Plus,
 } from "lucide-react";
 import { ChatPanel } from "./ChatPanel";
 import { toast } from "sonner";
@@ -86,7 +86,9 @@ function AssistantClientInner() {
 
   // Load sidebar settings from localStorage
   useEffect(() => {
-    const savedHist = localStorage.getItem("zentra_assistant_history_collapsed");
+    const savedHist = localStorage.getItem(
+      "zentra_assistant_history_collapsed",
+    );
     if (savedHist) setIsHistoryCollapsed(savedHist === "true");
 
     const savedCtx = localStorage.getItem("zentra_assistant_context_collapsed");
@@ -163,7 +165,8 @@ function AssistantClientInner() {
   // Clear history / New Session
   const handleClear = async () => {
     if (messages.length === 1 && messages[0] === WELCOME_MESSAGE) return;
-    if (!confirm("Start a new chat session? This clears active memory.")) return;
+    if (!confirm("Start a new chat session? This clears active memory."))
+      return;
     setClearing(true);
     try {
       await fetch("/api/chat/history", { method: "DELETE" });
@@ -218,7 +221,7 @@ function AssistantClientInner() {
       await saveHistory(finalMessages, conversationId);
       // Refresh stats on successful tool executions
       fetchStats();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       const errMessage: Message = {
         role: "assistant",
@@ -250,7 +253,9 @@ function AssistantClientInner() {
 
   const handlePromptClick = (text: string) => {
     // Try to scroll to message bubble if it exists
-    const idx = messages.findIndex((m) => m.role === "user" && m.content === text);
+    const idx = messages.findIndex(
+      (m) => m.role === "user" && m.content === text,
+    );
     if (idx !== -1) {
       const element = document.getElementById(`chat-msg-${idx}`);
       if (element) {
@@ -264,7 +269,6 @@ function AssistantClientInner() {
 
   return (
     <div className="flex h-screen bg-[#F7F2EA] overflow-hidden w-full text-left">
-
       {/* ─── Column 1: History Log (Left) ─── */}
       <aside
         style={{ width: isHistoryCollapsed ? "0px" : "280px" }}
@@ -273,7 +277,9 @@ function AssistantClientInner() {
         <div className="p-5 flex-1 flex flex-col min-w-[280px] h-full overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between mb-5 flex-shrink-0">
-            <h3 className="font-serif text-[18px] text-[#111827]">Active Session</h3>
+            <h3 className="font-serif text-[18px] text-[#111827]">
+              Active Session
+            </h3>
             <button
               onClick={handleClear}
               disabled={clearing || historyLoading}
@@ -330,7 +336,9 @@ function AssistantClientInner() {
           {/* Connected indicators & guidelines footer inside sidebar */}
           <div className="mt-auto pt-4 border-t border-[rgba(17,24,39,0.06)] flex items-center gap-2 flex-shrink-0">
             <ShieldCheck className="w-4 h-4 text-[#6D8A68]" />
-            <span className="text-[11px] text-[#64748B]">Secure Sandbox Shield</span>
+            <span className="text-[11px] text-[#64748B]">
+              Secure Sandbox Shield
+            </span>
           </div>
         </div>
       </aside>

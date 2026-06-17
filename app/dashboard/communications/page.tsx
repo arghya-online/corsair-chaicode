@@ -3,8 +3,18 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
-  Mail, Star, Send, FileText, Trash2, Pencil,
-  Search, RefreshCw, X, Sparkles, ChevronDown, Filter
+  Mail,
+  Star,
+  Send,
+  FileText,
+  Trash2,
+  Pencil,
+  Search,
+  RefreshCw,
+  X,
+  Sparkles,
+  ChevronDown,
+  Filter,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -25,11 +35,24 @@ interface Email {
   labelIds: string[];
 }
 
-const aiLabels: Record<string, { label: string; color: string; dot: string }> = {
-  urgent: { label: "Urgent", color: "bg-red-50 text-red-600 border-red-100", dot: "bg-red-400" },
-  action: { label: "Action", color: "bg-[#C67B3D]/10 text-[#C67B3D] border-[#C67B3D]/20", dot: "bg-[#C67B3D]" },
-  fyi: { label: "FYI", color: "bg-[#6D8A68]/10 text-[#6D8A68] border-[#6D8A68]/20", dot: "bg-[#6D8A68]" },
-};
+const aiLabels: Record<string, { label: string; color: string; dot: string }> =
+  {
+    urgent: {
+      label: "Urgent",
+      color: "bg-red-50 text-red-600 border-red-100",
+      dot: "bg-red-400",
+    },
+    action: {
+      label: "Action",
+      color: "bg-[#C67B3D]/10 text-[#C67B3D] border-[#C67B3D]/20",
+      dot: "bg-[#C67B3D]",
+    },
+    fyi: {
+      label: "FYI",
+      color: "bg-[#6D8A68]/10 text-[#6D8A68] border-[#6D8A68]/20",
+      dot: "bg-[#6D8A68]",
+    },
+  };
 
 function getSenderName(from: string) {
   return from.split("<")[0].replace(/"/g, "").trim() || "Unknown";
@@ -47,7 +70,7 @@ export default function CommunicationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
-  
+
   // Compose modal states
   const [composeOpen, setComposeOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
@@ -57,7 +80,9 @@ export default function CommunicationsPage() {
   // Resizable panel states (caching in localStorage)
   const [foldersWidth, setFoldersWidth] = useState(200);
   const [listWidth, setListWidth] = useState(340);
-  const [resizingPanel, setResizingPanel] = useState<"folders" | "list" | null>(null);
+  const [resizingPanel, setResizingPanel] = useState<"folders" | "list" | null>(
+    null,
+  );
 
   useEffect(() => {
     const savedFolders = localStorage.getItem("zentra_comm_folders_width");
@@ -112,38 +137,63 @@ export default function CommunicationsPage() {
     return () => clearTimeout(t);
   }, [searchQuery]);
 
-  const fetchEmails = useCallback(async (query = "") => {
-    setLoading(true);
-    try {
-      const url = query
-        ? `/api/gmail/inbox?query=${encodeURIComponent(query)}`
-        : "/api/gmail/inbox";
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
-      let filtered = data.messages ?? [];
-      
-      if (activeFolder === "starred") filtered = filtered.filter((m: Email) => m.labelIds.includes("STARRED"));
-      else if (activeFolder === "sent") filtered = filtered.filter((m: Email) => m.labelIds.includes("SENT"));
-      else if (activeFolder === "drafts") filtered = filtered.filter((m: Email) => m.labelIds.includes("DRAFT"));
-      else if (activeFolder === "trash") filtered = filtered.filter((m: Email) => m.labelIds.includes("TRASH"));
-      
-      // Apply filters if set
-      if (activeFilter === "urgent") {
-        filtered = filtered.filter((m: Email) => m.subject.toLowerCase().includes("urgent") || m.snippet.toLowerCase().includes("urgent"));
-      } else if (activeFilter === "action") {
-        filtered = filtered.filter((m: Email) => m.subject.toLowerCase().includes("action") || m.snippet.toLowerCase().includes("please"));
-      } else if (activeFilter === "fyi") {
-        filtered = filtered.filter((m: Email) => !m.subject.toLowerCase().includes("urgent") && !m.snippet.toLowerCase().includes("please"));
-      }
+  const fetchEmails = useCallback(
+    async (query = "") => {
+      setLoading(true);
+      try {
+        const url = query
+          ? `/api/gmail/inbox?query=${encodeURIComponent(query)}`
+          : "/api/gmail/inbox";
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed");
+        const data = await res.json();
+        let filtered = data.messages ?? [];
 
-      setEmails(filtered);
-    } catch {
-      toast.error("Error loading emails.");
-    } finally {
-      setLoading(false);
-    }
-  }, [activeFolder, activeFilter]);
+        if (activeFolder === "starred")
+          filtered = filtered.filter((m: Email) =>
+            m.labelIds.includes("STARRED"),
+          );
+        else if (activeFolder === "sent")
+          filtered = filtered.filter((m: Email) => m.labelIds.includes("SENT"));
+        else if (activeFolder === "drafts")
+          filtered = filtered.filter((m: Email) =>
+            m.labelIds.includes("DRAFT"),
+          );
+        else if (activeFolder === "trash")
+          filtered = filtered.filter((m: Email) =>
+            m.labelIds.includes("TRASH"),
+          );
+
+        // Apply filters if set
+        if (activeFilter === "urgent") {
+          filtered = filtered.filter(
+            (m: Email) =>
+              m.subject.toLowerCase().includes("urgent") ||
+              m.snippet.toLowerCase().includes("urgent"),
+          );
+        } else if (activeFilter === "action") {
+          filtered = filtered.filter(
+            (m: Email) =>
+              m.subject.toLowerCase().includes("action") ||
+              m.snippet.toLowerCase().includes("please"),
+          );
+        } else if (activeFilter === "fyi") {
+          filtered = filtered.filter(
+            (m: Email) =>
+              !m.subject.toLowerCase().includes("urgent") &&
+              !m.snippet.toLowerCase().includes("please"),
+          );
+        }
+
+        setEmails(filtered);
+      } catch {
+        toast.error("Error loading emails.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeFolder, activeFilter],
+  );
 
   useEffect(() => {
     fetchEmails(debouncedQuery);
@@ -156,7 +206,7 @@ export default function CommunicationsPage() {
       if (!res.ok) throw new Error("Failed");
       toast.success("Inbox synced.");
       await fetchEmails(debouncedQuery);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Sync failed.");
     } finally {
       setRefreshing(false);
@@ -177,7 +227,9 @@ export default function CommunicationsPage() {
     setSelectedEmailId(null);
   };
 
-  const unreadCount = emails.filter((m) => m.labelIds.includes("UNREAD")).length;
+  const unreadCount = emails.filter((m) =>
+    m.labelIds.includes("UNREAD"),
+  ).length;
 
   const folders = [
     { id: "inbox", label: "Inbox", icon: Mail, badge: unreadCount },
@@ -195,7 +247,6 @@ export default function CommunicationsPage() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F7F2EA] w-full">
-
       {/* ── Panel 1: Folders sidebar ── */}
       <aside
         style={{ width: `${foldersWidth}px` }}
@@ -234,7 +285,9 @@ export default function CommunicationsPage() {
                     : "text-[#64748B] hover:text-[#111827] hover:bg-[#F7F2EA]/50"
                 }`}
               >
-                <Icon className={`w-[16px] h-[16px] flex-shrink-0 ${active ? "text-[#C67B3D]" : "text-[#64748B]"}`} />
+                <Icon
+                  className={`w-[16px] h-[16px] flex-shrink-0 ${active ? "text-[#C67B3D]" : "text-[#64748B]"}`}
+                />
                 <span className="flex-1 text-left">{folder.label}</span>
                 {folder.badge && folder.badge > 0 ? (
                   <span className="font-sans text-[10px] font-bold bg-[#C67B3D] text-white rounded-full px-2 py-0.5 text-center min-w-[18px]">
@@ -265,7 +318,9 @@ export default function CommunicationsPage() {
                     : "text-[#64748B] hover:text-[#111827] hover:bg-[#F7F2EA]/50"
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${f.dot}`} />
+                <span
+                  className={`w-2 h-2 rounded-full flex-shrink-0 ${f.dot}`}
+                />
                 <span className="text-left flex-1">{f.label}</span>
               </button>
             );
@@ -277,10 +332,13 @@ export default function CommunicationsPage() {
           <div className="bg-[#C67B3D]/5 border border-[#C67B3D]/15 rounded-2xl p-4 space-y-2">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#C67B3D]" />
-              <span className="font-sans text-[11px] font-bold text-[#111827] uppercase tracking-wider">ZENTRA INSIGHT</span>
+              <span className="font-sans text-[11px] font-bold text-[#111827] uppercase tracking-wider">
+                ZENTRA INSIGHT
+              </span>
             </div>
             <p className="font-sans text-[11px] text-[#64748B] leading-relaxed">
-              Inbox parsed. 3 emails require attention. 2 response drafts composed.
+              Inbox parsed. 3 emails require attention. 2 response drafts
+              composed.
             </p>
           </div>
         </div>
@@ -315,7 +373,9 @@ export default function CommunicationsPage() {
             className="p-2 rounded-xl text-[#64748B] hover:text-[#111827] hover:bg-[#F7F2EA] transition-colors disabled:opacity-50 cursor-pointer"
             title="Reload Gmail"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
+            />
           </button>
         </div>
 
@@ -337,7 +397,9 @@ export default function CommunicationsPage() {
           ) : emails.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-16 text-center px-6">
               <Mail className="w-8 h-8 text-[#64748B]/35 mb-3" />
-              <p className="font-sans text-[13px] font-bold text-[#111827] mb-1">Clean Inbox</p>
+              <p className="font-sans text-[13px] font-bold text-[#111827] mb-1">
+                Clean Inbox
+              </p>
               <p className="font-sans text-[12px] text-[#64748B]">
                 All threads resolved. No messages in this view.
               </p>
@@ -353,31 +415,39 @@ export default function CommunicationsPage() {
               return (
                 <div
                   key={email.id}
-                  onClick={() => setSelectedEmailId(isSelected ? null : email.id)}
+                  onClick={() =>
+                    setSelectedEmailId(isSelected ? null : email.id)
+                  }
                   className={`flex gap-3.5 items-start px-4.5 py-4 cursor-pointer transition-all duration-150 border-b border-[rgba(17,24,39,0.04)] select-none ${
                     isSelected
                       ? "bg-[#C67B3D]/8"
                       : unread
-                      ? "bg-white"
-                      : "bg-[#F7F2EA]/20 hover:bg-[#F7F2EA]/40"
+                        ? "bg-white"
+                        : "bg-[#F7F2EA]/20 hover:bg-[#F7F2EA]/40"
                   }`}
                 >
                   <Avatar className="w-8.5 h-8.5 flex-shrink-0 rounded-xl border border-white shadow-xs">
-                    <AvatarFallback className={`${color.bg} ${color.text} text-[11px] font-sans font-bold rounded-xl`}>
+                    <AvatarFallback
+                      className={`${color.bg} ${color.text} text-[11px] font-sans font-bold rounded-xl`}
+                    >
                       {initials || "U"}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline justify-between gap-1 mb-0.5">
-                      <p className={`font-sans text-[12.5px] truncate ${unread ? "font-bold text-[#111827]" : "font-medium text-[#64748B]"}`}>
+                      <p
+                        className={`font-sans text-[12.5px] truncate ${unread ? "font-bold text-[#111827]" : "font-medium text-[#64748B]"}`}
+                      >
                         {senderName}
                       </p>
                       <p className="font-sans text-[10px] text-[#64748B] whitespace-nowrap flex-shrink-0">
                         {formatEmailDate(email.updatedAt)}
                       </p>
                     </div>
-                    <p className={`font-sans text-[12.5px] truncate mb-0.5 ${unread ? "font-semibold text-[#111827]" : "text-[#64748B]"}`}>
+                    <p
+                      className={`font-sans text-[12.5px] truncate mb-0.5 ${unread ? "font-semibold text-[#111827]" : "text-[#64748B]"}`}
+                    >
                       {email.subject}
                     </p>
                     <p className="font-sans text-[11px] text-[#64748B] truncate">
@@ -439,7 +509,8 @@ export default function CommunicationsPage() {
                 No message open
               </h2>
               <p className="font-sans text-[14px] text-[#64748B] max-w-xs leading-relaxed mb-6">
-                Select an email from the priorities timeline list to display conversational thread analysis.
+                Select an email from the priorities timeline list to display
+                conversational thread analysis.
               </p>
               <button
                 onClick={() => {

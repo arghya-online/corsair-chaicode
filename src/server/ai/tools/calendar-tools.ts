@@ -131,7 +131,8 @@ export const calendarToolDefinitions = [
           },
           all_day: {
             type: "boolean",
-            description: "True if this is an all-day event (no specific time). Use YYYY-MM-DD format for dates.",
+            description:
+              "True if this is an all-day event (no specific time). Use YYYY-MM-DD format for dates.",
           },
         },
         required: ["summary", "start_datetime"],
@@ -167,11 +168,13 @@ export const calendarToolDefinitions = [
         properties: {
           from_date: {
             type: "string",
-            description: "Start of the window in ISO 8601 format, e.g. '2026-06-17T00:00:00Z'",
+            description:
+              "Start of the window in ISO 8601 format, e.g. '2026-06-17T00:00:00Z'",
           },
           to_date: {
             type: "string",
-            description: "End of the window in ISO 8601 format, e.g. '2026-06-17T23:59:59Z'",
+            description:
+              "End of the window in ISO 8601 format, e.g. '2026-06-17T23:59:59Z'",
           },
         },
         required: ["from_date", "to_date"],
@@ -205,19 +208,25 @@ export const calendarToolImplementations: Record<
       const items = ((result as any)?.items ?? []).slice(0, cappedLimit);
 
       if (items.length === 0) {
-        return { events: [], message: `No events found in the next ${cappedDays} days.` };
+        return {
+          events: [],
+          message: `No events found in the next ${cappedDays} days.`,
+        };
       }
 
       return {
         events: items.map((ev: any) => simplifyEvent({ data: ev, ...ev })),
         count: items.length,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Fall back to DB if live API fails
       try {
         const now = new Date();
         const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const dbResults = await tenant.googlecalendar.db.events.search({ data: {}, limit: 200 });
+        const dbResults = await tenant.googlecalendar.db.events.search({
+          data: {},
+          limit: 200,
+        });
         const items = (dbResults as any[])
           .map(simplifyEvent)
           .filter((ev) => {
@@ -225,7 +234,9 @@ export const calendarToolImplementations: Record<
             const t = new Date(ev.start).getTime();
             return t >= now.getTime() && t <= future.getTime();
           })
-          .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+          .sort(
+            (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+          )
           .slice(0, 10);
         return { events: items, count: items.length, source: "db_fallback" };
       } catch {
@@ -251,7 +262,7 @@ export const calendarToolImplementations: Record<
         events: items.map((ev: any) => simplifyEvent({ data: ev, ...ev })),
         count: items.length,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { error: err.message ?? "Search failed" };
     }
   },
@@ -259,24 +270,37 @@ export const calendarToolImplementations: Record<
   // ── Create event ── uses the CORRECT Corsair schema: { event: {...} } ──────
   create_calendar_event: async (
     tenant,
-    { summary, description, location, start_datetime, end_datetime, attendees, all_day }
+    {
+      summary,
+      description,
+      location,
+      start_datetime,
+      end_datetime,
+      attendees,
+      all_day,
+    },
   ) => {
     try {
-      const isAllDay = all_day || /^\d{4}-\d{2}-\d{2}$/.test(String(start_datetime));
+      const isAllDay =
+        all_day || /^\d{4}-\d{2}-\d{2}$/.test(String(start_datetime));
 
       let startPayload: any;
       let endPayload: any;
 
       if (isAllDay) {
         const startDate = String(start_datetime).slice(0, 10);
-        const endDate = end_datetime ? String(end_datetime).slice(0, 10) : startDate;
+        const endDate = end_datetime
+          ? String(end_datetime).slice(0, 10)
+          : startDate;
         startPayload = { date: startDate };
         endPayload = { date: endDate };
       } else {
         const startIso = normalizeDateTime(String(start_datetime));
         const endIso = end_datetime
           ? normalizeDateTime(String(end_datetime))
-          : new Date(new Date(startIso).getTime() + 60 * 60 * 1000).toISOString();
+          : new Date(
+              new Date(startIso).getTime() + 60 * 60 * 1000,
+            ).toISOString();
 
         startPayload = { dateTime: startIso };
         endPayload = { dateTime: endIso };
@@ -292,7 +316,9 @@ export const calendarToolImplementations: Record<
       if (description) eventBody.description = String(description).trim();
       if (location) eventBody.location = String(location).trim();
       if (attendees?.length) {
-        eventBody.attendees = (attendees as string[]).map((e) => ({ email: e }));
+        eventBody.attendees = (attendees as string[]).map((e) => ({
+          email: e,
+        }));
       }
 
       // ✅ Correct Corsair API shape: { calendarId, event: { ... } }
@@ -310,8 +336,11 @@ export const calendarToolImplementations: Record<
         link: (result as any)?.htmlLink ?? null,
         message: `✅ "${summary}" has been added to your Google Calendar.`,
       };
-    } catch (err: any) {
-      return { error: err.message ?? "Failed to create event", details: String(err) };
+    } catch (err: unknown) {
+      return {
+        error: err.message ?? "Failed to create event",
+        details: String(err),
+      };
     }
   },
 
@@ -326,7 +355,7 @@ export const calendarToolImplementations: Record<
         success: true,
         message: `✅ Event has been deleted from your Google Calendar.`,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { error: err.message ?? "Failed to delete event" };
     }
   },
@@ -344,7 +373,7 @@ export const calendarToolImplementations: Record<
       });
 
       return { availability: result };
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { error: err.message ?? "Failed to fetch availability" };
     }
   },

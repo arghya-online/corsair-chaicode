@@ -6,7 +6,10 @@ import { getCurrentUser } from "@/src/actions/auth";
 // Per-user rate limiter: max 10 requests per minute (to protect Gemini 15 RPM limits)
 const rateLimits = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(userId: string): { allowed: boolean; retryAfter?: number } {
+function checkRateLimit(userId: string): {
+  allowed: boolean;
+  retryAfter?: number;
+} {
   const now = Date.now();
   const limit = 10;
   const windowMs = 60 * 1000;
@@ -18,7 +21,10 @@ function checkRateLimit(userId: string): { allowed: boolean; retryAfter?: number
   }
 
   if (record.count >= limit) {
-    return { allowed: false, retryAfter: Math.ceil((record.resetAt - now) / 1000) };
+    return {
+      allowed: false,
+      retryAfter: Math.ceil((record.resetAt - now) / 1000),
+    };
   }
 
   record.count += 1;
@@ -26,7 +32,10 @@ function checkRateLimit(userId: string): { allowed: boolean; retryAfter?: number
 }
 
 // Simple prompt injection and safety guardrail check
-function checkGuardrails(messageContent: string): { safe: boolean; reason?: string } {
+function checkGuardrails(messageContent: string): {
+  safe: boolean;
+  reason?: string;
+} {
   const lower = messageContent.toLowerCase();
 
   // Basic check for common prompt injection/override phrases
@@ -41,7 +50,11 @@ function checkGuardrails(messageContent: string): { safe: boolean; reason?: stri
 
   for (const keyword of injectionKeywords) {
     if (lower.includes(keyword)) {
-      return { safe: false, reason: "Security violation: Direct system prompt modification detected." };
+      return {
+        safe: false,
+        reason:
+          "Security violation: Direct system prompt modification detected.",
+      };
     }
   }
 
@@ -59,8 +72,10 @@ export async function POST(req: NextRequest) {
     const limitCheck = checkRateLimit(user.id);
     if (!limitCheck.allowed) {
       return NextResponse.json(
-        { error: `Rate limit exceeded. Please wait ${limitCheck.retryAfter} seconds before sending another message.` },
-        { status: 429 }
+        {
+          error: `Rate limit exceeded. Please wait ${limitCheck.retryAfter} seconds before sending another message.`,
+        },
+        { status: 429 },
       );
     }
 
@@ -68,7 +83,10 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json();
 
     if (!Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: "Invalid message history" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid message history" },
+        { status: 400 },
+      );
     }
 
     // 2. Limit Conversation History size (Guardrail to prevent huge payloads / token limit hits)
@@ -76,11 +94,16 @@ export async function POST(req: NextRequest) {
     const trimmedMessages = messages.slice(-maxHistory);
 
     // 3. Input Guardrails on the latest message
-    const lastUserMessage = trimmedMessages.filter((m: any) => m.role === "user").pop();
+    const lastUserMessage = trimmedMessages
+      .filter((m: any) => m.role === "user")
+      .pop();
     if (lastUserMessage && typeof lastUserMessage.content === "string") {
       const guardrailResult = checkGuardrails(lastUserMessage.content);
       if (!guardrailResult.safe) {
-        return NextResponse.json({ error: guardrailResult.reason }, { status: 400 });
+        return NextResponse.json(
+          { error: guardrailResult.reason },
+          { status: 400 },
+        );
       }
     }
 
@@ -115,11 +138,14 @@ You have access to the following capabilities:
 
     const result = await runChat([systemMessage, ...trimmedMessages], tenant);
     return NextResponse.json(result);
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/chat] error:", err);
-    return NextResponse.json({ error: err.message ?? "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message ?? "Internal error" },
+      { status: 500 },
+    );
   }
 }

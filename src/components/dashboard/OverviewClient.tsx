@@ -18,7 +18,7 @@ import {
   TrendingUp,
   Clock,
   MapPin,
-  Users
+  Users,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -62,7 +62,9 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
     try {
       const res = await fetch("/api/dashboard/stats");
       if (res.ok) setData(await res.json());
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   };
 
   const fetchRecentEmails = async () => {
@@ -72,7 +74,9 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
         const d = await res.json();
         setRecentEmails((d.messages ?? []).slice(0, 4));
       }
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   };
 
   const fetchCalendarEvents = async () => {
@@ -82,12 +86,18 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
         const d = await res.json();
         setCalendarEvents(d.slice(0, 4));
       }
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   };
 
   const loadAllData = async () => {
     setLoading(true);
-    await Promise.all([fetchStats(), fetchRecentEmails(), fetchCalendarEvents()]);
+    await Promise.all([
+      fetchStats(),
+      fetchRecentEmails(),
+      fetchCalendarEvents(),
+    ]);
     setLoading(false);
   };
 
@@ -102,7 +112,7 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
       if (!res.ok) throw new Error("Sync failed");
       toast.success("Workspace synced.");
       await loadAllData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Sync failed.");
     } finally {
       setSyncing(false);
@@ -112,11 +122,16 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
   const handleAiCommandSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
-    router.push(`/dashboard/assistant?prompt=${encodeURIComponent(aiPrompt.trim())}`);
+    router.push(
+      `/dashboard/assistant?prompt=${encodeURIComponent(aiPrompt.trim())}`,
+    );
   };
 
   const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric", year: "numeric"
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
 
   const getGreetingText = () => {
@@ -133,12 +148,11 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
     "Summarize urgent emails",
     "Show calendar conflicts",
     "Draft reply to Vikram",
-    "Prepare workspace brief"
+    "Prepare workspace brief",
   ];
 
   return (
     <div className="min-h-screen px-6 sm:px-8 py-10 max-w-[1280px] mx-auto w-full space-y-10">
-
       {/* ─── 1. Greeting Header ─── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -168,7 +182,9 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
             disabled={syncing || loading}
             className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-white border border-[rgba(17,24,39,0.08)] hover:bg-[#F7F2EA] font-sans text-[12.5px] font-semibold text-[#111827] transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-[#C67B3D] ${syncing ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 text-[#C67B3D] ${syncing ? "animate-spin" : ""}`}
+            />
             Sync Workspace
           </button>
         </div>
@@ -182,29 +198,30 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
             desc: "Draft message",
             color: "rgba(198, 123, 61, 0.08)",
             icon: Mail,
-            action: () => setComposeOpen(true)
+            action: () => setComposeOpen(true),
           },
           {
             title: "New Event",
             desc: "Schedule slot",
             color: "rgba(91, 122, 140, 0.08)",
             icon: Calendar,
-            action: () => setEventOpen(true)
+            action: () => setEventOpen(true),
           },
           {
             title: "Ask AI",
             desc: "Ask anything about your inbox or calendar",
             color: "rgba(109, 138, 104, 0.08)",
             icon: Sparkles,
-            action: () => router.push("/dashboard/assistant")
+            action: () => router.push("/dashboard/assistant"),
           },
           {
             title: "Search",
             desc: "Command menu",
             color: "rgba(17, 24, 39, 0.04)",
             icon: Search,
-            action: () => window.dispatchEvent(new CustomEvent("open-zentra-command"))
-          }
+            action: () =>
+              window.dispatchEvent(new CustomEvent("open-zentra-command")),
+          },
         ].map((act, index) => {
           const Icon = act.icon;
           return (
@@ -239,7 +256,8 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         style={{
-          background: "linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(30,41,59,0.98) 100%)",
+          background:
+            "linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(30,41,59,0.98) 100%)",
         }}
         className="p-8 sm:p-10 rounded-[24px] shadow-[0_30px_70px_rgba(0,0,0,0.12)] border border-[#1e293b] text-white relative overflow-hidden"
       >
@@ -250,7 +268,9 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10">
               <Sparkles className="w-3.5 h-3.5 text-[#C67B3D]" />
-              <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">AI Assistant</span>
+              <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">
+                AI Assistant
+              </span>
             </div>
             <h2 className="text-[24px] font-serif font-normal text-white">
               How can I help today?
@@ -259,7 +279,10 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
         </div>
 
         {/* Input Form */}
-        <form onSubmit={handleAiCommandSubmit} className="relative z-10 flex gap-3 max-w-4xl">
+        <form
+          onSubmit={handleAiCommandSubmit}
+          className="relative z-10 flex gap-3 max-w-4xl"
+        >
           <div className="relative flex-1">
             <input
               type="text"
@@ -296,11 +319,12 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
 
       {/* ─── 4. Metrics Grid ─── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
         {/* Metric 1: Unread */}
         <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Inbox</span>
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">
+              Inbox
+            </span>
             <Mail className="w-4.5 h-4.5 text-[#C67B3D]" />
           </div>
           {loading ? (
@@ -308,20 +332,26 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
           ) : (
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
-                {gmailConnected ? data?.unreadCount ?? 0 : "—"}
+                {gmailConnected ? (data?.unreadCount ?? 0) : "—"}
               </span>
-              <span className="text-[12px] text-[#64748B]">priorities unread</span>
+              <span className="text-[12px] text-[#64748B]">
+                priorities unread
+              </span>
             </div>
           )}
           <p className="text-[12px] text-[#64748B] mt-2">
-            {gmailConnected ? "Connected to Gmail." : "Connect Gmail to index messages."}
+            {gmailConnected
+              ? "Connected to Gmail."
+              : "Connect Gmail to index messages."}
           </p>
         </div>
 
         {/* Metric 2: Events */}
         <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Today's Schedule</span>
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">
+              Today's Schedule
+            </span>
             <Calendar className="w-4.5 h-4.5 text-[#C67B3D]" />
           </div>
           {loading ? (
@@ -329,43 +359,49 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
           ) : (
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
-                {calConnected ? data?.eventsTodayCount ?? 0 : "—"}
+                {calConnected ? (data?.eventsTodayCount ?? 0) : "—"}
               </span>
               <span className="text-[12px] text-[#64748B]">Events today</span>
             </div>
           )}
           <p className="text-[12px] text-[#64748B] mt-2">
-            {calConnected && data?.nextEvent ? `Next: "${data.nextEvent.summary}"` : "No upcoming conflicts."}
+            {calConnected && data?.nextEvent
+              ? `Next: "${data.nextEvent.summary}"`
+              : "No upcoming conflicts."}
           </p>
         </div>
 
         {/* Metric 3: Integrations */}
         <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs relative">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">Connected Apps</span>
+            <span className="text-[11.5px] font-bold text-[#64748B] uppercase tracking-wider">
+              Connected Apps
+            </span>
             <ShieldCheck className="w-4.5 h-4.5 text-[#6D8A68]" />
           </div>
           <div className="space-y-2.5">
             <div className="flex items-center justify-between text-[12px]">
               <span className="text-[#64748B]">Gmail</span>
-              <span className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${gmailConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}>
+              <span
+                className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${gmailConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}
+              >
                 {gmailConnected ? "Connected" : "Offline"}
               </span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
               <span className="text-[#64748B]">Google Calendar</span>
-              <span className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${calConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}>
+              <span
+                className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${calConnected ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-red-50 text-red-500"}`}
+              >
                 {calConnected ? "Connected" : "Offline"}
               </span>
             </div>
           </div>
         </div>
-
       </div>
 
       {/* ─── 5. Dynamic Activity & Timeline ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
         {/* Left: Recent Activity Feed (Span 7) */}
         <div className="lg:col-span-7 space-y-4 text-left">
           <h3 className="font-serif text-[20px] font-normal text-[#111827]">
@@ -376,25 +412,37 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
             {loading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-12 w-full bg-cream-200 rounded" />
+                  <Skeleton
+                    key={i}
+                    className="h-12 w-full bg-cream-200 rounded"
+                  />
                 ))}
               </div>
             ) : !gmailConnected ? (
               <div className="py-12 text-center text-[#64748B]">
                 <Mail className="w-8 h-8 mx-auto mb-2 text-[#64748B]/40" />
                 <p className="text-[13px] font-bold">Gmail not connected</p>
-                <p className="text-[12px] text-[#64748B] mt-1">Connect your Gmail integration to view recent threads.</p>
-                <a href="/api/connect?plugin=gmail" className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold">
+                <p className="text-[12px] text-[#64748B] mt-1">
+                  Connect your Gmail integration to view recent threads.
+                </p>
+                <a
+                  href="/api/connect?plugin=gmail"
+                  className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold"
+                >
                   Connect Gmail
                 </a>
               </div>
             ) : recentEmails.length === 0 ? (
-              <p className="text-[13px] text-[#64748B] italic py-8 text-center">No recent priorities detected.</p>
+              <p className="text-[13px] text-[#64748B] italic py-8 text-center">
+                No recent priorities detected.
+              </p>
             ) : (
               <div className="divide-y divide-[rgba(17,24,39,0.06)]">
                 {recentEmails.map((email) => {
                   const unread = email.labelIds.includes("UNREAD");
-                  const sender = email.from.split("<")[0].replace(/"/g, "").trim() || "Unknown";
+                  const sender =
+                    email.from.split("<")[0].replace(/"/g, "").trim() ||
+                    "Unknown";
                   return (
                     <Link
                       href={`/dashboard/communications?folder=inbox`}
@@ -403,14 +451,18 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
                     >
                       <div className="min-w-0 flex-1 pr-4">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className={`text-[12.5px] ${unread ? "font-bold text-[#111827]" : "text-[#64748B]"}`}>
+                          <span
+                            className={`text-[12.5px] ${unread ? "font-bold text-[#111827]" : "text-[#64748B]"}`}
+                          >
                             {sender}
                           </span>
                           {unread && (
                             <span className="w-1.5 h-1.5 rounded-full bg-[#C67B3D]" />
                           )}
                         </div>
-                        <p className={`text-[12px] truncate ${unread ? "font-semibold text-[#111827]" : "text-[#64748B]"}`}>
+                        <p
+                          className={`text-[12px] truncate ${unread ? "font-semibold text-[#111827]" : "text-[#64748B]"}`}
+                        >
                           {email.subject}
                         </p>
                         <p className="text-[11px] text-[#64748B] truncate mt-0.5">
@@ -436,15 +488,23 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
             {loading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-12 w-full bg-cream-200 rounded" />
+                  <Skeleton
+                    key={i}
+                    className="h-12 w-full bg-cream-200 rounded"
+                  />
                 ))}
               </div>
             ) : !calConnected ? (
               <div className="py-12 text-center text-[#64748B]">
                 <Calendar className="w-8 h-8 mx-auto mb-2 text-[#64748B]/40" />
                 <p className="text-[13px] font-bold">Calendar not connected</p>
-                <p className="text-[12px] text-[#64748B] mt-1">Connect your Google Calendar integration to view schedules.</p>
-                <a href="/api/connect?plugin=googlecalendar" className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold">
+                <p className="text-[12px] text-[#64748B] mt-1">
+                  Connect your Google Calendar integration to view schedules.
+                </p>
+                <a
+                  href="/api/connect?plugin=googlecalendar"
+                  className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold"
+                >
                   Connect Calendar
                 </a>
               </div>
@@ -457,14 +517,19 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
                 {calendarEvents.map((ev, idx) => {
                   const startStr = ev.start?.dateTime ?? ev.start?.date;
                   const timeLabel = startStr
-                    ? new Date(startStr).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+                    ? new Date(startStr).toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })
                     : "All Day";
                   return (
                     <div key={ev.id} className="relative space-y-1">
                       {/* Timeline dot */}
                       <span className="absolute -left-[20.5px] top-1.5 w-2 h-2 rounded-full bg-[#C67B3D] border border-white" />
 
-                      <div className="text-[11.5px] text-[#C67B3D] font-bold">{timeLabel}</div>
+                      <div className="text-[11.5px] text-[#C67B3D] font-bold">
+                        {timeLabel}
+                      </div>
                       <p className="text-[13px] font-bold text-[#111827] leading-snug">
                         {ev.summary}
                       </p>
@@ -481,7 +546,6 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
             )}
           </div>
         </div>
-
       </div>
 
       {/* ─── Shared Modals ─── */}
@@ -493,7 +557,6 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
         mode="create"
         onSaved={loadAllData}
       />
-
     </div>
   );
 }

@@ -93,13 +93,18 @@ export function EventModal({
         summary: initial?.summary ?? "",
         description: initial?.description ?? "",
         location: initial?.location ?? "",
-        startDate: toLocalDateStr(initial?.start?.dateTime ?? initial?.start?.date ?? defaultDateStr),
+        startDate: toLocalDateStr(
+          initial?.start?.dateTime ?? initial?.start?.date ?? defaultDateStr,
+        ),
         startTime: toLocalTimeStr(initial?.start?.dateTime),
-        endDate: toLocalDateStr(initial?.end?.dateTime ?? initial?.end?.date ?? defaultDateStr),
+        endDate: toLocalDateStr(
+          initial?.end?.dateTime ?? initial?.end?.date ?? defaultDateStr,
+        ),
         endTime: toLocalTimeStr(initial?.end?.dateTime) || "10:00",
         allDay: initial?.allDay ?? false,
         colorId: initial?.colorId ?? "",
-        attendees: initial?.attendees?.map((a: any) => a.email).join(", ") ?? "",
+        attendees:
+          initial?.attendees?.map((a: any) => a.email).join(", ") ?? "",
       });
       setTimeout(() => titleRef.current?.focus(), 150);
     }
@@ -157,12 +162,17 @@ export function EventModal({
       });
 
       const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error ?? "Failed to save event");
+      if (!res.ok || data.error)
+        throw new Error(data.error ?? "Failed to save event");
 
-      toast.success(mode === "create" ? "Event created successfully." : "Event updated successfully.");
+      toast.success(
+        mode === "create"
+          ? "Event created successfully."
+          : "Event updated successfully.",
+      );
       onSaved();
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Failed to save event.");
     } finally {
       setSaving(false);
@@ -180,9 +190,10 @@ export function EventModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 pt-4">
-          
           <div>
-            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Title *</label>
+            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+              Title *
+            </label>
             <Input
               ref={titleRef}
               type="text"
@@ -202,12 +213,19 @@ export function EventModal({
               onChange={(e) => set("allDay", e.target.checked)}
               className="w-4 h-4 text-peach focus:ring-peach border-border rounded"
             />
-            <label htmlFor="allDay" className="text-xs text-espresso font-medium cursor-pointer">All-day event</label>
+            <label
+              htmlFor="allDay"
+              className="text-xs text-espresso font-medium cursor-pointer"
+            >
+              All-day event
+            </label>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Start Date</label>
+              <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+                Start Date
+              </label>
               <Input
                 type="date"
                 value={form.startDate}
@@ -217,7 +235,9 @@ export function EventModal({
             </div>
             {!form.allDay && (
               <div>
-                <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Start Time</label>
+                <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+                  Start Time
+                </label>
                 <Input
                   type="time"
                   value={form.startTime}
@@ -230,7 +250,9 @@ export function EventModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">End Date</label>
+              <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+                End Date
+              </label>
               <Input
                 type="date"
                 value={form.endDate}
@@ -240,7 +262,9 @@ export function EventModal({
             </div>
             {!form.allDay && (
               <div>
-                <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">End Time</label>
+                <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+                  End Time
+                </label>
                 <Input
                   type="time"
                   value={form.endTime}
@@ -252,7 +276,9 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Location</label>
+            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+              Location
+            </label>
             <Input
               type="text"
               value={form.location}
@@ -263,7 +289,9 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Description</label>
+            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+              Description
+            </label>
             <Textarea
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
@@ -274,7 +302,9 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Guests</label>
+            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+              Guests
+            </label>
             <Input
               type="text"
               value={form.attendees}
@@ -285,7 +315,9 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">Event Color</label>
+            <label className="font-sans text-[11px] text-espresso-300 uppercase tracking-wide mb-1 block">
+              Event Color
+            </label>
             <div className="flex flex-wrap gap-2 mt-1">
               {COLOR_OPTIONS.map((c) => (
                 <button
@@ -293,10 +325,11 @@ export function EventModal({
                   type="button"
                   onClick={() => set("colorId", c.id)}
                   title={c.label}
-                  className={`w-6.5 h-6.5 rounded-full flex items-center justify-center border-2 transition-transform hover:scale-110 cursor-pointer ${c.dot} ${form.colorId === c.id
-                    ? "border-espresso scale-110"
-                    : "border-transparent"
-                    }`}
+                  className={`w-6.5 h-6.5 rounded-full flex items-center justify-center border-2 transition-transform hover:scale-110 cursor-pointer ${c.dot} ${
+                    form.colorId === c.id
+                      ? "border-espresso scale-110"
+                      : "border-transparent"
+                  }`}
                 />
               ))}
             </div>
@@ -312,7 +345,9 @@ export function EventModal({
               Cancel
             </Button>
             <Button type="submit" disabled={saving} className="rounded-pill">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
               {mode === "create" ? "Create Event" : "Save Changes"}
             </Button>
           </div>

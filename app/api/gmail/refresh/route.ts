@@ -19,19 +19,19 @@ export async function POST() {
           } catch (e) {
             console.error(`Failed to sync message ${msg.id}:`, e);
           }
-        })
+        }),
       );
     }
 
     return NextResponse.json({ success: true, count: messages.length });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/gmail/refresh]", err);
     return NextResponse.json(
       { error: err.message ?? "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

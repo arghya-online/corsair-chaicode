@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { eventId, summary, description, location, start, end } = await request.json();
+    const { eventId, summary, description, location, start, end } =
+      await request.json();
     if (!eventId) {
       return NextResponse.json({ error: "Missing eventId" }, { status: 400 });
     }
@@ -47,22 +48,22 @@ export async function POST(request: NextRequest) {
     `;
 
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
     const responseText = result.response.text();
     const parsed = JSON.parse(responseText);
 
     return NextResponse.json(parsed);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/calendar/analyze]", err);
     return NextResponse.json(
       {
         prepNotes: "Prepare notes and review agendas.",
         preActions: ["Review description", "Set up meeting space"],
-        postActions: ["Send follow-up notes", "Log action items"]
+        postActions: ["Send follow-up notes", "Log action items"],
       },
-      { status: 200 } // Return fallback gracefully
+      { status: 200 }, // Return fallback gracefully
     );
   }
 }

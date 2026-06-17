@@ -13,7 +13,7 @@ import {
   Edit3,
   CheckCircle2,
   PanelLeft,
-  PanelRight
+  PanelRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -85,37 +85,51 @@ function parseStructuredContent(text: string) {
     const body = cleanStr(bodyMatch[1]);
     const to = toMatch ? cleanStr(toMatch[1]) : "";
 
-    const draftIndex = text.search(/(?:\*\*Subject\*\*|Subject|(?:\*\*To\*\*|To)):\s*/i);
-    const messageText = draftIndex !== -1 ? text.substring(0, draftIndex).trim() : text;
+    const draftIndex = text.search(
+      /(?:\*\*Subject\*\*|Subject|(?:\*\*To\*\*|To)):\s*/i,
+    );
+    const messageText =
+      draftIndex !== -1 ? text.substring(0, draftIndex).trim() : text;
 
     return {
       type: "email-draft" as const,
       messageText: messageText || "Here is your email draft:",
-      draft: { to, subject, body }
+      draft: { to, subject, body },
     };
   }
 
   // 2. Check for Calendar Event
-  const eventMatch = text.match(/(?:\*\*Event\*\*|\*\*Title\*\*|Event|Title):\s*([^\n]+)/i);
-  const startMatch = text.match(/(?:\*\*Date\*\*|\*\*Start\*\*|\*\*Time\*\*|Date|Start|Time):\s*([^\n]+)/i);
+  const eventMatch = text.match(
+    /(?:\*\*Event\*\*|\*\*Title\*\*|Event|Title):\s*([^\n]+)/i,
+  );
+  const startMatch = text.match(
+    /(?:\*\*Date\*\*|\*\*Start\*\*|\*\*Time\*\*|Date|Start|Time):\s*([^\n]+)/i,
+  );
 
   if (eventMatch && startMatch) {
     const title = cleanStr(eventMatch[1]);
     const timeInfo = cleanStr(startMatch[1]);
-    
-    const locationMatch = text.match(/(?:\*\*Location\*\*|Location):\s*([^\n]+)/i);
+
+    const locationMatch = text.match(
+      /(?:\*\*Location\*\*|Location):\s*([^\n]+)/i,
+    );
     const location = locationMatch ? cleanStr(locationMatch[1]) : "";
 
-    const idMatch = text.match(/(?:\*\*ID\*\*|\*\*Event ID\*\*|ID|Event ID|Event_ID|id):\s*([a-zA-Z0-9_]+)/i);
+    const idMatch = text.match(
+      /(?:\*\*ID\*\*|\*\*Event ID\*\*|ID|Event ID|Event_ID|id):\s*([a-zA-Z0-9_]+)/i,
+    );
     const eventId = idMatch ? cleanStr(idMatch[1]) : "";
 
-    const eventIndex = text.search(/(?:\*\*Event\*\*|\*\*Title\*\*|Event|Title):\s*/i);
-    const messageText = eventIndex !== -1 ? text.substring(0, eventIndex).trim() : text;
+    const eventIndex = text.search(
+      /(?:\*\*Event\*\*|\*\*Title\*\*|Event|Title):\s*/i,
+    );
+    const messageText =
+      eventIndex !== -1 ? text.substring(0, eventIndex).trim() : text;
 
     return {
       type: "calendar-event" as const,
       messageText: messageText || "Here is the scheduled calendar event:",
-      event: { title, timeInfo, location, eventId }
+      event: { title, timeInfo, location, eventId },
     };
   }
 
@@ -133,7 +147,10 @@ function renderContent(text: string) {
 
     if (/^[-•*]\s/.test(line) || /^\d+\.\s/.test(line)) {
       const listItems: string[] = [];
-      while (i < lines.length && (/^[-•*]\s/.test(lines[i]) || /^\d+\.\s/.test(lines[i]))) {
+      while (
+        i < lines.length &&
+        (/^[-•*]\s/.test(lines[i]) || /^\d+\.\s/.test(lines[i]))
+      ) {
         listItems.push(lines[i].replace(/^[-•*\d.]\s+/, ""));
         i++;
       }
@@ -145,7 +162,7 @@ function renderContent(text: string) {
               <span dangerouslySetInnerHTML={{ __html: inlineBold(item) }} />
             </li>
           ))}
-        </ul>
+        </ul>,
       );
       continue;
     }
@@ -157,7 +174,11 @@ function renderContent(text: string) {
     }
 
     elements.push(
-      <p key={`p-${i}`} className="leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: inlineBold(line) }} />
+      <p
+        key={`p-${i}`}
+        className="leading-relaxed font-medium"
+        dangerouslySetInnerHTML={{ __html: inlineBold(line) }}
+      />,
     );
     i++;
   }
@@ -168,7 +189,10 @@ function renderContent(text: string) {
 function inlineBold(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/`(.+?)`/g, '<code class="bg-[#F7F2EA] px-1 py-0.5 rounded text-[10px] font-mono text-[#C67B3D]">$1</code>');
+    .replace(
+      /`(.+?)`/g,
+      '<code class="bg-[#F7F2EA] px-1 py-0.5 rounded text-[10px] font-mono text-[#C67B3D]">$1</code>',
+    );
 }
 
 // ─── Email Draft Card Component ─────────────────
@@ -227,7 +251,7 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
       }
       setSentSuccess(true);
       toast.success("Email sent successfully via Gmail API!");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Email send failed");
     } finally {
       setSending(false);
@@ -239,9 +263,13 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
       <div className="flex items-center justify-between border-b border-[rgba(17,24,39,0.05)] pb-3">
         <div className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-[#C67B3D]" />
-          <span className="text-[11px] font-bold text-[#111827] uppercase tracking-wider">Gmail Draft</span>
+          <span className="text-[11px] font-bold text-[#111827] uppercase tracking-wider">
+            Gmail Draft
+          </span>
         </div>
-        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${sentSuccess ? "bg-[#6D8A68]/15 text-[#6D8A68]" : "bg-[#C67B3D]/10 text-[#C67B3D]"}`}>
+        <span
+          className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${sentSuccess ? "bg-[#6D8A68]/15 text-[#6D8A68]" : "bg-[#C67B3D]/10 text-[#C67B3D]"}`}
+        >
           {sentSuccess ? "Sent" : "Ready"}
         </span>
       </div>
@@ -249,7 +277,9 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
       {isEditing ? (
         <div className="space-y-3">
           <div>
-            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">To</label>
+            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">
+              To
+            </label>
             <input
               type="text"
               value={to}
@@ -259,7 +289,9 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
             />
           </div>
           <div>
-            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">Subject</label>
+            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">
+              Subject
+            </label>
             <input
               type="text"
               value={subject}
@@ -268,7 +300,9 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
             />
           </div>
           <div>
-            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">Body</label>
+            <label className="text-[10px] font-bold text-[#64748B] uppercase tracking-wide">
+              Body
+            </label>
             <textarea
               value={body}
               rows={4}
@@ -295,11 +329,15 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
         <div className="space-y-3.5 text-[13px] leading-relaxed">
           <div className="grid grid-cols-[50px_1fr] border-b border-[rgba(17,24,39,0.03)] pb-2">
             <span className="text-[#64748B] font-medium">To:</span>
-            <span className="text-[#111827] font-semibold truncate">{to || "(No recipient)"}</span>
+            <span className="text-[#111827] font-semibold truncate">
+              {to || "(No recipient)"}
+            </span>
           </div>
           <div className="grid grid-cols-[50px_1fr] border-b border-[rgba(17,24,39,0.03)] pb-2">
             <span className="text-[#64748B] font-medium">Subject:</span>
-            <span className="text-[#111827] font-semibold truncate">{subject || "(No subject)"}</span>
+            <span className="text-[#111827] font-semibold truncate">
+              {subject || "(No subject)"}
+            </span>
           </div>
           <div className="bg-[#F7F2EA]/30 rounded-xl p-3 text-[12px] text-[#64748B] whitespace-pre-wrap leading-relaxed border border-[rgba(17,24,39,0.04)] font-medium">
             {body}
@@ -316,7 +354,11 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
                 Edit
               </button>
               <button
-                onClick={() => onRegenerate(`Rewrite the email draft: "${subject}". Make it more enthusiastic.`)}
+                onClick={() =>
+                  onRegenerate(
+                    `Rewrite the email draft: "${subject}". Make it more enthusiastic.`,
+                  )
+                }
                 disabled={sentSuccess}
                 className="px-3 py-1.5 rounded-lg border border-[rgba(17,24,39,0.08)] hover:bg-[#F7F2EA]/50 text-[11px] font-semibold text-[#64748B] hover:text-[#111827] transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
@@ -324,7 +366,7 @@ function EmailDraftCard({ draft, onRegenerate }: EmailDraftCardProps) {
                 Regenerate
               </button>
             </div>
-            
+
             <button
               onClick={handleSend}
               disabled={sending || sentSuccess}
@@ -365,14 +407,18 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
     }
     setDeleting(true);
     try {
-      const res = await fetch(`/api/calendar/events/${encodeURIComponent(event.eventId)}?calendarId=primary`, {
-        method: "DELETE"
-      });
+      const res = await fetch(
+        `/api/calendar/events/${encodeURIComponent(event.eventId)}?calendarId=primary`,
+        {
+          method: "DELETE",
+        },
+      );
       const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error ?? "Failed to delete");
+      if (!res.ok || data.error)
+        throw new Error(data.error ?? "Failed to delete");
       setDeleted(true);
       toast.success("Event cancelled successfully.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Cancel event failed");
     } finally {
       setDeleting(false);
@@ -386,7 +432,7 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
       location: event.location,
       description: "Scheduled via Zentra Assistant",
       start: { dateTime: parseTimeToIso(event.timeInfo).toISOString() },
-      end: { dateTime: parseTimeToIso(event.timeInfo, 1).toISOString() }
+      end: { dateTime: parseTimeToIso(event.timeInfo, 1).toISOString() },
     });
   };
 
@@ -395,9 +441,13 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
       <div className="flex items-center justify-between border-b border-[rgba(17,24,39,0.05)] pb-3">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-[#C67B3D]" />
-          <span className="text-[11px] font-bold text-[#111827] uppercase tracking-wider">Calendar Event</span>
+          <span className="text-[11px] font-bold text-[#111827] uppercase tracking-wider">
+            Calendar Event
+          </span>
         </div>
-        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${deleted ? "bg-red-50 text-red-600" : "bg-[#6D8A68]/15 text-[#6D8A68]"}`}>
+        <span
+          className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${deleted ? "bg-red-50 text-red-600" : "bg-[#6D8A68]/15 text-[#6D8A68]"}`}
+        >
           {deleted ? "Cancelled" : "Scheduled"}
         </span>
       </div>
@@ -405,11 +455,15 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
       <div className="space-y-3 text-[13px] leading-relaxed">
         <div className="grid grid-cols-[70px_1fr] border-b border-[rgba(17,24,39,0.03)] pb-2">
           <span className="text-[#64748B] font-medium">Event:</span>
-          <span className="text-[#111827] font-semibold truncate">{event.title}</span>
+          <span className="text-[#111827] font-semibold truncate">
+            {event.title}
+          </span>
         </div>
         <div className="grid grid-cols-[70px_1fr] border-b border-[rgba(17,24,39,0.03)] pb-2">
           <span className="text-[#64748B] font-medium">Schedule:</span>
-          <span className="text-[#111827] font-semibold truncate">{event.timeInfo}</span>
+          <span className="text-[#111827] font-semibold truncate">
+            {event.timeInfo}
+          </span>
         </div>
         {event.location && (
           <div className="grid grid-cols-[70px_1fr] border-b border-[rgba(17,24,39,0.03)] pb-2">
@@ -427,7 +481,7 @@ function CalendarEventCard({ event, onOpenEditModal }: CalendarEventCardProps) {
             <Edit3 className="w-3.5 h-3.5" />
             Reschedule
           </button>
-          
+
           <button
             onClick={handleDelete}
             disabled={deleting || deleted}
@@ -457,7 +511,7 @@ export function ChatPanel({
   toggleContext,
   handleSend,
   handleClear,
-  clearing
+  clearing,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -499,11 +553,11 @@ export function ChatPanel({
     }
   };
 
-  const isInitialState = messages.length === 1 && messages[0] === WELCOME_MESSAGE && !loading;
+  const isInitialState =
+    messages.length === 1 && messages[0] === WELCOME_MESSAGE && !loading;
 
   return (
     <div className="flex flex-col h-full bg-[#F7F2EA] w-full overflow-hidden">
-      
       {/* ── Toolbar Header Row ── */}
       <div className="px-6 py-4.5 border-b border-[rgba(17,24,39,0.06)] bg-white flex items-center justify-between flex-shrink-0 select-none z-10">
         <div className="flex items-center gap-3">
@@ -513,11 +567,15 @@ export function ChatPanel({
             className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${
               !isHistoryCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
             }`}
-            title={isHistoryCollapsed ? "Expand logs sidebar" : "Collapse logs sidebar"}
+            title={
+              isHistoryCollapsed
+                ? "Expand logs sidebar"
+                : "Collapse logs sidebar"
+            }
           >
             <PanelLeft className="w-4.5 h-4.5" />
           </button>
-          
+
           <div className="flex items-center gap-2">
             <motion.span
               className="w-1.5 h-1.5 rounded-full bg-[#6D8A68] inline-block"
@@ -556,7 +614,11 @@ export function ChatPanel({
             className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${
               !isContextCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
             }`}
-            title={isContextCollapsed ? "Expand context sidebar" : "Collapse context sidebar"}
+            title={
+              isContextCollapsed
+                ? "Expand context sidebar"
+                : "Collapse context sidebar"
+            }
           >
             <PanelRight className="w-4.5 h-4.5" />
           </button>
@@ -582,7 +644,8 @@ export function ChatPanel({
                   Chat with Zentra AI
                 </h2>
                 <p className="font-sans text-[13px] text-[#64748B] text-center max-w-[340px] leading-relaxed">
-                  Compose drafts, find mail logs, check availability, schedule meetings, or query the assistant directly:
+                  Compose drafts, find mail logs, check availability, schedule
+                  meetings, or query the assistant directly:
                 </p>
                 <SuggestionPills onSelect={handleSend} />
               </div>
@@ -591,7 +654,9 @@ export function ChatPanel({
               <div className="space-y-4">
                 {messages.map((msg, idx) => {
                   const isUser = msg.role === "user";
-                  const parsed = !isUser ? parseStructuredContent(msg.content) : null;
+                  const parsed = !isUser
+                    ? parseStructuredContent(msg.content)
+                    : null;
 
                   return (
                     <div
@@ -676,7 +741,8 @@ export function ChatPanel({
           </button>
         </div>
         <p className="font-sans text-[11px] text-[#64748B] text-center mt-2.5 select-none">
-          Zentra AI is synced dynamically with Gmail and Google Calendar via secure workspace integrations.
+          Zentra AI is synced dynamically with Gmail and Google Calendar via
+          secure workspace integrations.
         </p>
       </div>
 
@@ -690,7 +756,6 @@ export function ChatPanel({
           toast.success("Calendar event rescheduled successfully.");
         }}
       />
-
     </div>
   );
 }

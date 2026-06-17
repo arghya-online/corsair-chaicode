@@ -1,23 +1,18 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
-import { 
-  Search, 
-  RefreshCw, 
-  Plus, 
-  X, 
-  Mail, 
-  ArrowLeft, 
-  Send, 
-  Clock, 
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import {
+  Search,
+  RefreshCw,
+  Plus,
+  X,
+  Mail,
+  ArrowLeft,
+  Send,
+  Clock,
   AlertCircle,
   CheckCircle2,
-  Trash2
+  Trash2,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -51,9 +46,7 @@ interface EmailDetail {
 function relativeTime(dateVal: string | number | null | undefined): string {
   if (!dateVal) return "";
   const d =
-    typeof dateVal === "number"
-      ? new Date(Number(dateVal))
-      : new Date(dateVal);
+    typeof dateVal === "number" ? new Date(Number(dateVal)) : new Date(dateVal);
   if (isNaN(d.getTime())) return "";
   const diff = Date.now() - d.getTime();
   const mins = Math.floor(diff / 60_000);
@@ -82,7 +75,7 @@ function isUnread(labelIds: string[]): boolean {
 function linkify(text: string): string {
   return text.replace(
     /(https?:\/\/[^\s<>"']+)/g,
-    '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[#F97316] underline break-all hover:text-[#C2410C]">$1</a>'
+    '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[#F97316] underline break-all hover:text-[#C2410C]">$1</a>',
   );
 }
 
@@ -124,12 +117,16 @@ function Toast({
     <div
       role="alert"
       className={`fixed bottom-6 right-6 z-[9999] p-4 rounded-2xl border flex items-center gap-3 shadow-[0_8px_30px_rgba(13,13,13,0.06)] animate-fade-in text-xs font-semibold ${
-        type === "success" 
-          ? "border-emerald-100 bg-emerald-50 text-emerald-800" 
+        type === "success"
+          ? "border-emerald-100 bg-emerald-50 text-emerald-800"
           : "border-red-100 bg-red-50 text-red-800"
       }`}
     >
-      {type === "success" ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
+      {type === "success" ? (
+        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+      ) : (
+        <AlertCircle className="w-4 h-4 text-red-600" />
+      )}
       {message}
     </div>
   );
@@ -144,7 +141,12 @@ interface ComposeModalProps {
   defaults?: Partial<{ to: string; subject: string }>;
 }
 
-function ComposeModal({ onClose, onSent, onToast, defaults = {} }: ComposeModalProps) {
+function ComposeModal({
+  onClose,
+  onSent,
+  onToast,
+  defaults = {},
+}: ComposeModalProps) {
   const [to, setTo] = useState(defaults.to ?? "");
   const [subject, setSubject] = useState(defaults.subject ?? "");
   const [body, setBody] = useState("");
@@ -172,7 +174,7 @@ function ComposeModal({ onClose, onSent, onToast, defaults = {} }: ComposeModalP
       onToast("Email sent successfully.", "success");
       onSent();
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       onToast(err.message ?? "Failed to send email.", "error");
     } finally {
       setSending(false);
@@ -205,7 +207,10 @@ function ComposeModal({ onClose, onSent, onToast, defaults = {} }: ComposeModalP
         {/* Fields */}
         <div className="p-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5 text-left">
-            <label htmlFor="compose-to" className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans">
+            <label
+              htmlFor="compose-to"
+              className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans"
+            >
               To
             </label>
             <input
@@ -220,7 +225,10 @@ function ComposeModal({ onClose, onSent, onToast, defaults = {} }: ComposeModalP
           </div>
 
           <div className="flex flex-col gap-1.5 text-left">
-            <label htmlFor="compose-subject" className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans">
+            <label
+              htmlFor="compose-subject"
+              className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans"
+            >
               Subject
             </label>
             <input
@@ -234,7 +242,10 @@ function ComposeModal({ onClose, onSent, onToast, defaults = {} }: ComposeModalP
           </div>
 
           <div className="flex flex-col gap-1.5 text-left">
-            <label htmlFor="compose-body" className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans">
+            <label
+              htmlFor="compose-body"
+              className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider font-sans"
+            >
               Body
             </label>
             <textarea
@@ -317,7 +328,9 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <span className="text-xs font-bold font-sans text-[#6B7280] truncate flex-1 text-left">
-            {loading ? "Loading thread..." : (detail?.subject ?? "Message Details")}
+            {loading
+              ? "Loading thread..."
+              : (detail?.subject ?? "Message Details")}
           </span>
           {detail && (
             <button
@@ -336,7 +349,7 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
               <Spinner size={16} /> Loading message content...
             </div>
           )}
-          
+
           {error && (
             <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-xs font-semibold text-red-800 text-left">
               {error}
@@ -351,8 +364,16 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
                   {detail.subject}
                 </h2>
                 <div className="space-y-1 text-xs text-[#6B7280]">
-                  <div><span className="font-semibold text-[#0D0D0D]">From:</span> {detail.from || "—"}</div>
-                  {detail.to && <div><span className="font-semibold text-[#0D0D0D]">To:</span> {detail.to}</div>}
+                  <div>
+                    <span className="font-semibold text-[#0D0D0D]">From:</span>{" "}
+                    {detail.from || "—"}
+                  </div>
+                  {detail.to && (
+                    <div>
+                      <span className="font-semibold text-[#0D0D0D]">To:</span>{" "}
+                      {detail.to}
+                    </div>
+                  )}
                   {detail.internalDate && (
                     <div className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5 text-[#6B7280]/60" />
@@ -360,7 +381,7 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
                         {new Date(
                           typeof detail.internalDate === "number"
                             ? detail.internalDate
-                            : Number(detail.internalDate)
+                            : Number(detail.internalDate),
                         ).toLocaleString("en-US", {
                           dateStyle: "medium",
                           timeStyle: "short",
@@ -421,8 +442,13 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showCompose, setShowCompose] = useState(false);
-  const [composeDefaults, setComposeDefaults] = useState<Partial<{ to: string; subject: string }>>({});
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [composeDefaults, setComposeDefaults] = useState<
+    Partial<{ to: string; subject: string }>
+  >({});
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const debouncedQuery = useDebounce(query, 400);
 
@@ -442,7 +468,10 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
     const oauthSuccess = params.get("oauth_success");
     const oauthError = params.get("oauth_error");
     if (oauthSuccess) {
-      showToast(`${oauthSuccess} connected successfully! Click Refresh to sync.`, "success");
+      showToast(
+        `${oauthSuccess} connected successfully! Click Refresh to sync.`,
+        "success",
+      );
       const clean = window.location.pathname;
       window.history.replaceState({}, "", clean);
     } else if (oauthError) {
@@ -463,7 +492,7 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to load inbox");
       setMessages(data.messages ?? []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -480,9 +509,12 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
       const res = await fetch("/api/gmail/refresh", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Refresh failed");
-      showToast(`Synced ${data.count} thread${data.count !== 1 ? "s" : ""}.`, "success");
+      showToast(
+        `Synced ${data.count} thread${data.count !== 1 ? "s" : ""}.`,
+        "success",
+      );
       await fetchInbox(debouncedQuery);
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err.message ?? "Refresh failed.", "error");
     } finally {
       setRefreshing(false);
@@ -503,14 +535,15 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
     <div className="h-full flex flex-col bg-white">
       {/* Search & Header panel */}
       <div className="p-5 border-b border-[#E8E8EC] flex flex-col md:flex-row md:items-center justify-between gap-4">
-        
         {/* Title */}
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[#F97316]/10 flex items-center justify-center text-[#F97316]">
             <Mail className="w-4 h-4" />
           </div>
           <div className="text-left">
-            <h2 className="text-sm font-bold text-[#0D0D0D] font-display">Inbox Messages</h2>
+            <h2 className="text-sm font-bold text-[#0D0D0D] font-display">
+              Inbox Messages
+            </h2>
             <p className="text-[10px] text-[#6B7280] font-sans">
               SYNCED OVER GMAIL API
             </p>
@@ -526,8 +559,12 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
             className="border border-[#E8E8EC] bg-white hover:bg-[#F2F2F5] hover:border-[#F97316]/30 rounded-xl p-2.5 text-[#6B7280] hover:text-[#0D0D0D] transition-colors cursor-pointer flex items-center gap-1.5"
             title="Refresh Inbox"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin text-[#F97316]" : ""}`} />
-            <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Sync</span>
+            <RefreshCw
+              className={`w-4 h-4 ${refreshing ? "animate-spin text-[#F97316]" : ""}`}
+            />
+            <span className="text-[10px] font-bold uppercase tracking-wider font-sans">
+              Sync
+            </span>
           </button>
 
           {/* Compose */}
@@ -584,7 +621,9 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
                   <Mail className="w-6 h-6" />
                 </div>
                 <div className="space-y-1.5">
-                  <h4 className="text-sm font-bold text-[#0D0D0D]">Connect your Gmail account</h4>
+                  <h4 className="text-sm font-bold text-[#0D0D0D]">
+                    Connect your Gmail account
+                  </h4>
                   <p className="text-xs text-[#6B7280]">
                     Authorize Zentra to sync and manage emails via Google API.
                   </p>
@@ -612,9 +651,13 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
               <Mail className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-[#0D0D0D]">No messages found</p>
+              <p className="text-xs font-bold text-[#0D0D0D]">
+                No messages found
+              </p>
               <p className="text-[11px] text-[#6B7280] mt-0.5">
-                {query ? "No items match your search term." : "No emails synchronized yet. Press sync."}
+                {query
+                  ? "No items match your search term."
+                  : "No emails synchronized yet. Press sync."}
               </p>
             </div>
           </div>
@@ -625,7 +668,8 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
           <ul className="divide-y divide-[#E8E8EC] text-left">
             {messages.map((msg, idx) => {
               const unread = isUnread(msg.labelIds);
-              const dateDisplay = relativeTime(msg.internalDate) || relativeTime(msg.updatedAt);
+              const dateDisplay =
+                relativeTime(msg.internalDate) || relativeTime(msg.updatedAt);
               const name = senderName(msg.from);
               const isSelected = selectedId === (msg.entityId || msg.id);
 
@@ -634,7 +678,9 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
                   <button
                     onClick={() => setSelectedId(msg.entityId || msg.id)}
                     className={`w-full flex items-start p-4 transition-colors relative text-left gap-3 cursor-pointer ${
-                      isSelected ? "bg-[#F2F2F5]" : "bg-white hover:bg-[#F2F2F5]/50"
+                      isSelected
+                        ? "bg-[#F2F2F5]"
+                        : "bg-white hover:bg-[#F2F2F5]/50"
                     }`}
                   >
                     {/* Unread Left Border Stripe Indicator */}
@@ -645,14 +691,18 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
                     {/* Content text */}
                     <div className="flex-1 min-w-0 flex flex-col gap-1">
                       <div className="flex justify-between items-center gap-4">
-                        <span className={`text-xs truncate ${unread ? "font-bold text-[#0D0D0D]" : "font-medium text-[#6B7280]"}`}>
+                        <span
+                          className={`text-xs truncate ${unread ? "font-bold text-[#0D0D0D]" : "font-medium text-[#6B7280]"}`}
+                        >
                           {name}
                         </span>
                         <span className="text-[10px] text-[#6B7280] font-sans flex-shrink-0">
                           {dateDisplay}
                         </span>
                       </div>
-                      <span className={`text-xs truncate ${unread ? "font-bold text-[#0D0D0D]" : "font-medium text-[#6B7280]"}`}>
+                      <span
+                        className={`text-xs truncate ${unread ? "font-bold text-[#0D0D0D]" : "font-medium text-[#6B7280]"}`}
+                      >
                         {msg.subject}
                       </span>
                       <p className="text-[11px] text-[#6B7280] truncate leading-normal">

@@ -26,17 +26,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // ignore parse errors; body may already be consumed
       }
       return NextResponse.json(
-        typeof responseBody === "string" ? { message: responseBody } : (responseBody ?? {}),
-        { status: webhookRes.status ?? 200 }
+        typeof responseBody === "string"
+          ? { message: responseBody }
+          : (responseBody ?? {}),
+        { status: webhookRes.status ?? 200 },
       );
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/webhook POST]", err);
     return NextResponse.json(
       { error: err.message ?? "Webhook processing failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

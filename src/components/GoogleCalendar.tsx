@@ -19,7 +19,7 @@ import {
   CheckCircle2,
   Loader2,
   Sparkles,
-  HelpCircle
+  HelpCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -38,7 +38,11 @@ interface CalendarEvent {
   status: string;
   htmlLink: string;
   hangoutLink: string | null;
-  attendees: Array<{ email: string; displayName?: string; responseStatus?: string }>;
+  attendees: Array<{
+    email: string;
+    displayName?: string;
+    responseStatus?: string;
+  }>;
   organizer: { email: string; displayName?: string } | null;
   calendarId: string;
   recurringEventId: string | null;
@@ -49,26 +53,59 @@ interface CalendarEvent {
 
 type ViewType = "month" | "week" | "day";
 
-const EVENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+const EVENT_COLORS: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
   "1": { bg: "bg-sky-50", text: "text-sky-800", border: "border-sky-100" },
-  "2": { bg: "bg-emerald-50", text: "text-emerald-800", border: "border-emerald-100" },
-  "3": { bg: "bg-purple-50", text: "text-purple-800", border: "border-purple-100" },
+  "2": {
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
+    border: "border-emerald-100",
+  },
+  "3": {
+    bg: "bg-purple-50",
+    text: "text-purple-800",
+    border: "border-purple-100",
+  },
   "4": { bg: "bg-pink-50", text: "text-pink-800", border: "border-pink-100" },
-  "5": { bg: "bg-yellow-50", text: "text-yellow-800", border: "border-yellow-100" },
-  "6": { bg: "bg-orange-50", text: "text-orange-800", border: "border-orange-100" },
+  "5": {
+    bg: "bg-yellow-50",
+    text: "text-yellow-800",
+    border: "border-yellow-100",
+  },
+  "6": {
+    bg: "bg-orange-50",
+    text: "text-orange-800",
+    border: "border-orange-100",
+  },
   "7": { bg: "bg-teal-50", text: "text-teal-800", border: "border-teal-100" },
-  "8": { bg: "bg-slate-100", text: "text-slate-800", border: "border-slate-200" },
-  "9": { bg: "bg-indigo-50", text: "text-indigo-800", border: "border-indigo-100" },
-  "10": { bg: "bg-[#C67B3D]/8", text: "text-[#C67B3D]", border: "border-[#C67B3D]/15" },
+  "8": {
+    bg: "bg-slate-100",
+    text: "text-slate-800",
+    border: "border-slate-200",
+  },
+  "9": {
+    bg: "bg-indigo-50",
+    text: "text-indigo-800",
+    border: "border-indigo-100",
+  },
+  "10": {
+    bg: "bg-[#C67B3D]/8",
+    text: "text-[#C67B3D]",
+    border: "border-[#C67B3D]/15",
+  },
   "11": { bg: "bg-red-50", text: "text-red-800", border: "border-red-100" },
 };
 
 function getEventColor(colorId: string | null) {
-  return EVENT_COLORS[colorId ?? ""] ?? {
-    bg: "bg-[#C67B3D]/8",
-    text: "text-[#C67B3D]",
-    border: "border-[#C67B3D]/12",
-  };
+  return (
+    EVENT_COLORS[colorId ?? ""] ?? {
+      bg: "bg-[#C67B3D]/8",
+      text: "text-[#C67B3D]",
+      border: "border-[#C67B3D]/12",
+    }
+  );
 }
 
 function getEventStart(ev: CalendarEvent): Date | null {
@@ -84,7 +121,11 @@ function getEventEnd(ev: CalendarEvent): Date | null {
 function formatTime(dt: string | undefined): string {
   if (!dt) return "";
   const d = new Date(dt);
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  return d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 
 function formatDateTime(dt: string | undefined | null): string {
@@ -116,7 +157,12 @@ interface EventDetailProps {
   onEdit: (ev: CalendarEvent) => void;
 }
 
-function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps) {
+function EventDetailPanel({
+  event,
+  onClose,
+  onDelete,
+  onEdit,
+}: EventDetailProps) {
   const color = getEventColor(event.colorId);
   const startDt = event.start?.dateTime ?? event.start?.date;
   const endDt = event.end?.dateTime ?? event.end?.date;
@@ -156,7 +202,6 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          
           <div className="flex items-start gap-3.5">
             <Clock className="w-4.5 h-4.5 text-[#64748B] flex-shrink-0 mt-0.5" />
             <div className="text-[13px] text-[#111827] space-y-1">
@@ -203,12 +248,17 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
 
           {event.organizer && (
             <div className="space-y-2 text-[13px]">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">Organizer</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                Organizer
+              </span>
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-[#C67B3D]/10 text-[#C67B3D] flex items-center justify-center font-bold text-[11px]">
-                  {(event.organizer.displayName ?? event.organizer.email)[0].toUpperCase()}
+                  {(event.organizer.displayName ??
+                    event.organizer.email)[0].toUpperCase()}
                 </div>
-                <span>{event.organizer.displayName ?? event.organizer.email}</span>
+                <span>
+                  {event.organizer.displayName ?? event.organizer.email}
+                </span>
               </div>
             </div>
           )}
@@ -223,9 +273,16 @@ function EventDetailPanel({ event, onClose, onDelete, onEdit }: EventDetailProps
               </div>
               <div className="space-y-2 text-[12.5px]">
                 {event.attendees.map((att, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 p-1.5 hover:bg-[#F7F2EA]/20 rounded-lg">
-                    <span className="truncate">{att.displayName ?? att.email}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${att.responseStatus === "accepted" ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-yellow-50 text-yellow-600"}`}>
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-3 p-1.5 hover:bg-[#F7F2EA]/20 rounded-lg"
+                  >
+                    <span className="truncate">
+                      {att.displayName ?? att.email}
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${att.responseStatus === "accepted" ? "bg-[#6D8A68]/10 text-[#6D8A68]" : "bg-yellow-50 text-yellow-600"}`}
+                    >
                       {att.responseStatus ?? "no response"}
                     </span>
                   </div>
@@ -251,7 +308,14 @@ interface MonthGridProps {
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: MonthGridProps) {
+function MonthGrid({
+  year,
+  month,
+  events,
+  today,
+  onDayClick,
+  onEventClick,
+}: MonthGridProps) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const prevMonthDays = new Date(year, month, 0).getDate();
@@ -259,7 +323,10 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
   const cells: Array<{ date: Date; isCurrentMonth: boolean }> = [];
 
   for (let i = firstDay - 1; i >= 0; i--) {
-    cells.push({ date: new Date(year, month - 1, prevMonthDays - i), isCurrentMonth: false });
+    cells.push({
+      date: new Date(year, month - 1, prevMonthDays - i),
+      isCurrentMonth: false,
+    });
   }
   for (let d = 1; d <= daysInMonth; d++) {
     cells.push({ date: new Date(year, month, d), isCurrentMonth: true });
@@ -273,7 +340,10 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
     <div className="flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-[rgba(17,24,39,0.06)] shadow-xs">
       <div className="grid grid-cols-7 border-b border-[rgba(17,24,39,0.05)] bg-[#F7F2EA]/20">
         {DAYS.map((d) => (
-          <div key={d} className="py-3.5 text-center text-[12px] font-bold uppercase tracking-wider text-[#64748B]">
+          <div
+            key={d}
+            className="py-3.5 text-center text-[12px] font-bold uppercase tracking-wider text-[#64748B]"
+          >
             {d}
           </div>
         ))}
@@ -282,27 +352,33 @@ function MonthGrid({ year, month, events, today, onDayClick, onEventClick }: Mon
       <div className="grid grid-cols-7 flex-1 divide-x divide-y divide-[rgba(17,24,39,0.05)] border-t border-[rgba(17,24,39,0.05)]">
         {cells.map((cell, idx) => {
           const isToday = isSameDay(cell.date, today);
-          const cellEvents = events.filter((ev) => {
-            const s = getEventStart(ev);
-            return s && isSameDay(s, cell.date);
-          }).slice(0, 3);
+          const cellEvents = events
+            .filter((ev) => {
+              const s = getEventStart(ev);
+              return s && isSameDay(s, cell.date);
+            })
+            .slice(0, 3);
 
           return (
             <div
               key={idx}
               onClick={() => onDayClick(cell.date)}
               className={`min-h-[105px] p-2 flex flex-col gap-1 cursor-pointer transition-all duration-200 ${
-                cell.isCurrentMonth ? "bg-white hover:bg-[#F7F2EA]/10" : "bg-[#F7F2EA]/20 hover:bg-[#F7F2EA]/30"
+                cell.isCurrentMonth
+                  ? "bg-white hover:bg-[#F7F2EA]/10"
+                  : "bg-[#F7F2EA]/20 hover:bg-[#F7F2EA]/30"
               }`}
             >
               <div className="flex justify-end">
-                <span className={`text-[12.5px] font-bold w-6.5 h-6.5 flex items-center justify-center rounded-lg ${
-                  isToday
-                    ? "bg-[#C67B3D] text-white shadow-xs"
-                    : cell.isCurrentMonth
-                    ? "text-[#111827]"
-                    : "text-[#64748B]/40"
-                }`}>
+                <span
+                  className={`text-[12.5px] font-bold w-6.5 h-6.5 flex items-center justify-center rounded-lg ${
+                    isToday
+                      ? "bg-[#C67B3D] text-white shadow-xs"
+                      : cell.isCurrentMonth
+                        ? "text-[#111827]"
+                        : "text-[#64748B]/40"
+                  }`}
+                >
                   {cell.date.getDate()}
                 </span>
               </div>
@@ -346,7 +422,13 @@ interface WeekViewProps {
   onDayClick: (date: Date) => void;
 }
 
-function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekViewProps) {
+function WeekView({
+  weekStart,
+  events,
+  today,
+  onEventClick,
+  onDayClick,
+}: WeekViewProps) {
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + i);
@@ -368,7 +450,9 @@ function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekVi
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                 {DAYS[day.getDay()]}
               </span>
-              <span className={`mt-1 text-[13px] font-bold w-6.5 h-6.5 flex items-center justify-center rounded-lg ${isToday ? "bg-[#C67B3D] text-white shadow-xs" : "text-[#111827]"}`}>
+              <span
+                className={`mt-1 text-[13px] font-bold w-6.5 h-6.5 flex items-center justify-center rounded-lg ${isToday ? "bg-[#C67B3D] text-white shadow-xs" : "text-[#111827]"}`}
+              >
                 {day.getDate()}
               </span>
             </div>
@@ -400,7 +484,10 @@ function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekVi
               onClick={() => onDayClick(day)}
             >
               {Array.from({ length: 24 }, (_, h) => (
-                <div key={h} className="h-14 hover:bg-[#F7F2EA]/20 transition-colors" />
+                <div
+                  key={h}
+                  className="h-14 hover:bg-[#F7F2EA]/20 transition-colors"
+                />
               ))}
 
               {dayEvents.map((ev) => {
@@ -413,7 +500,10 @@ function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekVi
                   return (
                     <button
                       key={ev.id}
-                      onClick={(evt) => { evt.stopPropagation(); onEventClick(ev); }}
+                      onClick={(evt) => {
+                        evt.stopPropagation();
+                        onEventClick(ev);
+                      }}
                       className={`absolute left-0.5 right-0.5 top-0 z-10 text-[10px] font-bold px-2 py-1 rounded-lg truncate border-l-2 cursor-pointer hover:brightness-95 ${color.bg} ${color.text} ${color.border}`}
                     >
                       {ev.summary}
@@ -422,18 +512,25 @@ function WeekView({ weekStart, events, today, onEventClick, onDayClick }: WeekVi
                 }
 
                 const startH = s.getHours() + s.getMinutes() / 60;
-                const endH = e ? e.getHours() + e.getMinutes() / 60 : startH + 1;
+                const endH = e
+                  ? e.getHours() + e.getMinutes() / 60
+                  : startH + 1;
                 const top = startH * 56;
                 const height = Math.max((endH - startH) * 56, 22);
 
                 return (
                   <button
                     key={ev.id}
-                    onClick={(evt) => { evt.stopPropagation(); onEventClick(ev); }}
+                    onClick={(evt) => {
+                      evt.stopPropagation();
+                      onEventClick(ev);
+                    }}
                     style={{ top, height }}
                     className={`absolute left-0.5 right-0.5 z-10 text-[10.5px] font-bold px-2 py-1.5 rounded-lg overflow-hidden border-l-2 cursor-pointer hover:brightness-95 transition-all text-left flex flex-col justify-between ${color.bg} ${color.text} ${color.border}`}
                   >
-                    <span className="truncate leading-tight block">{ev.summary}</span>
+                    <span className="truncate leading-tight block">
+                      {ev.summary}
+                    </span>
                     {height > 35 && (
                       <span className="opacity-75 text-[9px] block">
                         {formatTime(ev.start?.dateTime)}
@@ -460,27 +557,43 @@ interface DayViewProps {
 
 function DayView({ date, events, today, onEventClick }: DayViewProps) {
   const isToday = isSameDay(date, today);
-  const dayEvents = events.filter((ev) => {
-    const s = getEventStart(ev);
-    return s && isSameDay(s, date);
-  }).sort((a, b) => (getEventStart(a)?.getTime() ?? 0) - (getEventStart(b)?.getTime() ?? 0));
+  const dayEvents = events
+    .filter((ev) => {
+      const s = getEventStart(ev);
+      return s && isSameDay(s, date);
+    })
+    .sort(
+      (a, b) =>
+        (getEventStart(a)?.getTime() ?? 0) - (getEventStart(b)?.getTime() ?? 0),
+    );
 
   return (
     <div className="h-full bg-white rounded-2xl border border-[rgba(17,24,39,0.06)] shadow-xs flex flex-col overflow-y-auto">
       <div className="flex items-center gap-3.5 px-6 py-5 border-b border-[rgba(17,24,39,0.05)] bg-[#F7F2EA]/20 sticky top-0 z-10">
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-[15px] font-bold ${isToday ? "bg-[#C67B3D] text-white" : "bg-[#F7F2EA]/60 text-[#111827]"}`}>
+        <div
+          className={`w-9 h-9 rounded-lg flex items-center justify-center text-[15px] font-bold ${isToday ? "bg-[#C67B3D] text-white" : "bg-[#F7F2EA]/60 text-[#111827]"}`}
+        >
           {date.getDate()}
         </div>
         <div className="text-left">
-          <p className="text-[14px] font-bold text-[#111827]">{date.toLocaleDateString("en-US", { weekday: "long" })}</p>
-          <p className="text-[11px] text-[#64748B]">{date.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+          <p className="text-[14px] font-bold text-[#111827]">
+            {date.toLocaleDateString("en-US", { weekday: "long" })}
+          </p>
+          <p className="text-[11px] text-[#64748B]">
+            {date.toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
       </div>
 
       {dayEvents.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
           <Calendar className="w-8 h-8 text-[#64748B]/30" />
-          <p className="text-[12.5px] text-[#64748B] font-medium">Clear schedule for today.</p>
+          <p className="text-[12.5px] text-[#64748B] font-medium">
+            Clear schedule for today.
+          </p>
         </div>
       ) : (
         <div className="p-6 space-y-3.5">
@@ -497,18 +610,30 @@ function DayView({ date, events, today, onEventClick }: DayViewProps) {
               >
                 <div className="flex justify-between items-start gap-4">
                   <div>
-                    <h4 className="text-[14.5px] font-serif font-bold text-[#111827] leading-snug">{ev.summary}</h4>
+                    <h4 className="text-[14.5px] font-serif font-bold text-[#111827] leading-snug">
+                      {ev.summary}
+                    </h4>
                     {ev.description && (
-                      <p className="text-[11.5px] text-[#64748B] mt-1 line-clamp-1">{ev.description}</p>
+                      <p className="text-[11.5px] text-[#64748B] mt-1 line-clamp-1">
+                        {ev.description}
+                      </p>
                     )}
                   </div>
                   <div className="text-right">
                     {ev.allDay ? (
-                      <span className="text-[11px] font-semibold text-[#64748B]">All Day</span>
+                      <span className="text-[11px] font-semibold text-[#64748B]">
+                        All Day
+                      </span>
                     ) : (
                       <>
-                        <span className="text-[12px] font-bold text-[#111827]">{start && formatTime(start.toISOString())}</span>
-                        {end && <span className="block text-[10px] text-[#64748B]">to {formatTime(end.toISOString())}</span>}
+                        <span className="text-[12px] font-bold text-[#111827]">
+                          {start && formatTime(start.toISOString())}
+                        </span>
+                        {end && (
+                          <span className="block text-[10px] text-[#64748B]">
+                            to {formatTime(end.toISOString())}
+                          </span>
+                        )}
                       </>
                     )}
                   </div>
@@ -533,11 +658,17 @@ export default function GoogleCalendar() {
   const [error, setError] = useState<string | null>(null);
 
   // Modal states
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
+    null,
+  );
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | undefined>(undefined);
-  const [defaultModalDate, setDefaultModalDate] = useState<Date | undefined>(undefined);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | undefined>(
+    undefined,
+  );
+  const [defaultModalDate, setDefaultModalDate] = useState<Date | undefined>(
+    undefined,
+  );
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -547,7 +678,7 @@ export default function GoogleCalendar() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to load events");
       setEvents(data.events ?? []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -566,7 +697,7 @@ export default function GoogleCalendar() {
       if (!res.ok) throw new Error(data.error ?? "Sync failed");
       toast.success(data.message ?? `Synced ${data.count} events.`);
       await fetchEvents();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Sync failed.");
     } finally {
       setSyncing(false);
@@ -578,14 +709,14 @@ export default function GoogleCalendar() {
     try {
       const res = await fetch(
         `/api/calendar/events/${encodeURIComponent(ev.id)}?calendarId=${ev.calendarId ?? "primary"}`,
-        { method: "DELETE" }
+        { method: "DELETE" },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Delete failed");
       toast.success("Event deleted.");
       setSelectedEvent(null);
       setEvents((evs) => evs.filter((e) => e.id !== ev.id));
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message ?? "Failed to delete event.");
     }
   };
@@ -627,22 +758,29 @@ export default function GoogleCalendar() {
 
   const getHeaderLabel = () => {
     if (view === "month") {
-      return currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      return currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
     } else if (view === "week") {
       const ws = getWeekStart(currentDate);
       const we = new Date(ws);
       we.setDate(we.getDate() + 6);
       return `${ws.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${we.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
     } else {
-      return currentDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+      return currentDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
     }
   };
 
-  const isConnectError = error && (
-    error.toLowerCase().includes("not connected") ||
-    error.toLowerCase().includes("unauthorized") ||
-    error.toLowerCase().includes("oauth")
-  );
+  const isConnectError =
+    error &&
+    (error.toLowerCase().includes("not connected") ||
+      error.toLowerCase().includes("unauthorized") ||
+      error.toLowerCase().includes("oauth"));
 
   // Compute conflicts and buffer suggestions for right sidebar
   const getSchedulingBrief = () => {
@@ -652,7 +790,8 @@ export default function GoogleCalendar() {
     });
 
     let conflictText = "No overlaps detected. Your schedule is clear.";
-    let bufferSuggestion = "Buffer suggestions: Zentra maintains 15-minute buffers automatically between calls.";
+    let bufferSuggestion =
+      "Buffer suggestions: Zentra maintains 15-minute buffers automatically between calls.";
     let hasConflict = false;
 
     // Detect overlaps
@@ -675,22 +814,36 @@ export default function GoogleCalendar() {
       }
     }
 
-    return { hasConflict, conflictText, bufferSuggestion, todayCount: todayEvents.length, todayEvents };
+    return {
+      hasConflict,
+      conflictText,
+      bufferSuggestion,
+      todayCount: todayEvents.length,
+      todayEvents,
+    };
   };
 
-  const { hasConflict, conflictText, bufferSuggestion, todayCount, todayEvents } = getSchedulingBrief();
+  const {
+    hasConflict,
+    conflictText,
+    bufferSuggestion,
+    todayCount,
+    todayEvents,
+  } = getSchedulingBrief();
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F7F2EA] w-full text-left">
-      
       {/* ─── Main Grid Canvas Area ─── */}
       <div className="flex-1 flex flex-col p-6 sm:p-8 min-w-0 overflow-hidden relative">
-        
         {/* Toolbar Header Row */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 mb-5 flex-shrink-0">
           <div>
-            <span className="text-[11px] font-bold text-[#C67B3D] tracking-[0.15em] uppercase block mb-0.5">Google Calendar</span>
-            <h2 className="text-[28px] font-serif font-normal text-[#111827] tracking-tight">{getHeaderLabel()}</h2>
+            <span className="text-[11px] font-bold text-[#C67B3D] tracking-[0.15em] uppercase block mb-0.5">
+              Google Calendar
+            </span>
+            <h2 className="text-[28px] font-serif font-normal text-[#111827] tracking-tight">
+              {getHeaderLabel()}
+            </h2>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -701,7 +854,9 @@ export default function GoogleCalendar() {
                   key={v}
                   onClick={() => setView(v)}
                   className={`px-3.5 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
-                    view === v ? "bg-[#111827] text-white shadow-sm" : "text-[#64748B] hover:text-[#111827]"
+                    view === v
+                      ? "bg-[#111827] text-white shadow-sm"
+                      : "text-[#64748B] hover:text-[#111827]"
                   }`}
                 >
                   {v}
@@ -716,21 +871,37 @@ export default function GoogleCalendar() {
               className="p-2.5 rounded-xl border border-[rgba(17,24,39,0.08)] bg-white text-[#64748B] hover:text-[#111827] transition-all cursor-pointer shadow-2xs disabled:opacity-50"
               title="Sync Calendar"
             >
-              <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin text-[#C67B3D]" : ""}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${syncing ? "animate-spin text-[#C67B3D]" : ""}`}
+              />
             </button>
 
             {/* Controls */}
             <div className="flex items-center gap-1 bg-white border border-[rgba(17,24,39,0.08)] rounded-xl p-0.5 shadow-2xs">
-              <button onClick={() => navigate(-1)} className="p-1.5 hover:bg-[#F7F2EA] rounded-lg text-[#64748B] cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <button onClick={() => navigate(1)} className="p-1.5 hover:bg-[#F7F2EA] rounded-lg text-[#64748B] cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
-              <button onClick={goToday} className="text-[12px] font-semibold text-[#C67B3D] px-2 cursor-pointer">Today</button>
+              <button
+                onClick={() => navigate(-1)}
+                className="p-1.5 hover:bg-[#F7F2EA] rounded-lg text-[#64748B] cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => navigate(1)}
+                className="p-1.5 hover:bg-[#F7F2EA] rounded-lg text-[#64748B] cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={goToday}
+                className="text-[12px] font-semibold text-[#C67B3D] px-2 cursor-pointer"
+              >
+                Today
+              </button>
             </div>
           </div>
         </div>
 
         {/* Calendar Grid wrapper */}
         <div className="flex-1 overflow-hidden relative">
-          
           {loading && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70 backdrop-blur-xs">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B]">
@@ -746,9 +917,12 @@ export default function GoogleCalendar() {
                 <div className="w-12 h-12 rounded-xl bg-[#C67B3D]/8 flex items-center justify-center mx-auto text-[#C67B3D]">
                   <Calendar className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-[20px] text-[#111827]">Authorize Google Calendar</h3>
+                <h3 className="font-serif text-[20px] text-[#111827]">
+                  Authorize Google Calendar
+                </h3>
                 <p className="text-[12.5px] text-[#64748B] leading-relaxed">
-                  Authenticate securely to sync event timelines and access intelligent conflict suggestions.
+                  Authenticate securely to sync event timelines and access
+                  intelligent conflict suggestions.
                 </p>
                 <a
                   href="/api/connect?plugin=googlecalendar"
@@ -810,25 +984,37 @@ export default function GoogleCalendar() {
 
       {/* ─── 2. Today's Scheduling Sidebar (320px) ─── */}
       <aside className="w-[320px] bg-white border-l border-[rgba(17,24,39,0.06)] p-6 overflow-y-auto space-y-8 flex-shrink-0 flex flex-col justify-between select-none">
-        
         <div className="space-y-6">
-          <h3 className="font-serif text-[20px] text-[#111827]">Today's schedule</h3>
-          
+          <h3 className="font-serif text-[20px] text-[#111827]">
+            Today's schedule
+          </h3>
+
           <div className="space-y-3">
             {todayEvents.length === 0 ? (
-              <p className="text-[12.5px] text-[#64748B] italic">No meetings scheduled today.</p>
+              <p className="text-[12.5px] text-[#64748B] italic">
+                No meetings scheduled today.
+              </p>
             ) : (
               todayEvents.map((ev) => {
                 const sStr = ev.start?.dateTime ?? ev.start?.date;
-                const startLabel = sStr ? new Date(sStr).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "All Day";
+                const startLabel = sStr
+                  ? new Date(sStr).toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })
+                  : "All Day";
                 return (
                   <div
                     key={ev.id}
                     onClick={() => setSelectedEvent(ev)}
                     className="p-3.5 rounded-xl border border-[rgba(17,24,39,0.05)] hover:border-[#C67B3D]/30 hover:bg-[#F7F2EA]/10 cursor-pointer transition-colors"
                   >
-                    <span className="text-[11px] font-bold text-[#C67B3D]">{startLabel}</span>
-                    <h4 className="text-[13px] font-bold text-[#111827] truncate mt-0.5">{ev.summary}</h4>
+                    <span className="text-[11px] font-bold text-[#C67B3D]">
+                      {startLabel}
+                    </span>
+                    <h4 className="text-[13px] font-bold text-[#111827] truncate mt-0.5">
+                      {ev.summary}
+                    </h4>
                   </div>
                 );
               })
@@ -840,16 +1026,22 @@ export default function GoogleCalendar() {
         <div className="bg-[#C67B3D]/5 border border-[#C67B3D]/15 rounded-2xl p-4.5 space-y-3 text-[12.5px] leading-relaxed">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#C67B3D]" />
-            <span className="text-[10px] font-bold text-[#111827] uppercase tracking-wider">AI Scheduler suggestion</span>
+            <span className="text-[10px] font-bold text-[#111827] uppercase tracking-wider">
+              AI Scheduler suggestion
+            </span>
           </div>
-          
+
           {hasConflict ? (
             <>
               <p className="text-red-600 font-semibold">{conflictText}</p>
               <p className="text-[#64748B]">{bufferSuggestion}</p>
               <button
                 onClick={() => {
-                  const conflictEvent = todayEvents.find(e => e.summary.toLowerCase().includes("sync") || e.summary.toLowerCase().includes("critique"));
+                  const conflictEvent = todayEvents.find(
+                    (e) =>
+                      e.summary.toLowerCase().includes("sync") ||
+                      e.summary.toLowerCase().includes("critique"),
+                  );
                   if (conflictEvent) {
                     handleEditEvent(conflictEvent);
                   } else {
@@ -863,11 +1055,11 @@ export default function GoogleCalendar() {
             </>
           ) : (
             <p className="text-[#64748B]">
-              No meeting overlaps found. Your schedule meets the optimal 15-minute buffer between slots automatically.
+              No meeting overlaps found. Your schedule meets the optimal
+              15-minute buffer between slots automatically.
             </p>
           )}
         </div>
-
       </aside>
 
       {/* ── Modals & Overlays ── */}

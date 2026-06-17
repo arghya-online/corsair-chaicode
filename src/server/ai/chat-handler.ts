@@ -1,6 +1,12 @@
 import { genAI, CHAT_MODEL } from "./gemini";
-import { toolDefinitions as gmailToolDefs, toolImplementations as gmailToolImpls } from "./tools/gmail-tools";
-import { calendarToolDefinitions, calendarToolImplementations } from "./tools/calendar-tools";
+import {
+  toolDefinitions as gmailToolDefs,
+  toolImplementations as gmailToolImpls,
+} from "./tools/gmail-tools";
+import {
+  calendarToolDefinitions,
+  calendarToolImplementations,
+} from "./tools/calendar-tools";
 import type { corsair } from "@/src/server/corsair";
 import type { Content } from "@google/generative-ai";
 
@@ -8,7 +14,10 @@ type Tenant = ReturnType<typeof corsair.withTenant>;
 
 // Merge all tool definitions and implementations
 const allToolDefinitions = [...gmailToolDefs, ...calendarToolDefinitions];
-const allToolImplementations = { ...gmailToolImpls, ...calendarToolImplementations };
+const allToolImplementations = {
+  ...gmailToolImpls,
+  ...calendarToolImplementations,
+};
 
 // Helper to look up the function name corresponding to a tool_call_id from history
 function getToolNameForCallId(toolCallId: string, messages: any[]): string {
@@ -74,7 +83,8 @@ function mapMessagesToGemini(messages: any[]): MappedHistory {
         parts: [
           {
             functionResponse: {
-              name: msg.name ?? getToolNameForCallId(msg.tool_call_id, messages),
+              name:
+                msg.name ?? getToolNameForCallId(msg.tool_call_id, messages),
               response: JSON.parse(msg.content || "{}"),
             },
           },
@@ -119,10 +129,15 @@ function mapOpenAiToolsToGemini(openaiTools: any[]): any[] {
 }
 
 // Retry generateContent with exponential backoff on transient 429 rate limit errors
-async function generateContentWithRetry(model: any, params: any, retries = 5, delay = 2000): Promise<any> {
+async function generateContentWithRetry(
+  model: any,
+  params: any,
+  retries = 5,
+  delay = 2000,
+): Promise<any> {
   try {
     return await model.generateContent(params);
-  } catch (err: any) {
+  } catch (err: unknown) {
     const errMsg = String(err);
     const isRateLimit =
       err.status === 429 ||
@@ -133,9 +148,16 @@ async function generateContentWithRetry(model: any, params: any, retries = 5, de
       err.message?.toLowerCase().includes("exhausted");
 
     if (isRateLimit && retries > 0) {
-      console.warn(`[Gemini 429] Rate limited. Retrying in ${delay}ms... (${retries} retries left). Error: ${err.message ?? errMsg}`);
+      console.warn(
+        `[Gemini 429] Rate limited. Retrying in ${delay}ms... (${retries} retries left). Error: ${err.message ?? errMsg}`,
+      );
       await new Promise((resolve) => setTimeout(resolve, delay));
-      return generateContentWithRetry(model, params, retries - 1, Math.min(delay * 2, 10000));
+      return generateContentWithRetry(
+        model,
+        params,
+        retries - 1,
+        Math.min(delay * 2, 10000),
+      );
     }
     throw err;
   }
@@ -196,8 +218,10 @@ export async function runChat(messages: any[], tenant: Tenant) {
       let result;
       try {
         const args = JSON.parse(call.function?.arguments || "{}");
-        result = fn ? await fn(tenant, args) : { error: `Unknown tool: ${call.function?.name}` };
-      } catch (err: any) {
+        result = fn
+          ? await fn(tenant, args)
+          : { error: `Unknown tool: ${call.function?.name}` };
+      } catch (err: unknown) {
         result = { error: err.message };
       }
       convo.push({
@@ -208,5 +232,8 @@ export async function runChat(messages: any[], tenant: Tenant) {
     }
   }
 
-  return { reply: "Sorry, I couldn't finish that — try rephrasing.", messages: convo };
+  return {
+    reply: "Sorry, I couldn't finish that — try rephrasing.",
+    messages: convo,
+  };
 }

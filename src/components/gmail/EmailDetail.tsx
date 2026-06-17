@@ -6,7 +6,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import { getAvatarColor, getInitials } from "@/src/lib/avatar-color";
 import { toast } from "sonner";
 
@@ -44,7 +48,7 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
         if (!res.ok) throw new Error("Failed to fetch email details");
         const json = await res.json();
         setData(json);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
         toast.error("Error loading email content.");
       } finally {
@@ -59,7 +63,9 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
     return (
       <div className="hidden md:flex flex-col items-center justify-center flex-1 h-full py-12 text-center bg-cream-DEFAULT">
         <Mail className="w-7 h-7 text-espresso-300 mb-3" />
-        <p className="font-sans text-[13px] text-espresso-400 font-medium">Select an email to read</p>
+        <p className="font-sans text-[13px] text-espresso-400 font-medium">
+          Select an email to read
+        </p>
         <p className="font-sans text-[11px] text-espresso-300 max-w-[200px] mt-1">
           Pick a conversation thread from the list to display details.
         </p>
@@ -67,8 +73,14 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
     );
   }
 
-  const senderName = data?.from ? data.from.split("<")[0].replace(/"/g, "").trim() || "Unknown" : "Loading...";
-  const senderEmail = data?.from ? (data.from.includes("<") ? data.from.split("<")[1].replace(/>/g, "") : data.from) : "";
+  const senderName = data?.from
+    ? data.from.split("<")[0].replace(/"/g, "").trim() || "Unknown"
+    : "Loading...";
+  const senderEmail = data?.from
+    ? data.from.includes("<")
+      ? data.from.split("<")[1].replace(/>/g, "")
+      : data.from
+    : "";
   const initials = getInitials(senderName);
   const color = getAvatarColor(senderName);
 
@@ -101,13 +113,21 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
           <Tooltip>
             <TooltipTrigger
               render={
-                <Button variant="ghost" size="icon" onClick={onClose} className="rounded-xl flex-shrink-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="rounded-xl flex-shrink-0"
+                >
                   <ArrowLeft className="w-4 h-4 text-espresso-400" />
                   <span className="sr-only">Back</span>
                 </Button>
               }
             />
-            <TooltipContent side="bottom" className="bg-espresso text-cream-50 text-[11px] font-sans">
+            <TooltipContent
+              side="bottom"
+              className="bg-espresso text-cream-50 text-[11px] font-sans"
+            >
               Back
             </TooltipContent>
           </Tooltip>
@@ -133,7 +153,10 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                 </Button>
               }
             />
-            <TooltipContent side="bottom" className="bg-espresso text-cream-50 text-[11px] font-sans">
+            <TooltipContent
+              side="bottom"
+              className="bg-espresso text-cream-50 text-[11px] font-sans"
+            >
               Reply
             </TooltipContent>
           </Tooltip>
@@ -153,7 +176,10 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                 </Button>
               }
             />
-            <TooltipContent side="bottom" className="bg-espresso text-cream-50 text-[11px] font-sans">
+            <TooltipContent
+              side="bottom"
+              className="bg-espresso text-cream-50 text-[11px] font-sans"
+            >
               Archive
             </TooltipContent>
           </Tooltip>
@@ -173,7 +199,10 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                 </Button>
               }
             />
-            <TooltipContent side="bottom" className="bg-espresso text-cream-50 text-[11px] font-sans">
+            <TooltipContent
+              side="bottom"
+              className="bg-espresso text-cream-50 text-[11px] font-sans"
+            >
               Delete
             </TooltipContent>
           </Tooltip>
@@ -202,7 +231,9 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
             {/* Sender Metadata Row */}
             <div className="px-5 py-3 border-b border-border flex gap-3 items-center bg-cream-100/50 flex-shrink-0">
               <Avatar className="w-9 h-9">
-                <AvatarFallback className={`${color.bg} ${color.text} text-[12px] font-sans font-medium`}>
+                <AvatarFallback
+                  className={`${color.bg} ${color.text} text-[12px] font-sans font-medium`}
+                >
                   {initials || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -221,17 +252,21 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
 
             {/* Email Body Scroll Area */}
             <div className="p-5 flex-1 overflow-y-auto bg-white space-y-6">
-              
               {/* Zentra AI Insights Card */}
               <div
                 style={{
-                  background: "linear-gradient(135deg, rgba(198,123,61,0.06) 0%, rgba(217,161,91,0.03) 100%)",
+                  background:
+                    "linear-gradient(135deg, rgba(198,123,61,0.06) 0%, rgba(217,161,91,0.03) 100%)",
                 }}
                 className="p-5 rounded-2xl border border-[#C67B3D]/15 space-y-4 text-left shadow-xs"
               >
                 <div className="flex items-center gap-2">
                   <span className="p-1 rounded bg-[#C67B3D]/10 text-[#C67B3D] flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-3.5 h-3.5 fill-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
                       <path d="M12 3v4M12 17v4M3 12h4M17 12h4M12 7l1.5 3.5L17 12l-3.5 1.5L12 17l-1.5-3.5L7 12l3.5-1.5z" />
                     </svg>
                   </span>
@@ -242,23 +277,71 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
 
                 {(() => {
                   const insights = (() => {
-                    const text = ((data.subject ?? "") + " " + (data.body ?? "")).toLowerCase();
-                    let summary = "Zentra parsed this message thread. Sender is requesting coordination on workspace launch metrics.";
-                    let actionItems = ["Review design draft files", "Coordinate meeting slots"];
-                    let replies = ["Looks good to me, let's proceed.", "Let me check my calendar.", "Can we schedule for Wednesday?"];
+                    const text = (
+                      (data.subject ?? "") +
+                      " " +
+                      (data.body ?? "")
+                    ).toLowerCase();
+                    let summary =
+                      "Zentra parsed this message thread. Sender is requesting coordination on workspace launch metrics.";
+                    let actionItems = [
+                      "Review design draft files",
+                      "Coordinate meeting slots",
+                    ];
+                    let replies = [
+                      "Looks good to me, let's proceed.",
+                      "Let me check my calendar.",
+                      "Can we schedule for Wednesday?",
+                    ];
 
-                    if (text.includes("meeting") || text.includes("schedule") || text.includes("calendar")) {
-                      summary = "Calendar coordination request. The sender wants to schedule a meeting slot.";
-                      actionItems = ["Verify calendar conflicts for proposed times", "Confirm availability"];
-                      replies = ["Sure, send a calendar invite.", "I am free Wednesday afternoon.", "Let's postpone to next week."];
-                    } else if (text.includes("launch") || text.includes("design") || text.includes("approv")) {
-                      summary = "Design assets launch review. Feedback or approval is requested.";
-                      actionItems = ["Inspect courtyard presentation draft", "Provide layout approval"];
-                      replies = ["Approved. Design looks premium.", "Let's update the visual contrast.", "Ready to deploy."];
-                    } else if (text.includes("invoice") || text.includes("price") || text.includes("billing")) {
-                      summary = "Billing inquiry. Inquiry relates to payment structure or tier changes.";
-                      actionItems = ["Verify billing records", "Respond to support ticket"];
-                      replies = ["I have processed the transaction.", "Let me check with finance.", "Will follow up shortly."];
+                    if (
+                      text.includes("meeting") ||
+                      text.includes("schedule") ||
+                      text.includes("calendar")
+                    ) {
+                      summary =
+                        "Calendar coordination request. The sender wants to schedule a meeting slot.";
+                      actionItems = [
+                        "Verify calendar conflicts for proposed times",
+                        "Confirm availability",
+                      ];
+                      replies = [
+                        "Sure, send a calendar invite.",
+                        "I am free Wednesday afternoon.",
+                        "Let's postpone to next week.",
+                      ];
+                    } else if (
+                      text.includes("launch") ||
+                      text.includes("design") ||
+                      text.includes("approv")
+                    ) {
+                      summary =
+                        "Design assets launch review. Feedback or approval is requested.";
+                      actionItems = [
+                        "Inspect courtyard presentation draft",
+                        "Provide layout approval",
+                      ];
+                      replies = [
+                        "Approved. Design looks premium.",
+                        "Let's update the visual contrast.",
+                        "Ready to deploy.",
+                      ];
+                    } else if (
+                      text.includes("invoice") ||
+                      text.includes("price") ||
+                      text.includes("billing")
+                    ) {
+                      summary =
+                        "Billing inquiry. Inquiry relates to payment structure or tier changes.";
+                      actionItems = [
+                        "Verify billing records",
+                        "Respond to support ticket",
+                      ];
+                      replies = [
+                        "I have processed the transaction.",
+                        "Let me check with finance.",
+                        "Will follow up shortly.",
+                      ];
                     }
 
                     return { summary, actionItems, replies };
@@ -267,11 +350,14 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                   return (
                     <div className="space-y-3">
                       <p className="text-[13px] text-[#111827] leading-relaxed">
-                        <strong className="text-[#C67B3D]">Summary:</strong> {insights.summary}
+                        <strong className="text-[#C67B3D]">Summary:</strong>{" "}
+                        {insights.summary}
                       </p>
 
                       <div className="space-y-1.5">
-                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block">Recommended Actions</span>
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block">
+                          Recommended Actions
+                        </span>
                         <ul className="space-y-1 text-[12px] text-[#64748B]">
                           {insights.actionItems.map((act, i) => (
                             <li key={i} className="flex items-center gap-1.5">
@@ -284,7 +370,9 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
 
                       {/* Quick Replies */}
                       <div className="pt-2">
-                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block mb-2">One-Click AI Reply</span>
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block mb-2">
+                          One-Click AI Reply
+                        </span>
                         <div className="flex flex-wrap gap-2">
                           {insights.replies.map((reply) => (
                             <button
@@ -292,7 +380,11 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                               type="button"
                               onClick={() => {
                                 if (onReply && data) {
-                                  onReply(senderEmail, `Re: ${data.subject}`, `\n\nOn ${displayDate}, ${senderName} wrote:\n> ${data.snippet}\n\n${reply}`);
+                                  onReply(
+                                    senderEmail,
+                                    `Re: ${data.subject}`,
+                                    `\n\nOn ${displayDate}, ${senderName} wrote:\n> ${data.snippet}\n\n${reply}`,
+                                  );
                                 }
                               }}
                               className="text-[11.5px] text-[#C67B3D] hover:text-white bg-white hover:bg-[#C67B3D] border border-[#C67B3D]/25 rounded-lg px-2.5 py-1.5 transition-all duration-200 cursor-pointer shadow-2xs font-sans font-semibold"
@@ -305,7 +397,6 @@ export function EmailDetail({ emailId, onClose, onReply }: EmailDetailProps) {
                     </div>
                   );
                 })()}
-
               </div>
 
               {/* Separator */}

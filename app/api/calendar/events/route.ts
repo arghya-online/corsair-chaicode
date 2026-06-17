@@ -22,8 +22,11 @@ export async function GET(request: NextRequest) {
 
     if (!hasCalAccount) {
       return NextResponse.json(
-        { error: "Integration 'googlecalendar' not configured or authorized for this user." },
-        { status: 400 }
+        {
+          error:
+            "Integration 'googlecalendar' not configured or authorized for this user.",
+        },
+        { status: 400 },
       );
     }
 
@@ -111,7 +114,9 @@ export async function GET(request: NextRequest) {
     const filtered =
       fromDate || toDate
         ? events.filter((ev) => {
-            const evStart = new Date(ev.start?.dateTime ?? ev.start?.date ?? 0).getTime();
+            const evStart = new Date(
+              ev.start?.dateTime ?? ev.start?.date ?? 0,
+            ).getTime();
             const from = fromDate ? new Date(fromDate).getTime() : 0;
             const to = toDate ? new Date(toDate).getTime() : Infinity;
             return evStart >= from && evStart <= to;
@@ -119,14 +124,14 @@ export async function GET(request: NextRequest) {
         : events;
 
     return NextResponse.json({ events: filtered });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/events GET]", err);
     return NextResponse.json(
       { error: err.message ?? "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

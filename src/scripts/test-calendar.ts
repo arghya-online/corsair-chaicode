@@ -22,11 +22,15 @@ async function main() {
 
   try {
     const intRes = await client.query(
-      `SELECT id FROM corsair_integrations WHERE name = 'googlecalendar' LIMIT 1`
+      `SELECT id FROM corsair_integrations WHERE name = 'googlecalendar' LIMIT 1`,
     );
     if (intRes.rows.length === 0) {
-      console.error("❌ No 'googlecalendar' integration found in corsair_integrations table.");
-      console.log("   → Run: pnpm corsair setup --plugin=googlecalendar client_id=... client_secret=...");
+      console.error(
+        "❌ No 'googlecalendar' integration found in corsair_integrations table.",
+      );
+      console.log(
+        "   → Run: pnpm corsair setup --plugin=googlecalendar client_id=... client_secret=...",
+      );
       return;
     }
     const integrationId = intRes.rows[0].id;
@@ -34,16 +38,22 @@ async function main() {
 
     const accRes = await client.query(
       `SELECT tenant_id FROM corsair_accounts WHERE integration_id = $1 LIMIT 5`,
-      [integrationId]
+      [integrationId],
     );
     if (accRes.rows.length === 0) {
-      console.error("❌ No accounts found for googlecalendar. OAuth not completed.");
+      console.error(
+        "❌ No accounts found for googlecalendar. OAuth not completed.",
+      );
       console.log("   → Run: pnpm corsair auth --plugin=googlecalendar");
-      console.log("   → OR: go to the Calendar tab in the app and click 'Authorize Google Calendar'");
+      console.log(
+        "   → OR: go to the Calendar tab in the app and click 'Authorize Google Calendar'",
+      );
       return;
     }
     tenantId = accRes.rows[0].tenant_id;
-    console.log(`✅ Found ${accRes.rows.length} authorized account(s). Testing tenant: ${tenantId}`);
+    console.log(
+      `✅ Found ${accRes.rows.length} authorized account(s). Testing tenant: ${tenantId}`,
+    );
   } finally {
     client.release();
   }
@@ -67,9 +77,11 @@ async function main() {
     const items = (result as any)?.items ?? [];
     console.log(`✅ getMany succeeded — ${items.length} events found`);
     if (items.length > 0) {
-      console.log(`   First event: "${items[0].summary}" at ${items[0].start?.dateTime ?? items[0].start?.date}`);
+      console.log(
+        `   First event: "${items[0].summary}" at ${items[0].start?.dateTime ?? items[0].start?.date}`,
+      );
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("❌ getMany failed:", err.message);
     console.error("   Full error:", JSON.stringify(err, null, 2));
   }
@@ -83,7 +95,9 @@ async function main() {
 
   try {
     const startIso = "2026-06-17T09:00:00+05:30";
-    const endIso = new Date(new Date(startIso).getTime() + 60 * 60 * 1000).toISOString();
+    const endIso = new Date(
+      new Date(startIso).getTime() + 60 * 60 * 1000,
+    ).toISOString();
     console.log(`   Simulating tool input: start=${startIso}, end=${endIso}`);
     const result = await tenant.googlecalendar.api.events.create({
       calendarId: "primary",
@@ -112,8 +126,10 @@ async function main() {
         console.error("❌ Delete failed:", delErr.message);
       }
     }
-  } catch (err: any) {
-    console.error("❌ CREATE FAILED — this is the root cause of the agent error:");
+  } catch (err: unknown) {
+    console.error(
+      "❌ CREATE FAILED — this is the root cause of the agent error:",
+    );
     console.error("   Message:", err.message);
     console.error("   Full error:", JSON.stringify(err, null, 2));
   }

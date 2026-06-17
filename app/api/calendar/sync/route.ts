@@ -23,15 +23,19 @@ export async function POST(request: NextRequest) {
     } as any);
 
     const count = (result as any)?.items?.length ?? 0;
-    return NextResponse.json({ success: true, count, message: `Synced ${count} event(s).` });
-  } catch (err: any) {
+    return NextResponse.json({
+      success: true,
+      count,
+      message: `Synced ${count} event(s).`,
+    });
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/calendar/sync POST]", err);
     return NextResponse.json(
       { error: err.message ?? "Sync failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

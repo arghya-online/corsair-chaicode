@@ -23,11 +23,11 @@ export async function GET(_req: NextRequest) {
       id: conversation.id,
       messages: conversation.messages as any[],
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/chat/history GET]", err);
     return NextResponse.json(
       { error: err.message ?? "Failed to load history" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -43,7 +43,10 @@ export async function POST(req: NextRequest) {
     const { messages, conversationId } = await req.json();
 
     if (!Array.isArray(messages)) {
-      return NextResponse.json({ error: "messages must be an array" }, { status: 400 });
+      return NextResponse.json(
+        { error: "messages must be an array" },
+        { status: 400 },
+      );
     }
 
     // Keep only user/assistant messages (strip tool calls) and cap at 100 messages
@@ -59,7 +62,10 @@ export async function POST(req: NextRequest) {
         where: { id: conversationId, userId: user.id },
       });
       if (!existing) {
-        return NextResponse.json({ error: "Conversation not found or unauthorized" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Conversation not found or unauthorized" },
+          { status: 404 },
+        );
       }
 
       // Update existing conversation
@@ -90,11 +96,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ id: conversation.id, saved: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/chat/history POST]", err);
     return NextResponse.json(
       { error: err.message ?? "Failed to save history" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -112,11 +118,11 @@ export async function DELETE(_req: NextRequest) {
     });
 
     return NextResponse.json({ cleared: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/chat/history DELETE]", err);
     return NextResponse.json(
       { error: err.message ?? "Failed to clear history" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

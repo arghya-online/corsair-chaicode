@@ -20,26 +20,31 @@ export async function GET(request: NextRequest) {
       where: {
         tenantId: user.id,
         integration: {
-          name: { in: ["gmail", "googlecalendar"] }
-        }
+          name: { in: ["gmail", "googlecalendar"] },
+        },
       },
       include: {
-        integration: true
-      }
+        integration: true,
+      },
     });
 
-    const gmailAcc = connectedAccounts.find(acc => acc.integration.name === "gmail");
-    const calAcc = connectedAccounts.find(acc => acc.integration.name === "googlecalendar");
+    const gmailAcc = connectedAccounts.find(
+      (acc: any) => acc.integration.name === "gmail",
+    );
+    const calAcc = connectedAccounts.find(
+      (acc: any) => acc.integration.name === "googlecalendar",
+    );
 
     const tenant = await getTenant().catch(() => null);
 
     if (tenant) {
-      const promises: Promise<any>[] = [];
+      const promises: Promise<unknown>[] = [];
 
       // Fetch Gmail messages if connected
       if (gmailAcc) {
         promises.push(
-          tenant.gmail.db.messages.search({ limit: 150 } as any)
+          tenant.gmail.db.messages
+            .search({ limit: 150 } as any)
             .then((res: any[]) => {
               // Deduplicate by entity_id
               const seen = new Map<string, any>();
@@ -47,7 +52,10 @@ export async function GET(request: NextRequest) {
                 const key = msg.entity_id ?? msg.id;
                 if (!key) continue;
                 const existing = seen.get(key);
-                if (!existing || new Date(msg.updatedAt) > new Date(existing.updatedAt)) {
+                if (
+                  !existing ||
+                  new Date(msg.updatedAt) > new Date(existing.updatedAt)
+                ) {
                   seen.set(key, msg);
                 }
               }
@@ -68,21 +76,27 @@ export async function GET(request: NextRequest) {
                 return date >= startOfToday;
               }).length;
             })
-            .catch((e) => console.error("Dashboard stats Gmail fetch error:", e))
+            .catch((e) =>
+              console.error("Dashboard stats Gmail fetch error:", e),
+            ),
         );
       }
 
       // Fetch Calendar events if connected
       if (calAcc) {
         promises.push(
-          tenant.googlecalendar.db.events.search({ data: {}, limit: 150 })
+          tenant.googlecalendar.db.events
+            .search({ data: {}, limit: 150 })
             .then((res: any[]) => {
               const seen = new Map<string, any>();
               for (const ev of res) {
                 const key = ev.entity_id ?? ev.id;
                 if (!key) continue;
                 const existing = seen.get(key);
-                if (!existing || new Date(ev.updatedAt) > new Date(existing.updatedAt)) {
+                if (
+                  !existing ||
+                  new Date(ev.updatedAt) > new Date(existing.updatedAt)
+                ) {
                   seen.set(key, ev);
                 }
               }
@@ -106,7 +120,10 @@ export async function GET(request: NextRequest) {
                 const startTimeStr = ev.start?.dateTime ?? ev.start?.date;
                 if (!startTimeStr) return false;
                 const startTime = new Date(startTimeStr).getTime();
-                return startTime >= startOfToday.getTime() && startTime <= endOfToday.getTime();
+                return (
+                  startTime >= startOfToday.getTime() &&
+                  startTime <= endOfToday.getTime()
+                );
               }).length;
 
               // Find next upcoming future event
@@ -118,8 +135,12 @@ export async function GET(request: NextRequest) {
                   return new Date(startTimeStr).getTime() > now;
                 })
                 .sort((a, b) => {
-                  const aTime = new Date(a.start?.dateTime ?? a.start?.date ?? "").getTime();
-                  const bTime = new Date(b.start?.dateTime ?? b.start?.date ?? "").getTime();
+                  const aTime = new Date(
+                    a.start?.dateTime ?? a.start?.date ?? "",
+                  ).getTime();
+                  const bTime = new Date(
+                    b.start?.dateTime ?? b.start?.date ?? "",
+                  ).getTime();
                   return aTime - bTime;
                 });
 
@@ -127,7 +148,9 @@ export async function GET(request: NextRequest) {
                 nextEvent = futureEvents[0] as any;
               }
             })
-            .catch((e) => console.error("Dashboard stats Calendar fetch error:", e))
+            .catch((e) =>
+              console.error("Dashboard stats Calendar fetch error:", e),
+            ),
         );
       }
 
@@ -142,8 +165,11 @@ export async function GET(request: NextRequest) {
       gmailConnected: !!gmailAcc,
       calendarConnected: !!calAcc,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/dashboard/stats GET]", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

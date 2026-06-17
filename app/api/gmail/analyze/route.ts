@@ -50,23 +50,27 @@ export async function POST(request: NextRequest) {
     `;
 
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
     const responseText = result.response.text();
     const parsed = JSON.parse(responseText);
 
     return NextResponse.json(parsed);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[/api/gmail/analyze]", err);
     return NextResponse.json(
       {
         summary: "Could not generate AI summary.",
         keyPeople: [],
-        suggestedReplies: ["Acknowledge email", "Schedule follow-up", "Politely decline"],
-        nextActions: ["Mark as read"]
+        suggestedReplies: [
+          "Acknowledge email",
+          "Schedule follow-up",
+          "Politely decline",
+        ],
+        nextActions: ["Mark as read"],
       },
-      { status: 200 } // Return fallback gracefully
+      { status: 200 }, // Return fallback gracefully
     );
   }
 }

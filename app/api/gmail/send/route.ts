@@ -6,7 +6,11 @@ export async function POST(request: NextRequest) {
   try {
     const tenant = await getTenant();
     const body = await request.json();
-    const { to, subject, body: emailBody } = body as {
+    const {
+      to,
+      subject,
+      body: emailBody,
+    } = body as {
       to: string;
       subject: string;
       body: string;
@@ -15,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (!to || !subject || !emailBody) {
       return NextResponse.json(
         { error: "Missing required fields: to, subject, body" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,14 +31,14 @@ export async function POST(request: NextRequest) {
       success: true,
       messageId: result?.id ?? null,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/gmail/send]", err);
     return NextResponse.json(
       { error: err.message ?? "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

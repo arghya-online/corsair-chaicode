@@ -74,7 +74,7 @@ export function ComposeModal({
       setSubject("");
       setBody("");
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error(err.message ?? "Failed to send. Please try again.");
     } finally {
@@ -147,7 +147,9 @@ export function ComposeModal({
               Cancel
             </Button>
             <Button type="submit" disabled={sending} className="rounded-pill">
-              {sending ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
+              {sending ? (
+                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
               {sending ? "Sending..." : "Send email"}
             </Button>
           </div>

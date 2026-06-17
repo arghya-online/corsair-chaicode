@@ -4,7 +4,7 @@ import { extractPlainBody, getHeader } from "@/src/server/lib/email";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -56,14 +56,14 @@ export async function GET(
       labelIds: full?.labelIds ?? [],
       threadId: full?.threadId ?? null,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err.message === "Not authenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[/api/gmail/message/[id]]", err);
     return NextResponse.json(
       { error: err.message ?? "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
