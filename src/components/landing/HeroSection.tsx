@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 interface HeroSectionProps {
   user: {
@@ -15,6 +15,8 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ user }: HeroSectionProps) {
+  const { isSignedIn } = useAuth();
+
   return (
     <section className="relative h-screen min-h-[800px] w-full flex items-center justify-center px-6 overflow-hidden select-none bg-[#111827]">
       {/* Immersive Background Image (hero_bharat.png) */}
@@ -52,28 +54,30 @@ export function HeroSection({ user }: HeroSectionProps) {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto px-6">
-            <SignedOut>
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
-              >
-                Start Free
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-full bg-white/10 border border-white/20 hover:bg-white/20 text-[#FCFAF7] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] font-sans backdrop-blur-sm"
-              >
-                Sign In
-              </Link>
-            </SignedOut>
-            <SignedIn>
+            {!isSignedIn && (
+              <>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
+                >
+                  Start Free
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-full bg-white/10 border border-white/20 hover:bg-white/20 text-[#FCFAF7] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] font-sans backdrop-blur-sm"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
+            {isSignedIn && (
               <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
               >
                 Open Dashboard
               </Link>
-            </SignedIn>
+            )}
           </div>
 
           {/* Trust Row */}

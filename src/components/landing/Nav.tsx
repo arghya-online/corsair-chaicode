@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { LogoMark } from "@/src/components/shared/LogoMark";
 import { Menu, X } from "lucide-react";
-import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { UserButton, useAuth } from "@clerk/nextjs";
 
 interface NavProps {
   user?: any;
@@ -12,6 +12,7 @@ interface NavProps {
 
 export function Nav({ user }: NavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isSignedIn } = useAuth();
 
   return (
     <header className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 select-none">
@@ -52,46 +53,50 @@ export function Nav({ user }: NavProps) {
  
         {/* Right: Actions (Clerk Auth Controls integrated) */}
         <div className="hidden md:flex items-center gap-6">
-          <SignedOut>
-            <Link
-              href="/login"
-              className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-full bg-[#111827] hover:bg-[#111827]/90 text-white px-5 py-2.5 text-[15px] font-medium tracking-wide transition-all active:scale-[0.98] inline-block shadow-sm"
-            >
-              Sign Up
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              href="/dashboard"
-              className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
-            >
-              Go to Dashboard
-            </Link>
-            <div className="flex items-center justify-center border-l border-[rgba(17,24,39,0.12)] pl-4">
-              <UserButton />
-            </div>
-          </SignedIn>
+          {!isSignedIn && (
+            <>
+              <Link
+                href="/login"
+                className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-full bg-[#111827] hover:bg-[#111827]/90 text-white px-5 py-2.5 text-[15px] font-medium tracking-wide transition-all active:scale-[0.98] inline-block shadow-sm"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+          {isSignedIn && (
+            <>
+              <Link
+                href="/dashboard"
+                className="text-[15px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium tracking-wide"
+              >
+                Go to Dashboard
+              </Link>
+              <div className="flex items-center justify-center border-l border-[rgba(17,24,39,0.12)] pl-4">
+                <UserButton />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Mobile menu trigger */}
         <div className="md:hidden flex items-center gap-4">
-          <SignedOut>
+          {!isSignedIn && (
             <Link
               href="/login"
               className="text-[13px] font-sans font-medium bg-[#111827] text-white px-4 py-1.5 rounded-full"
             >
               Sign In
             </Link>
-          </SignedOut>
-          <SignedIn>
+          )}
+          {isSignedIn && (
             <UserButton />
-          </SignedIn>
+          )}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-[#111827] hover:text-[#C1783F] transition-colors focus:outline-none"
@@ -135,23 +140,25 @@ export function Nav({ user }: NavProps) {
           </Link>
           <hr className="border-[rgba(17,24,39,0.08)] my-2" />
           <div className="flex flex-col gap-3">
-            <SignedOut>
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-center py-2 text-[16px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-center rounded-full bg-[#111827] text-white py-3 text-[16px] font-medium transition-all active:scale-[0.98]"
-              >
-                Sign Up
-              </Link>
-            </SignedOut>
-            <SignedIn>
+            {!isSignedIn && (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-center py-2 text-[16px] font-sans text-[#5F6B7A] hover:text-[#111827] transition-colors font-medium"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-center rounded-full bg-[#111827] text-white py-3 text-[16px] font-medium transition-all active:scale-[0.98]"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+            {isSignedIn && (
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
@@ -159,7 +166,7 @@ export function Nav({ user }: NavProps) {
               >
                 Go to Dashboard
               </Link>
-            </SignedIn>
+            )}
           </div>
         </div>
       )}
