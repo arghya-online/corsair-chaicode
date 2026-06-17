@@ -49,7 +49,7 @@ export function ContactClient({ user }: ContactClientProps) {
 
       {/* Hero Content */}
       <section className="pt-32 pb-24 px-6 max-w-6xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        
+
         {/* Left pane: Details (Span 5) */}
         <div className="lg:col-span-5 space-y-6 text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[rgba(198,123,61,0.1)] shadow-xs">
@@ -71,7 +71,7 @@ export function ContactClient({ user }: ContactClientProps) {
               </div>
               <div>
                 <p className="font-semibold text-[#111827]">General inquiries</p>
-                <a href="mailto:hello@zentra.ai" className="text-[#64748B] hover:text-[#C67B3D] transition-colors">hello@zentra.ai</a>
+                <a href="mailto:arghyamajumdar.contact555@gmail.com" className="text-[#64748B] hover:text-[#C67B3D] transition-colors">arghyamajumdar.contact555@gmail.com</a>
               </div>
             </div>
 
@@ -81,7 +81,7 @@ export function ContactClient({ user }: ContactClientProps) {
               </div>
               <div>
                 <p className="font-semibold text-[#111827]">Technical Support</p>
-                <a href="mailto:support@zentra.ai" className="text-[#64748B] hover:text-[#C67B3D] transition-colors">support@zentra.ai</a>
+                <a href="mailto:arghyamajumdar.contact555@gmail.com" className="text-[#64748B] hover:text-[#C67B3D] transition-colors">arghyamajumdar.contact555@gmail.com</a>
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ export function ContactClient({ user }: ContactClientProps) {
           className="lg:col-span-7 p-8 sm:p-10 rounded-[28px] border border-[rgba(198,123,61,0.15)] shadow-[0_20px_50px_rgba(0,0,0,0.04)] text-left w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* Name input */}
             <div className="space-y-2">
               <label className="text-[12px] font-bold text-[#111827] uppercase tracking-wider block">Your Name</label>

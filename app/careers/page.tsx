@@ -71,7 +71,7 @@ export default async function CareersPage() {
                   <h3 className="text-[20px] font-serif font-bold text-[#111827]">{r.title}</h3>
                   <span className="text-[12px] font-bold text-[#C67B3D] uppercase tracking-wider">{r.dept}</span>
                 </div>
-                
+
                 <div className="flex flex-wrap items-center gap-4 text-[12.5px] text-[#64748B] font-medium">
                   <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{r.location}</span>
                   <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{r.type}</span>
@@ -82,7 +82,7 @@ export default async function CareersPage() {
 
               <div className="pt-2">
                 <a
-                  href="mailto:careers@zentra.ai"
+                  href="mailto:arghyamajumdar.contact555@gmail.com"
                   className="inline-flex items-center justify-center bg-[#111827] text-white text-[12.5px] font-bold px-5 py-2.5 rounded-xl hover:bg-[#C67B3D] transition-colors"
                 >
                   Apply to Role

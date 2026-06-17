@@ -57,7 +57,7 @@ export function Footer() {
 
   return (
     <footer className="relative w-full overflow-hidden select-none bg-[#F7F3EC] border-t border-[rgba(17,24,39,0.06)] text-[#111827] font-sans">
-      
+
       {/* ── 1. Subtle Warm Radial Gradient Atmosphere ── */}
       <div className="absolute inset-0 pointer-events-none z-0">
         {/* Soft amber lights */}
@@ -78,10 +78,10 @@ export function Footer() {
       </div>
 
       <div className="relative mx-auto max-w-[1400px] px-6 sm:px-8 md:px-12 z-10">
-        
+
         {/* ── 3. TOP CTA AREA (Centered, Spaced Luxuriously) ── */}
         <div className="pt-[120px] pb-16 flex flex-col items-center text-center">
-          
+
           {/* Centered Small Label */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -144,7 +144,7 @@ export function Footer() {
 
         {/* ── 4. FOUR-COLUMN SITE GRID (12 Columns) ── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-y-12 md:gap-x-8 pb-16">
-          
+
           {/* Column 1: Brand (Span 4) */}
           <div className="md:col-span-4 space-y-6 text-left">
             <Link href="/" className="font-serif text-[24px] text-[#111827] font-semibold tracking-[-0.02em] hover:opacity-80 transition-opacity">
@@ -170,14 +170,14 @@ export function Footer() {
             <div className="space-y-1 pt-2 text-[13.5px] text-[#64748B]">
               <div className="flex items-center gap-1.5">
                 <span className="font-medium text-[#111827]">Email:</span>
-                <a href="mailto:hello@zentra.ai" className="hover:text-[#C67B3D] hover:underline underline-offset-4 transition-colors">
-                  hello@zentra.ai
+                <a href="mailto:arghyamajumdar.contact555@gmail.com" className="hover:text-[#C67B3D] hover:underline underline-offset-4 transition-colors">
+                  arghyamajumdar.contact555@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="font-medium text-[#111827]">Support:</span>
-                <a href="mailto:support@zentra.ai" className="hover:text-[#C67B3D] hover:underline underline-offset-4 transition-colors">
-                  support@zentra.ai
+                <a href="mailto:arghyamajumdar.contact555@gmail.com" className="hover:text-[#C67B3D] hover:underline underline-offset-4 transition-colors">
+                  arghyamajumdar.contact555@gmail.com
                 </a>
               </div>
             </div>
@@ -265,7 +265,7 @@ export function Footer() {
           <div className="text-[13px] text-[#64748B]">
             Follow our journey towards a calmer workspace.
           </div>
-          
+
           <div className="flex gap-4">
             {socials.map((social) => {
               return (
@@ -308,7 +308,7 @@ export function Footer() {
 
         {/* ── 6. BOTTOM BAR (Luxurious whitespace & alignment) ── */}
         <div className="pt-8 pb-[80px] flex flex-col sm:flex-row justify-between items-center gap-6 text-[13.5px] text-[#64748B]">
-          
+
           {/* Left copyright */}
           <div>
             &copy; {currentYear} Zentra. All rights reserved.
@@ -322,7 +322,7 @@ export function Footer() {
           {/* Right version & operational status */}
           <div className="flex items-center gap-5">
             <span>v1.0.0</span>
-            
+
             {/* Pulsing Status Dot */}
             <div className="flex items-center gap-1.5 bg-[#5A6D56]/8 border border-[#5A6D56]/20 px-2.5 py-1 rounded-full text-[11px] font-semibold text-[#5A6D56]">
               <span className="relative flex h-1.5 w-1.5">

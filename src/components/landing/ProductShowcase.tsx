@@ -101,7 +101,7 @@ export function ProductShowcase() {
                       </div>
                       <div className="text-left">
                         <p className="text-[12px] font-semibold text-[#111827]">Arghya Halder</p>
-                        <p className="text-[10px] text-[#5F6B7A]">arghya@zentra.ai</p>
+                        <p className="text-[10px] text-[#5F6B7A]">arghyamajumdar.contact555@gmail.com</p>
                       </div>
                     </div>
                   </div>
@@ -130,8 +130,8 @@ export function ProductShowcase() {
                             <div
                               key={i}
                               className={`p-3.5 rounded-xl border transition-all cursor-pointer text-left ${msg.unread
-                                  ? "bg-white border-[#C1783F]/20 shadow-sm"
-                                  : "bg-white/40 border-[rgba(17,24,39,0.04)] hover:bg-white"
+                                ? "bg-white border-[#C1783F]/20 shadow-sm"
+                                : "bg-white/40 border-[rgba(17,24,39,0.04)] hover:bg-white"
                                 }`}
                             >
                               <div className="flex justify-between items-start">

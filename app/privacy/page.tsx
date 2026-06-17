@@ -74,7 +74,7 @@ export default async function PrivacyPage() {
         <div className="mt-16 space-y-6 text-left max-w-3xl text-[14px] text-[#64748B] leading-relaxed">
           <h3 className="font-serif text-[22px] font-normal text-[#111827]">Compliance & Safety Questions</h3>
           <p>
-            If you have questions regarding database caching structures, vector processing pipelines, or user credential deletions, you can send an inquiry directly to our compliance officers at <a href="mailto:support@zentra.ai" className="text-[#C67B3D] hover:underline">support@zentra.ai</a>.
+            If you have questions regarding database caching structures, vector processing pipelines, or user credential deletions, you can send an inquiry directly to our compliance officers at <a href="mailto:arghyamajumdar.contact555@gmail.com" className="text-[#C67B3D] hover:underline">arghyamajumdar.contact555@gmail.com</a>.
           </p>
         </div>
 
