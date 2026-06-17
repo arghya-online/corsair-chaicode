@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, Zap, Sparkles, HelpCircle } from "lucide-react";
+import { Check, Zap, Sparkles, HelpCircle, Loader2 } from "lucide-react";
 import { Nav } from "@/src/components/landing/Nav";
 import { Footer } from "@/src/components/landing/Footer";
+import { toast } from "sonner";
+import { createRazorpayOrderAction, verifyRazorpayPaymentAction } from "@/src/actions/billing";
 
 interface PricingClientProps {
   user: any;
@@ -13,32 +15,124 @@ interface PricingClientProps {
 
 export function PricingClient({ user }: PricingClientProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleCheckout = async (planId: "free" | "alpha" | "gama") => {
+    if (planId === "free") {
+      window.location.href = user ? "/dashboard" : "/register";
+      return;
+    }
+
+    if (!user) {
+      window.location.href = "/register";
+      return;
+    }
+
+    setPaymentLoading(planId);
+    try {
+      const orderRes = await createRazorpayOrderAction(planId);
+      if (!orderRes.success || !orderRes.orderId) {
+        toast.error(orderRes.error || "Failed to create payment order.");
+        setPaymentLoading(null);
+        return;
+      }
+
+
+
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded) {
+        toast.error("Failed to load Razorpay SDK. Please check your internet connection.");
+        setPaymentLoading(null);
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_API_KEY,
+        amount: orderRes.amount,
+        currency: orderRes.currency,
+        name: "Zentra AI",
+        description: `${planId.toUpperCase()} Plan Subscription`,
+        order_id: orderRes.orderId,
+        handler: async function (response: any) {
+          setPaymentLoading(planId);
+          try {
+            const verifyRes = await verifyRazorpayPaymentAction(
+              response.razorpay_order_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature,
+              planId
+            );
+            if (verifyRes.success) {
+              toast.success(`Welcome to Zentra ${planId.toUpperCase()}!`);
+              window.location.href = "/dashboard/settings";
+            } else {
+              toast.error(verifyRes.error || "Failed to verify payment.");
+            }
+          } catch (err) {
+            toast.error("An error occurred during verification.");
+          } finally {
+            setPaymentLoading(null);
+          }
+        },
+        prefill: {
+          email: user.email || "",
+          name: user.name || "",
+        },
+        theme: {
+          color: "#C67B3D",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        toast.error("Payment failed: " + response.error.description);
+      });
+      rzp.open();
+    } catch (err: any) {
+      toast.error("An error occurred during checkout initialization.");
+    } finally {
+      setPaymentLoading(null);
+    }
+  };
 
   const plans = [
     {
-      name: "Free",
+      name: "Base",
       priceMonthly: 0,
       priceYearly: 0,
-      badge: "Outcome Basis",
+      badge: "Free Tier",
       desc: "For builders organizing personal projects.",
       cta: "Start Free",
-      ctaHref: "/register",
       popular: false,
       features: [
         "Up to 3 integrations linked",
         "50 AI pilot actions / month",
         "Standard database tasks list",
         "Community forum support"
-      ]
+      ],
+      id: "free" as const
     },
     {
-      name: "Pro",
-      priceMonthly: 24,
-      priceYearly: 19,
+      name: "Alpha",
+      priceMonthly: 399,
+      priceYearly: 319,
       badge: "Most Popular",
-      desc: "For professionals who move fast.",
-      cta: "Get Started Now",
-      ctaHref: "/register",
+      desc: "For power users seeking unlimited capabilities and automation.",
+      cta: "Upgrade to Alpha",
       popular: true,
       features: [
         "Unlimited active integrations",
@@ -47,25 +141,26 @@ export function PricingClient({ user }: PricingClientProps) {
         "Automated inbox briefing summaries",
         "Custom workspace prompt control",
         "Priority email co-pilot support"
-      ]
+      ],
+      id: "alpha" as const
     },
     {
-      name: "Team",
-      priceMonthly: 79,
-      priceYearly: 64,
-      badge: "Collaborative Context",
-      desc: "For small teams operating synchronously.",
-      cta: "Contact Sales",
-      ctaHref: "/register",
+      name: "Gama",
+      priceMonthly: 999,
+      priceYearly: 799,
+      badge: "Enterprise Context",
+      desc: "For teams and professionals requiring dedicated resources.",
+      cta: "Upgrade to Gama",
       popular: false,
       features: [
-        "Everything included in Pro",
+        "Everything included in Alpha",
         "Shared organizational AI context",
         "Custom API access integrations",
         "Audit logs & compliance trials",
         "Dedicated account manager",
         "99.9% guaranteed uptime SLA"
-      ]
+      ],
+      id: "gama" as const
     }
   ];
 
@@ -205,8 +300,8 @@ export function PricingClient({ user }: PricingClientProps) {
                     </span>
 
                     {/* Price with slide animation */}
-                    <div className="mt-3 flex items-baseline gap-1 font-serif text-[48px] font-normal leading-none text-[#111827]">
-                      <span>$</span>
+                    <div className="mt-3 flex items-baseline gap-1 font-serif text-[42px] font-normal leading-none text-[#111827]">
+                      <span>₹</span>
                       <motion.span
                         key={price}
                         initial={{ opacity: 0, y: -10 }}
@@ -215,9 +310,11 @@ export function PricingClient({ user }: PricingClientProps) {
                       >
                         {price}
                       </motion.span>
-                      <span className="text-[12px] font-sans font-medium text-[#64748B] tracking-normal ml-0.5">
-                        /mo
-                      </span>
+                      {plan.priceMonthly > 0 && (
+                        <span className="text-[12px] font-sans font-medium text-[#64748B] tracking-normal ml-0.5">
+                          /mo
+                        </span>
+                      )}
                     </div>
 
                     <p className="mt-3 text-[12px] text-[#64748B] leading-relaxed">
@@ -242,8 +339,9 @@ export function PricingClient({ user }: PricingClientProps) {
                 </div>
 
                 {/* Compact CTA Buttons */}
-                <Link
-                  href={plan.ctaHref}
+                <button
+                  onClick={() => handleCheckout(plan.id)}
+                  disabled={paymentLoading !== null}
                   style={{
                     backgroundColor: isPro ? "#C67B3D" : "rgba(255,255,255,0.9)",
                     borderColor: isPro ? "transparent" : "rgba(198,123,61,0.2)"
@@ -251,10 +349,14 @@ export function PricingClient({ user }: PricingClientProps) {
                   className={`mt-10 block w-full rounded-xl border py-3.5 text-[13px] font-bold text-center transition-all cursor-pointer ${isPro
                       ? "hover:bg-[#b0672e] text-white shadow-[0_4px_14px_rgba(198,123,61,0.25)] active:scale-[0.98]"
                       : "hover:bg-white text-[#111827] active:scale-[0.98] shadow-xs"
-                    }`}
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {plan.cta}
-                </Link>
+                  {paymentLoading === plan.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin mx-auto text-current" />
+                  ) : (
+                    plan.cta
+                  )}
+                </button>
               </motion.div>
             );
           })}

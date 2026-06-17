@@ -163,7 +163,7 @@ async function generateContentWithRetry(
   }
 }
 
-export async function runChat(messages: any[], tenant: Tenant) {
+export async function runChat(messages: any[], tenant: Tenant, userPlan: string = "free") {
   const convo = [...messages];
 
   // Configure the generative model natively
@@ -171,7 +171,11 @@ export async function runChat(messages: any[], tenant: Tenant) {
     model: CHAT_MODEL,
   });
 
-  const geminiTools = mapOpenAiToolsToGemini(allToolDefinitions);
+  const allowedToolDefs = userPlan === "free"
+    ? gmailToolDefs
+    : [...gmailToolDefs, ...calendarToolDefinitions];
+
+  const geminiTools = mapOpenAiToolsToGemini(allowedToolDefs);
 
   for (let i = 0; i < 8; i++) {
     // Map current history to Gemini contents format
@@ -216,13 +220,18 @@ export async function runChat(messages: any[], tenant: Tenant) {
     for (const call of toolCalls) {
       const fn = allToolImplementations[call.function?.name];
       let result;
-      try {
-        const args = JSON.parse(call.function?.arguments || "{}");
-        result = fn
-          ? await fn(tenant, args)
-          : { error: `Unknown tool: ${call.function?.name}` };
-      } catch (err: unknown) {
-        result = { error: (err as Error).message };
+      const isCalendarTool = calendarToolDefinitions.some(d => d.function.name === call.function?.name);
+      if (userPlan === "free" && isCalendarTool) {
+        result = { error: "Google Calendar access is blocked on the Base Plan. Please upgrade to Alpha or Gama plan to use Google Calendar sync features." };
+      } else {
+        try {
+          const args = JSON.parse(call.function?.arguments || "{}");
+          result = fn
+            ? await fn(tenant, args)
+            : { error: `Unknown tool: ${call.function?.name}` };
+        } catch (err: unknown) {
+          result = { error: (err as Error).message };
+        }
       }
       convo.push({
         role: "tool",

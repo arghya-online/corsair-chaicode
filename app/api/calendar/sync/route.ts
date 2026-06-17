@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (user.plan === "free") {
+      return NextResponse.json(
+        { error: "Google Calendar sync is restricted on the Base plan. Please upgrade to Alpha or Gama plan." },
+        { status: 403 }
+      );
+    }
+
     const tenant = await getTenant();
 
     // Pull events using getMany — Corsair syncs them into the local DB

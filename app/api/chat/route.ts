@@ -89,6 +89,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1.5 Enforce Plan-Based Chat Limits
+    const plan = user.plan || "free";
+    const userMessageCount = messages.filter((m: any) => m.role === "user").length;
+
+    if (plan === "free" && userMessageCount > 4) {
+      return NextResponse.json(
+        { error: "Plan limit reached: The Base plan is limited to 4 chats (messages) in active memory. Upgrade to Alpha or Gama plan to send more chats." },
+        { status: 403 }
+      );
+    }
+
+    if (plan === "alpha" && userMessageCount > 20) {
+      return NextResponse.json(
+        { error: "Plan limit reached: The Alpha plan is limited to 20 chats (messages) in active memory. Upgrade to Gama plan for unlimited chats." },
+        { status: 403 }
+      );
+    }
+
     // 2. Limit Conversation History size (Guardrail to prevent huge payloads / token limit hits)
     const maxHistory = 12;
     const trimmedMessages = messages.slice(-maxHistory);
@@ -136,7 +154,7 @@ You have access to the following capabilities:
 6. Be concise, friendly, and proactive. If the user says "remind me X" without a time, ask what time/day they want it.`,
     };
 
-    const result = await runChat([systemMessage, ...trimmedMessages], tenant);
+    const result = await runChat([systemMessage, ...trimmedMessages], tenant, plan);
     return NextResponse.json(result);
   } catch (err: unknown) {
     const message = err instanceof Error ? (err as Error).message : undefined;

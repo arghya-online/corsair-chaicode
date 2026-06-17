@@ -28,6 +28,7 @@ interface DashboardShellProps {
   user: {
     name?: string | null;
     email: string;
+    plan?: string | null;
   };
   children: React.ReactNode;
 }
@@ -244,6 +245,28 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
             <div className="flex justify-center py-1">
               <span className={`w-2 h-2 rounded-full ${gmailConnected && calendarConnected ? "bg-[#6D8A68] animate-pulse" : "bg-[#64748B]"}`} title="Sync Status" />
             </div>
+          )}
+
+          {/* Plan badge / upgrade trigger */}
+          {!isCollapsed ? (
+            <button
+              onClick={() => setUpgradeOpen(true)}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[12.5px] font-medium font-sans text-[#64748B] hover:text-[#111827] hover:bg-[#F7F2EA]/60 border border-transparent hover:border-[rgba(17,24,39,0.05)] transition-all duration-200"
+            >
+              <Crown className="w-4 h-4 text-[#C67B3D] flex-shrink-0" />
+              <span className="capitalize">Plan: {user.plan || "Base"}</span>
+              <span className="ml-auto text-[9px] bg-[#C67B3D]/10 text-[#C67B3D] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                {user.plan === "alpha" || user.plan === "gama" ? user.plan : "Free"}
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setUpgradeOpen(true)}
+              className="w-10 h-10 mx-auto flex items-center justify-center rounded-xl hover:bg-[#F7F2EA]/70 text-[#C67B3D] transition-colors"
+              title={`Active Plan: ${user.plan ? user.plan.toUpperCase() : "BASE"}`}
+            >
+              <Crown className="w-4 h-4" />
+            </button>
           )}
 
           {/* User Profile avatar bar */}

@@ -15,12 +15,15 @@ export async function GET(request: NextRequest) {
     let nextEvent = null;
     let eventsTodayCount = 0;
 
+    const plan = user.plan || "free";
+    const allowedIntegrations = plan === "free" ? ["gmail"] : ["gmail", "googlecalendar"];
+
     // Check integration & account config in a single consolidated query
     const connectedAccounts = await prisma.corsairAccount.findMany({
       where: {
         tenantId: user.id,
         integration: {
-          name: { in: ["gmail", "googlecalendar"] },
+          name: { in: allowedIntegrations },
         },
       },
       include: {

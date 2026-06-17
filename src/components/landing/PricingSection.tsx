@@ -9,21 +9,29 @@ import { UpgradeModal } from "@/src/components/shared/UpgradeModal";
 export function PricingSection() {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
-  const freeFeatures = [
-    "Gmail Integration",
-    "Calendar Integration",
-    "AI Search",
-    "Inbox Summaries",
-    "Smart Drafts"
+  const baseFeatures = [
+    "Up to 3 integrations linked",
+    "50 AI pilot actions / month",
+    "Standard database tasks list",
+    "Community forum support"
   ];
 
-  const proFeatures = [
-    "Everything in Free",
-    "Priority Inbox",
-    "Advanced Drafting",
-    "Unlimited Search",
-    "Continuous Sync",
-    "Early Access Features"
+  const alphaFeatures = [
+    "Unlimited active integrations",
+    "Unlimited AI actions & drafting",
+    "Priority processing (0.2s latency)",
+    "Automated inbox briefings",
+    "Custom workspace prompts",
+    "Priority email co-pilot support"
+  ];
+
+  const gamaFeatures = [
+    "Everything included in Alpha",
+    "Shared organizational AI context",
+    "Custom API access integrations",
+    "Audit logs & compliance trials",
+    "Dedicated account manager",
+    "99.9% guaranteed uptime SLA"
   ];
 
   return (
@@ -76,7 +84,7 @@ export function PricingSection() {
         ))}
       </div>
 
-      <div className="relative mx-auto max-w-4xl z-10">
+      <div className="relative mx-auto max-w-5xl z-10">
         
         {/* ── Pricing Header (From Spec) ── */}
         <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
@@ -86,18 +94,18 @@ export function PricingSection() {
           </div>
           
           <h2 className="text-[38px] md:text-[56px] font-serif font-normal text-[#111827] leading-tight tracking-tight">
-            One workspace. One price.
+            One workspace. Simple plans.
           </h2>
           
           <p className="text-[16px] text-[#64748B] font-sans leading-relaxed font-normal pt-1 max-w-lg mx-auto">
-            Everything you need to manage email, calendar, and AI assistance in one place.
+            Choose the right tier for your focus flow. Integrate Gmail and Google Calendar seamlessly.
           </p>
         </div>
 
         {/* ── Pricing Cards Grid ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-3xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto px-4">
           
-          {/* Plan 1: FREE */}
+          {/* Plan 1: BASE (Free) */}
           <motion.div
             whileHover={{
               y: -6,
@@ -114,7 +122,7 @@ export function PricingSection() {
             <div className="space-y-6">
               <div>
                 <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-widest block mb-1">
-                  FREE
+                  BASE
                 </span>
                 <div className="flex items-baseline mt-2 font-serif text-[42px] font-normal text-[#111827]">
                   ₹0
@@ -126,7 +134,7 @@ export function PricingSection() {
 
               <div className="border-t border-[rgba(198,123,61,0.12)] pt-6">
                 <ul className="space-y-3.5 text-[13.5px] leading-tight text-[#111827]">
-                  {freeFeatures.map((feat, index) => (
+                  {baseFeatures.map((feat, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[rgba(198,123,61,0.06)] text-[#64748B] flex items-center justify-center flex-shrink-0">
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -140,15 +148,15 @@ export function PricingSection() {
 
             <div className="pt-8">
               <Link
-                href="/register"
+                href="/pricing"
                 className="block w-full text-center rounded-xl bg-white hover:bg-cream-100 border border-[rgba(198,123,61,0.2)] text-[#111827] text-[13px] font-bold py-3.5 transition-all active:scale-[0.98] shadow-xs font-sans cursor-pointer"
               >
-                Get Started
+                Get Started Free
               </Link>
             </div>
           </motion.div>
 
-          {/* Plan 2: PRO (Visually Dominant) */}
+          {/* Plan 2: ALPHA (₹399) */}
           <motion.div
             whileHover={{
               y: -8,
@@ -162,10 +170,8 @@ export function PricingSection() {
             }}
             className="relative rounded-[28px] p-8 sm:p-10 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.05),0_5px_20px_rgba(198,123,61,0.08)] text-left transition-all duration-300 md:scale-[1.03] z-10"
           >
-            {/* Gold Glow inside Pro Card */}
             <div className="absolute inset-0 -m-[1px] rounded-[28px] border-2 border-transparent bg-gradient-to-br from-[#D9A15B] to-[#C67B3D] opacity-10 pointer-events-none" />
 
-            {/* Spec: badge "Most Popular" (not "Pro Access") */}
             <div className="absolute -top-3.5 right-8 bg-gradient-to-r from-[#C67B3D] to-[#D9A15B] text-white px-4 py-1.5 rounded-full text-[9.5px] font-bold uppercase tracking-widest border border-[#C67B3D]/10 shadow-[0_4px_12px_rgba(198,123,61,0.2)]">
               Most Popular
             </div>
@@ -173,22 +179,22 @@ export function PricingSection() {
             <div className="space-y-6">
               <div>
                 <span className="text-[11px] font-bold text-[#C67B3D] uppercase tracking-widest block mb-1">
-                  PRO
+                  ALPHA
                 </span>
                 <div className="flex items-baseline mt-2">
                   <h3 className="font-serif text-[42px] font-normal text-[#111827]">
-                    ₹799
+                    ₹399
                   </h3>
                   <span className="text-[13px] text-[#64748B] font-sans ml-1">/ month</span>
                 </div>
                 <p className="text-[13px] text-[#64748B] font-sans mt-2">
-                  For professionals who move fast.
+                  For power users seeking unlimited capabilities and automation.
                 </p>
               </div>
 
               <div className="border-t border-[rgba(198,123,61,0.12)] pt-6">
                 <ul className="space-y-3.5 text-[13.5px] leading-tight text-[#111827]">
-                  {proFeatures.map((feat, index) => (
+                  {alphaFeatures.map((feat, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#C67B3D]/10 text-[#C67B3D] flex items-center justify-center flex-shrink-0">
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -201,12 +207,66 @@ export function PricingSection() {
             </div>
 
             <div className="pt-8">
-              <button
-                onClick={() => setUpgradeOpen(true)}
+              <Link
+                href="/pricing"
                 className="block w-full text-center rounded-xl bg-[#C67B3D] hover:bg-[#b0672e] text-white text-[13px] font-bold py-3.5 transition-all cursor-pointer active:scale-[0.98] shadow-[0_4px_14px_rgba(198,123,61,0.25)]"
               >
-                Start Pro
-              </button>
+                Get Alpha
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Plan 3: GAMA (₹999) */}
+          <motion.div
+            whileHover={{
+              y: -6,
+              boxShadow: "0 30px 60px rgba(0,0,0,0.06), 0 10px 25px rgba(198,123,61,0.05)",
+            }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            style={{
+              background: "rgba(255, 255, 255, 0.75)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(198, 123, 61, 0.15)",
+            }}
+            className="rounded-[28px] p-8 sm:p-10 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.05),0_5px_20px_rgba(198,123,61,0.08)] text-left transition-all duration-300"
+          >
+            <div className="space-y-6">
+              <div>
+                <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-widest block mb-1">
+                  GAMA
+                </span>
+                <div className="flex items-baseline mt-2">
+                  <h3 className="font-serif text-[42px] font-normal text-[#111827]">
+                    ₹999
+                  </h3>
+                  <span className="text-[13px] text-[#64748B] font-sans ml-1">/ month</span>
+                </div>
+                <p className="text-[13px] text-[#64748B] font-sans mt-2">
+                  For teams and professionals requiring dedicated resources.
+                </p>
+              </div>
+
+              <div className="border-t border-[rgba(198,123,61,0.12)] pt-6">
+                <ul className="space-y-3.5 text-[13.5px] leading-tight text-[#111827]">
+                  {gamaFeatures.map((feat, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[rgba(198,123,61,0.06)] text-[#64748B] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </div>
+                      <span className="leading-snug">{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="pt-8">
+              <Link
+                href="/pricing"
+                className="block w-full text-center rounded-xl bg-white hover:bg-cream-100 border border-[rgba(198,123,61,0.2)] text-[#111827] text-[13px] font-bold py-3.5 transition-all active:scale-[0.98] shadow-xs font-sans cursor-pointer"
+              >
+                Get Gama
+              </Link>
             </div>
           </motion.div>
 

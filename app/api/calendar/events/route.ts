@@ -10,6 +10,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (user.plan === "free") {
+      return NextResponse.json(
+        { error: "Google Calendar access is restricted on the Base plan. Please upgrade to Alpha or Gama plan." },
+        { status: 403 }
+      );
+    }
+
     // Check if Corsair has an authorized account for this tenant and Google Calendar integration
     const hasCalAccount = await prisma.corsairAccount.findFirst({
       where: {

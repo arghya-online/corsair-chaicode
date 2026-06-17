@@ -15,6 +15,7 @@ interface SettingsPanelProps {
   user: {
     name?: string | null;
     email: string;
+    plan?: string | null;
   };
 }
 
@@ -300,17 +301,25 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
           </CardHeader>
           <CardContent className="flex justify-between items-center py-2 gap-4">
             <div className="flex-1">
-              <p className="font-sans text-[13px] text-espresso font-medium">Free plan</p>
+              <p className="font-sans text-[13px] text-espresso font-medium capitalize">
+                {user.plan === "alpha" || user.plan === "gama" ? `${user.plan} Plan` : "Base Plan (Free)"}
+              </p>
               <p className="font-sans text-[11px] text-espresso-300 leading-normal mt-0.5">
-                Upgrade to unlock unlimited AI and Calendar sync.
+                {user.plan === "gama"
+                  ? "You are on the highest tier. Shared AI context & custom webhooks are active."
+                  : user.plan === "alpha"
+                  ? "You are on the Alpha plan. Upgrade to Gama for collaborative features."
+                  : "Upgrade to Alpha or Gama plan to unlock unlimited integrations and priority co-pilot support."}
               </p>
             </div>
-            <Button
-              onClick={() => setUpgradeOpen(true)}
-              className="rounded-pill font-sans font-medium text-[12px] px-4 flex-shrink-0"
-            >
-              Upgrade to Pro
-            </Button>
+            {user.plan !== "gama" && (
+              <Button
+                onClick={() => setUpgradeOpen(true)}
+                className="rounded-pill font-sans font-medium text-[12px] px-4 flex-shrink-0"
+              >
+                {user.plan === "alpha" ? "Upgrade to Gama" : "Upgrade Plan"}
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

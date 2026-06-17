@@ -113,6 +113,7 @@ const getCachedUser = cache(async () => {
       id: true,
       email: true,
       name: true,
+      plan: true,
       createdAt: true
     }
   });
@@ -144,6 +145,7 @@ const getCachedUser = cache(async () => {
           id: true,
           email: true,
           name: true,
+          plan: true,
           createdAt: true
         }
       });
@@ -158,6 +160,7 @@ const getCachedUser = cache(async () => {
           id: true,
           email: true,
           name: true,
+          plan: true,
           createdAt: true
         }
       });
