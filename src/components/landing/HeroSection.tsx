@@ -42,7 +42,7 @@ export function HeroSection({ user }: HeroSectionProps) {
 
           {/* Massive Serif Headline */}
           <h1 className="text-[54px] sm:text-[76px] md:text-[96px] lg:text-[112px] xl:text-[120px] leading-[1.02] font-serif font-normal text-[#FCFAF7] tracking-tight max-w-5xl whitespace-pre-line">
-            Built for Focused Minds..
+            Built for {"\n"}Focused Minds.
           </h1>
 
           {/* Supporting Text */}
