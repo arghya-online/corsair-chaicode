@@ -12,14 +12,12 @@ import type { Content } from "@google/generative-ai";
 
 type Tenant = ReturnType<typeof corsair.withTenant>;
 
-// Merge all tool definitions and implementations
 const allToolDefinitions = [...gmailToolDefs, ...calendarToolDefinitions];
 const allToolImplementations = {
   ...gmailToolImpls,
   ...calendarToolImplementations,
 };
 
-// Helper to look up the function name corresponding to a tool_call_id from history
 function getToolNameForCallId(toolCallId: string, messages: any[]): string {
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i];
@@ -36,7 +34,6 @@ interface MappedHistory {
   systemInstruction?: string;
 }
 
-// Helper to map OpenAI structured conversation messages to Gemini's native API format
 function mapMessagesToGemini(messages: any[]): MappedHistory {
   const contents: Content[] = [];
   let systemInstruction: string | undefined = undefined;
@@ -97,7 +94,6 @@ function mapMessagesToGemini(messages: any[]): MappedHistory {
   return { contents, systemInstruction };
 }
 
-// Helper to map OpenAI JSON-schema tool definitions to Gemini API declarations
 function mapOpenAiToolsToGemini(openaiTools: any[]): any[] {
   const mapParameters = (param: any): any => {
     if (!param) return undefined;
@@ -128,7 +124,6 @@ function mapOpenAiToolsToGemini(openaiTools: any[]): any[] {
   ];
 }
 
-// Retry generateContent with exponential backoff on transient 429 rate limit errors
 async function generateContentWithRetry(
   model: any,
   params: any,
@@ -166,7 +161,6 @@ async function generateContentWithRetry(
 export async function runChat(messages: any[], tenant: Tenant, userPlan: string = "free") {
   const convo = [...messages];
 
-  // Configure the generative model natively
   const model = genAI.getGenerativeModel({
     model: CHAT_MODEL,
   });

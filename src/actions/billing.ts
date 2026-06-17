@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import crypto from "crypto";
 import Razorpay from "razorpay";
 
-// Helper to retrieve Razorpay API keys and raise error if unconfigured
 function getRazorpayConfig() {
   const keyId = process.env.NEXT_PUBLIC_RAZORPAY_API_KEY;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -26,9 +25,6 @@ function getRazorpayConfig() {
   };
 }
 
-/**
- * Server action to create a Razorpay order
- */
 export async function createRazorpayOrderAction(planName: "alpha" | "gama") {
   try {
     const { userId } = await auth();
@@ -38,12 +34,8 @@ export async function createRazorpayOrderAction(planName: "alpha" | "gama") {
 
     const { keyId, keySecret } = getRazorpayConfig();
 
-    // Determine price in paise (₹1 = 100 paise)
-    // Alpha = ₹399 -> 39900 paise
-    // Gama = ₹999 -> 99900 paise
     const amount = planName === "alpha" ? 39900 : 99900;
 
-    // Initialize Razorpay SDK
     const razorpay = new Razorpay({
       key_id: keyId,
       key_secret: keySecret,
@@ -75,9 +67,6 @@ export async function createRazorpayOrderAction(planName: "alpha" | "gama") {
   }
 }
 
-/**
- * Server action to verify a Razorpay payment signature
- */
 export async function verifyRazorpayPaymentAction(
   orderId: string,
   paymentId: string,
@@ -92,7 +81,6 @@ export async function verifyRazorpayPaymentAction(
 
     const { keySecret } = getRazorpayConfig();
 
-    // Verify signature natively using Node.js crypto
     const generatedSignature = crypto
       .createHmac("sha256", keySecret)
       .update(`${orderId}|${paymentId}`)
@@ -102,7 +90,6 @@ export async function verifyRazorpayPaymentAction(
       return { success: false, error: "Payment verification failed. Invalid signature." };
     }
 
-    // Update the user's plan in local DB
     await prisma.user.update({
       where: { id: userId },
       data: { plan: planName },
