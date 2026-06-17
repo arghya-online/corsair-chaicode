@@ -11,17 +11,17 @@ export default async function PrivacyPage() {
     {
       icon: EyeOff,
       title: "Complete Data Isolation",
-      desc: "Zentra cached values are written directly to isolated workspace databases. We never aggregate, read, package, or sell your inbox emails or calendar histories.",
+      desc: "Your data is stored in tenant-isolated sandboxes within our secure PostgreSQL database. We never read, package, aggregate, or sell your emails or calendar histories.",
     },
     {
       icon: Lock,
       title: "No Model Training",
-      desc: "Zentra NEVER transmits your private draft contents, inbox communications, or meeting notes to train external generative models. Your contexts stay strictly local.",
+      desc: "We never use your emails, drafts, or calendar events to train generative AI models. Queries are sent directly on-demand to the Gemini API for execution.",
     },
     {
       icon: Server,
       title: "OAuth Token Integrity",
-      desc: "We connect to Google API endpoints using secure standard OAuth verification. We cache temporary access keys on secured local directories under your strict permissions.",
+      desc: "We connect to Google Workspace using official secure OAuth. Your tokens are stored encrypted in the database using keys managed via environment variables.",
     },
   ];
 
@@ -74,7 +74,7 @@ export default async function PrivacyPage() {
         <div className="mt-16 space-y-6 text-left max-w-3xl text-[14px] text-[#64748B] leading-relaxed">
           <h3 className="font-serif text-[22px] font-normal text-[#111827]">Compliance & Safety Questions</h3>
           <p>
-            If you have questions regarding database caching structures, vector processing pipelines, or user credential deletions, you can send an inquiry directly to our compliance officers at <a href="mailto:arghyamajumdar.contact555@gmail.com" className="text-[#C67B3D] hover:underline">arghyamajumdar.contact555@gmail.com</a>.
+            If you have questions regarding database caching structures, encryption protocols, or user credential deletions, you can send an inquiry directly to the developer at <a href="mailto:arghyamajumdar.contact555@gmail.com" className="text-[#C67B3D] hover:underline">arghyamajumdar.contact555@gmail.com</a>.
           </p>
         </div>
 

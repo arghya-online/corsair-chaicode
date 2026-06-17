@@ -9,25 +9,25 @@ export default async function BlogPage() {
 
   const posts = [
     {
-      title: "Designing software to reduce cognitive load",
-      date: "June 14, 2026",
-      readTime: "5 min read",
-      author: "Aditi Rao",
-      desc: "Why modern software defaults to noise, and how Zentra uses Indian courtyard layout principles to build workspaces that feel calming and spacious.",
-    },
-    {
-      title: "Offline-first SQLite vector search indices",
-      date: "June 03, 2026",
-      readTime: "8 min read",
-      author: "Devendra Patil",
-      desc: "An in-depth look at our client-side database schemas. Learn how we cache inbox threads safely without transmitting raw texts to remote databases.",
-    },
-    {
-      title: "Reclaiming focus: The end of email inbox tabs",
-      date: "May 22, 2026",
+      title: "Designing workspaces for quiet focus",
+      date: "June 17, 2026",
       readTime: "4 min read",
-      author: "Vikram Malhotra",
-      desc: "Why nesting emails into categorized tabs fails, and how semantic NLP context grouping presents summaries you actually need.",
+      author: "Arghya Majumdar",
+      desc: "Why modern workspace interfaces default to clutter and noise, and how Zentra uses warm sandstone tones, light geometric grid details, and structured spacing to build interfaces that respect user attention.",
+    },
+    {
+      title: "Securing multi-tenant integrations with Corsair",
+      date: "June 13, 2026",
+      readTime: "6 min read",
+      author: "Arghya Majumdar",
+      desc: "An overview of how we isolate Gmail and Google Calendar integrations. By sandbox partitioning in our database and using strong key encryption (KEK), Zentra keeps credentials and synced tokens safe.",
+    },
+    {
+      title: "Building email co-pilots with Gemini function calling",
+      date: "May 28, 2026",
+      readTime: "5 min read",
+      author: "Arghya Majumdar",
+      desc: "A deep dive into Zentra's chat engine. Learn how we use Gemini AI tool calling to securely interact with the Gmail and Calendar APIs on-demand, allowing users to query, draft, and coordinate in natural language.",
     },
   ];
 
@@ -46,12 +46,12 @@ export default async function BlogPage() {
       {/* Hero Header */}
       <section className="pt-32 pb-20 px-6 max-w-4xl mx-auto w-full z-10 text-left">
         <div className="max-w-3xl space-y-4 mb-16">
-          <span className="text-[12px] font-bold tracking-[0.2em] text-[#C67B3D] uppercase">JOURNAL</span>
+          <span className="text-[12px] font-bold tracking-[0.2em] text-[#C67B3D] uppercase">DEVELOPER JOURNAL</span>
           <h1 className="text-[48px] sm:text-[60px] font-serif font-normal text-[#111827] leading-tight tracking-tight">
             Zentra Journal
           </h1>
           <p className="text-[16px] sm:text-[18px] text-[#64748B] max-w-2xl leading-relaxed">
-            Observations on software design, data isolation, and methods to create a calm, focused workday.
+            Logs and reflections on design aesthetics, data sandboxing, and building a conversational productivity workspace.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export default async function BlogPage() {
                   <h3 className="text-[18px] font-serif font-bold text-[#111827] leading-snug line-clamp-2">
                     {p.title}
                   </h3>
-                  <p className="text-[13px] text-[#64748B] leading-relaxed line-clamp-4">
+                  <p className="text-[13px] text-[#64748B] leading-relaxed line-clamp-4 font-sans">
                     {p.desc}
                   </p>
                 </div>
@@ -87,7 +87,7 @@ export default async function BlogPage() {
               {/* Author info */}
               <div className="pt-6 border-t border-[rgba(17,24,39,0.06)] mt-6 flex justify-between items-center text-[12px]">
                 <span className="font-bold text-[#111827]">{p.author}</span>
-                <span className="text-[#C67B3D] font-semibold hover:underline cursor-pointer">Read article &rarr;</span>
+                <span className="text-[#C67B3D] font-semibold">Project Log</span>
               </div>
             </div>
           ))}

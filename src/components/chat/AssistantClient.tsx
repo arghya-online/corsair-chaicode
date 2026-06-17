@@ -31,7 +31,7 @@ interface Message {
 const WELCOME_MESSAGE: Message = {
   role: "assistant",
   content:
-    "Hello! I'm Zentra, your AI assistant. I can manage your Gmail inbox and Google Calendar — schedule meetings, add reminders, read emails, draft replies, and more. What should we work on today?",
+    "Hello! I'm Zentra, your AI assistant. I can manage your Gmail inbox and Google Calendar - schedule meetings, add reminders, read emails, draft replies, and more. What should we work on today?",
 };
 
 const capabilities = [

@@ -299,14 +299,14 @@ export const calendarToolImplementations: Record<
         const endIso = end_datetime
           ? normalizeDateTime(String(end_datetime))
           : new Date(
-              new Date(startIso).getTime() + 60 * 60 * 1000,
-            ).toISOString();
+            new Date(startIso).getTime() + 60 * 60 * 1000,
+          ).toISOString();
 
         startPayload = { dateTime: startIso };
         endPayload = { dateTime: endIso };
       }
 
-      // Build the event object — Corsair expects { event: {...}, calendarId?: string }
+      // Build the event object - Corsair expects { event: {...}, calendarId?: string }
       const eventBody: any = {
         summary: String(summary).trim(),
         start: startPayload,

@@ -10,48 +10,51 @@ export function PricingSection() {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const baseFeatures = [
-    "Up to 3 integrations linked",
-    "50 AI pilot actions / month",
-    "Standard database tasks list",
-    "Community forum support"
+    "1 integration connected (Gmail)",
+    "Limit of 4 chat messages in memory",
+    "Email search & draft reply cards",
+    "Google Calendar features blocked"
   ];
 
   const alphaFeatures = [
-    "Unlimited active integrations",
-    "Unlimited AI actions & drafting",
-    "Priority processing (0.2s latency)",
-    "Automated inbox briefings",
-    "Custom workspace prompts",
-    "Priority email co-pilot support"
+    "2 integrations (Gmail + Calendar)",
+    "Limit of 20 chat messages in memory",
+    "Check schedules & free slots",
+    "Create and delete calendar events",
+    "Draft and send reply emails",
+    "Standard developer support"
   ];
 
   const gamaFeatures = [
     "Everything included in Alpha",
-    "Shared organizational AI context",
-    "Custom API access integrations",
-    "Audit logs & compliance trials",
-    "Dedicated account manager",
-    "99.9% guaranteed uptime SLA"
+    "Unlimited chat messages",
+    "Full access to all AI tools",
+    "Isolated sandbox partitions",
+    "PostgreSQL token encryption",
+    "Priority developer support"
   ];
 
   return (
-    <section id="pricing" className="relative py-36 px-4 sm:px-6 md:px-8 bg-[#F7F3EC] select-none border-t border-[rgba(17,24,39,0.06)] overflow-hidden">
+    <section id="pricing" className="relative py-36 px-4 sm:px-6 md:px-8 bg-[#F9F6F0] select-none border-t border-[rgba(30,20,12,0.06)] overflow-hidden">
       
-      {/* ── 1. Barely Visible Indian Geometric Jaali Pattern (3% Opacity) ── */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] select-none z-0">
+      {/* ── 1. Barely Visible Indian Geometric Jaali Pattern (3.5% Opacity) ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.035] select-none z-0">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="jaali-lattice" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 30,0 L 60,30 L 30,60 L 0,30 Z M 0,0 L 30,30 L 0,60 M 60,0 L 30,30 L 60,60" stroke="#C67B3D" strokeWidth="1" fill="none" />
+              <path d="M 30,0 L 60,30 L 30,60 L 0,30 Z M 0,0 L 30,30 L 0,60 M 60,0 L 30,30 L 60,60" stroke="#CB7E3E" strokeWidth="1" fill="none" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#jaali-lattice)" />
         </svg>
       </div>
 
+      {/* ── Subtle Warm Paper Noise overlay ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.018] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')] z-0" />
+
       {/* ── 2. Giant Blurred Amber Radial Light & Cream Glow (Behind Cards) ── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[550px] rounded-full bg-[#C67B3D]/8 blur-[120px] pointer-events-none z-0" />
-      <div className="absolute top-[30%] right-[10%] w-[450px] h-[450px] rounded-full bg-[#D9A15B]/5 blur-[100px] pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[550px] rounded-full bg-[#CB7E3E]/10 blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-[30%] right-[10%] w-[450px] h-[450px] rounded-full bg-[#CB7E3E]/7 blur-[100px] pointer-events-none z-0" />
 
       {/* ── 3. Subtle Floating Ambient Particles ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 hidden lg:block">

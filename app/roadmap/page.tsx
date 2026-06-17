@@ -11,22 +11,22 @@ export default async function RoadmapPage() {
       quarter: "Q3 2026",
       status: "In Progress",
       color: "#C67B3D",
-      title: "Active Briefing Composer Engines",
-      desc: "Develop deep NLP contextual summary cards for email lists, auto-index Google Calendar attachments, and surface conflict reschedulers natively in the command line.",
+      title: "Thread Context Optimization",
+      desc: "Improve Gemini model parsing behavior for complex, multi-recipient email threads, ensuring high summary accuracy and clean draft generation.",
     },
     {
       quarter: "Q4 2026",
       status: "Planning",
       color: "#6D8A68",
-      title: "Offline Sync SQLite Directories & SDK",
-      desc: "Implement fully local sqlite databases using Clerk tokens. Introduce the Zentra CLI developers SDK to compose custom action nodes and third-party application triggers.",
+      title: "Google Workspace Expansion",
+      desc: "Extend Corsair database schemas and tools to connect Google Drive and Google Docs, allowing users to query spreadsheets and doc context alongside emails.",
     },
     {
       quarter: "Q1 2027",
       status: "Proposed",
       color: "#5B7A8C",
-      title: "CalDav Integrations & Slack Channels",
-      desc: "Add standard CalDav endpoints for Apple/Microsoft accounts, and integrate Slack and Notion channels into the workspace search timeline.",
+      title: "Desktop Client Wrappers",
+      desc: "Build optimized native desktop wrappers for macOS and Windows, offering fast keyboard shortcuts and system-level hotkey palettes.",
     },
   ];
 

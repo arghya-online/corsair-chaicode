@@ -74,12 +74,30 @@ export function ScrollTrackedSection({ children }: ScrollTrackedSectionProps) {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden bg-gradient-to-b from-[#F7F3EC] via-[#FCFAF7] to-[#F7F3EC] w-full"
+      className="relative overflow-hidden bg-gradient-to-b from-[#F9F6F0] via-[#FCF9F3] to-[#F9F6F0] w-full"
     >
-      {/* ── Background Soft Aura Spots (Interactive Aesthetic Glows) ── */}
-      <div className="absolute top-[20%] left-[5%] w-[400px] h-[400px] rounded-full bg-[#C1783F]/8 blur-[120px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute top-[55%] right-[10%] w-[550px] h-[550px] rounded-full bg-[#5A6D56]/8 blur-[140px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-[15%] left-[12%] w-[450px] h-[450px] rounded-full bg-[#C1783F]/6 blur-[110px] pointer-events-none" />
+      {/* ── Rich Warm Gradient Mesh ── */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#CB7E3E]/10 blur-[130px] opacity-75" />
+        <div className="absolute top-[35%] right-[-10%] w-[850px] h-[850px] rounded-full bg-[#CB7E3E]/7 blur-[150px] opacity-85" />
+        <div className="absolute top-[60%] left-[5%] w-[750px] h-[750px] rounded-full bg-[#5A6D56]/9 blur-[140px] opacity-60" />
+        <div className="absolute bottom-[10%] right-[5%] w-[650px] h-[650px] rounded-full bg-[#CB7E3E]/9 blur-[120px] opacity-75" />
+      </div>
+
+      {/* ── Barely Visible Indian Geometric Jaali Lattice (3.5% Opacity) ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.035] select-none z-0">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="scroll-jaali" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 30,0 L 60,30 L 30,60 L 0,30 Z M 0,0 L 30,30 L 0,60 M 60,0 L 30,30 L 60,60" stroke="#CB7E3E" strokeWidth="1" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#scroll-jaali)" />
+        </svg>
+      </div>
+
+      {/* ── Subtle Warm Paper Noise overlay ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.018] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')] z-0" />
 
       {/* ── SVG Tracking Path ── */}
       <div className="absolute inset-x-0 top-0 bottom-0 pointer-events-none z-10 hidden lg:block select-none">

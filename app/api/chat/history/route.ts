@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/src/actions/auth";
 import prisma from "@/src/lib/prisma";
 
-// GET /api/chat/history — Load the user's most recent conversation
+// GET /api/chat/history - Load the user's most recent conversation
 export async function GET(_req: NextRequest) {
   try {
     const user = await getCurrentUser();
@@ -33,7 +33,7 @@ export async function GET(_req: NextRequest) {
   }
 }
 
-// POST /api/chat/history — Save or update the user's conversation
+// POST /api/chat/history - Save or update the user's conversation
 export async function POST(req: NextRequest) {
   try {
     const user = await getCurrentUser();
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/chat/history — Clear the conversation history
+// DELETE /api/chat/history - Clear the conversation history
 export async function DELETE(_req: NextRequest) {
   try {
     const user = await getCurrentUser();

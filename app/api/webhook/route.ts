@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { processWebhook } from "corsair";
 import { corsair } from "@/src/server/corsair";
 
-// POST /api/webhook — Handles incoming Corsair webhook events
+// POST /api/webhook - Handles incoming Corsair webhook events
 // Register this URL in your Google Calendar push notification subscription
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const result = await processWebhook(corsair, headers, body);
 
-    // processWebhook returns a WebhookResponse — extract its status and body
+    // processWebhook returns a WebhookResponse - extract its status and body
     // and wrap in a standard NextResponse to satisfy Next.js route type constraints
     const webhookRes = result.response as any;
     if (webhookRes && typeof webhookRes.status === "number") {

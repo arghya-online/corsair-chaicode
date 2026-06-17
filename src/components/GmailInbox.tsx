@@ -116,11 +116,10 @@ function Toast({
   return (
     <div
       role="alert"
-      className={`fixed bottom-6 right-6 z-[9999] p-4 rounded-2xl border flex items-center gap-3 shadow-[0_8px_30px_rgba(13,13,13,0.06)] animate-fade-in text-xs font-semibold ${
-        type === "success"
+      className={`fixed bottom-6 right-6 z-[9999] p-4 rounded-2xl border flex items-center gap-3 shadow-[0_8px_30px_rgba(13,13,13,0.06)] animate-fade-in text-xs font-semibold ${type === "success"
           ? "border-emerald-100 bg-emerald-50 text-emerald-800"
           : "border-red-100 bg-red-50 text-red-800"
-      }`}
+        }`}
     >
       {type === "success" ? (
         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -373,7 +372,7 @@ function DetailDrawer({ emailId, onClose, onReply }: DetailDrawerProps) {
                 <div className="space-y-1 text-xs text-[#6B7280]">
                   <div>
                     <span className="font-semibold text-[#0D0D0D]">From:</span>{" "}
-                    {detail.from || "—"}
+                    {detail.from || "-"}
                   </div>
                   {detail.to && (
                     <div>
@@ -685,11 +684,10 @@ export default function GmailInbox({ onSelectEmail }: GmailInboxProps) {
                 <li key={msg.entityId || msg.id}>
                   <button
                     onClick={() => setSelectedId(msg.entityId || msg.id)}
-                    className={`w-full flex items-start p-4 transition-colors relative text-left gap-3 cursor-pointer ${
-                      isSelected
+                    className={`w-full flex items-start p-4 transition-colors relative text-left gap-3 cursor-pointer ${isSelected
                         ? "bg-[#F2F2F5]"
                         : "bg-white hover:bg-[#F2F2F5]/50"
-                    }`}
+                      }`}
                   >
                     {/* Unread Left Border Stripe Indicator */}
                     {unread && (

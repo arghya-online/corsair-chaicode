@@ -147,7 +147,7 @@ export function UpgradeModal({ open, onOpenChange }: UpgradeModalProps) {
                 Alpha Plan
               </span>
               <span className="font-sans text-[12px] text-espresso-300 block">
-                Unlimited AI & priority processing
+                Gmail & Calendar, up to 20 chats
               </span>
             </div>
             <div className="text-right flex flex-col items-end gap-1">
@@ -175,7 +175,7 @@ export function UpgradeModal({ open, onOpenChange }: UpgradeModalProps) {
                 Gama Plan
               </span>
               <span className="font-sans text-[12px] text-espresso-300 block">
-                Shared AI context & API integrations
+                Gmail & Calendar, unlimited chats
               </span>
             </div>
             <div className="text-right flex flex-col items-end gap-1">

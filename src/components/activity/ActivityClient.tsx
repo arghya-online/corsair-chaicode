@@ -19,17 +19,17 @@ interface ActivityEvent {
 }
 
 const mockActivity: ActivityEvent[] = [
-  { id: "1", type: "ai_action", title: "Zentra drafted a reply", meta: "To: Sarah Chen — Re: Q3 Budget Review", time: "Just now", tag: "AI Draft" },
-  { id: "2", type: "email_received", title: "New email received", meta: "From: Marcus Webb — Weekly retrospective", time: "4 min ago" },
+  { id: "1", type: "ai_action", title: "Zentra drafted a reply", meta: "To: Sarah Chen - Re: Q3 Budget Review", time: "Just now", tag: "AI Draft" },
+  { id: "2", type: "email_received", title: "New email received", meta: "From: Marcus Webb - Weekly retrospective", time: "4 min ago" },
   { id: "3", type: "meeting", title: "Meeting started", meta: "Q3 Planning Session · Google Meet", time: "12 min ago", tag: "Calendar" },
   { id: "4", type: "ai_action", title: "Zentra surfaced 3 priorities", meta: "2 urgent, 1 action needed in your inbox", time: "24 min ago", tag: "AI Insight" },
-  { id: "5", type: "email_sent", title: "Email sent", meta: "To: design@company.com — Brand refresh", time: "1h ago" },
+  { id: "5", type: "email_sent", title: "Email sent", meta: "To: design@company.com - Brand refresh", time: "1h ago" },
   { id: "6", type: "sync", title: "Workspace synced", meta: "14 new messages indexed and organized", time: "1h 20m ago" },
-  { id: "7", type: "email_starred", title: "Email starred", meta: "From: CEO — Company all-hands agenda", time: "2h ago" },
-  { id: "8", type: "draft_saved", title: "Draft saved", meta: "Re: Partnership proposal — 340 words", time: "2h 45m ago" },
+  { id: "7", type: "email_starred", title: "Email starred", meta: "From: CEO - Company all-hands agenda", time: "2h ago" },
+  { id: "8", type: "draft_saved", title: "Draft saved", meta: "Re: Partnership proposal - 340 words", time: "2h 45m ago" },
   { id: "9", type: "meeting", title: "Meeting ended", meta: "1:1 with Alex · 45 minutes", time: "3h ago", tag: "Calendar" },
-  { id: "10", type: "email_received", title: "New email received", meta: "From: newsletter@product.io — Weekly digest", time: "3h 30m ago" },
-  { id: "11", type: "ai_action", title: "Zentra generated meeting prep", meta: "For: Q3 Planning — 4 relevant threads found", time: "4h ago", tag: "AI Insight" },
+  { id: "10", type: "email_received", title: "New email received", meta: "From: newsletter@product.io - Weekly digest", time: "3h 30m ago" },
+  { id: "11", type: "ai_action", title: "Zentra generated meeting prep", meta: "For: Q3 Planning - 4 relevant threads found", time: "4h ago", tag: "AI Insight" },
   { id: "12", type: "sync", title: "Daily workspace sync", meta: "Zentra reviewed inbox and calendar overnight", time: "8h ago" },
 ];
 
@@ -78,7 +78,7 @@ export function ActivityClient() {
 
   return (
     <div className="min-h-screen p-8 max-w-[800px] mx-auto">
-      
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -131,11 +131,10 @@ export function ActivityClient() {
           <button
             key={f.id}
             onClick={() => setFilter(f.id as any)}
-            className={`font-sans text-[12px] font-medium px-3.5 py-1.5 rounded-full border transition-all duration-200 ${
-              filter === f.id
+            className={`font-sans text-[12px] font-medium px-3.5 py-1.5 rounded-full border transition-all duration-200 ${filter === f.id
                 ? "bg-espresso text-white border-espresso"
                 : "bg-white text-espresso-400 border-espresso-100 hover:text-espresso hover:border-espresso-300"
-            }`}
+              }`}
           >
             {f.label}
           </button>
@@ -152,7 +151,7 @@ export function ActivityClient() {
           <div className="relative">
             {/* Vertical line */}
             <div className="absolute left-4 top-0 bottom-0 w-px bg-espresso-100" />
-            
+
             <div className="space-y-1">
               {todayEvents.map((event, i) => {
                 const { Icon, bg, color } = iconMap[event.type];

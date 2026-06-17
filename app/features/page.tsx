@@ -10,38 +10,38 @@ export default async function FeaturesPage() {
   const featuresList = [
     {
       icon: Search,
-      title: "AI Semantic Search",
-      desc: "Search across your entire history of conversations, docs, and calendar entries using simple natural language.",
+      title: "AI Inbox Search",
+      desc: "Search across your Gmail threads, locate key conversations, and retrieve email summaries using simple natural language.",
       id: "search",
     },
     {
       icon: Calendar,
       title: "Smart Calendar Coordination",
-      desc: "Detect overlapping meetings, propose automated buffer times, and coordinate calendars effortlessly.",
+      desc: "Inspect daily schedules, view free/busy slots, create new events, and delete events seamlessly (on Alpha/Gama plans).",
       id: "calendar",
     },
     {
       icon: MessageSquare,
       title: "Contextual Smart Drafting",
-      desc: "Zentra reads active email threads and drafts intelligent, contextually aware responses ready for review.",
+      desc: "Ask the Zentra co-pilot to compose reply drafts for your active email threads and send them directly when approved.",
       id: "drafting",
     },
     {
       icon: Cpu,
-      title: "Inbox Intelligence",
-      desc: "Filter out the noise. Let our background AI prioritize emails, summarize newsletters, and highlight action items.",
+      title: "Inbox Summarization",
+      desc: "Get instant, straight-to-the-point summaries of recent email threads, helping you understand context quickly.",
       id: "assistant",
     },
     {
       icon: Shield,
       title: "Privacy First Isolation",
-      desc: "Your data stays yours. Zentra processes intelligence isolated safely, never training models on your sensitive text.",
+      desc: "Your synced data is isolated securely using the Corsair sandboxing system on our PostgreSQL server. We never train models on your data.",
       id: "privacy",
     },
     {
       icon: Sparkles,
       title: "Unified Calmer Workspaces",
-      desc: "A singular interface that blends calendar invites and email priorities without toggling between tabs.",
+      desc: "A singular interface that lets you search messages and coordinate schedules without switching tabs.",
       id: "integrations",
     },
   ];

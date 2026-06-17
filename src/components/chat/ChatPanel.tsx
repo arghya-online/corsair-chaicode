@@ -51,7 +51,7 @@ interface ChatPanelProps {
 const WELCOME_MESSAGE: Message = {
   role: "assistant",
   content:
-    "Hello! I'm Zentra, your AI assistant. I can manage your Gmail inbox and Google Calendar — schedule meetings, add reminders, read emails, draft replies, and more. What should we work on today?",
+    "Hello! I'm Zentra, your AI assistant. I can manage your Gmail inbox and Google Calendar - schedule meetings, add reminders, read emails, draft replies, and more. What should we work on today?",
 };
 
 // Clean helper to strip leading/trailing asterisks
@@ -65,7 +65,7 @@ function parseTimeToIso(timeStr: string, hourOffset = 0): Date {
       d.setHours(d.getHours() + hourOffset);
       return d;
     }
-  } catch {}
+  } catch { }
   const d = new Date();
   d.setHours(d.getHours() + hourOffset);
   return d;
@@ -564,9 +564,8 @@ export function ChatPanel({
           {/* History Collapsible trigger button */}
           <button
             onClick={toggleHistory}
-            className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${
-              !isHistoryCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
-            }`}
+            className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${!isHistoryCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
+              }`}
             title={
               isHistoryCollapsed
                 ? "Expand logs sidebar"
@@ -611,9 +610,8 @@ export function ChatPanel({
           {/* Context Collapsible trigger button */}
           <button
             onClick={toggleContext}
-            className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${
-              !isContextCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
-            }`}
+            className={`p-2 hover:bg-[#F7F2EA] rounded-xl text-[#64748B] hover:text-[#111827] transition-all cursor-pointer ${!isContextCollapsed ? "bg-[#F7F2EA] text-[#C67B3D]" : ""
+              }`}
             title={
               isContextCollapsed
                 ? "Expand context sidebar"
@@ -665,11 +663,10 @@ export function ChatPanel({
                       className={`flex ${isUser ? "justify-end" : "justify-start"} items-start`}
                     >
                       <div
-                        className={`max-w-[80%] px-4.5 py-3.5 text-[13.5px] leading-relaxed shadow-xs ${
-                          isUser
+                        className={`max-w-[80%] px-4.5 py-3.5 text-[13.5px] leading-relaxed shadow-xs ${isUser
                             ? "bg-[#111827] text-[#F7F2EA] rounded-[18px_18px_2px_18px]"
                             : "bg-white border border-[rgba(17,24,39,0.06)] text-[#111827] rounded-[18px_18px_18px_2px]"
-                        }`}
+                          }`}
                       >
                         {isUser ? (
                           <p className="font-medium">{msg.content}</p>
@@ -731,11 +728,10 @@ export function ChatPanel({
           <button
             onClick={triggerSend}
             disabled={loading || !input.trim() || historyLoading}
-            className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-              input.trim() && !loading
+            className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${input.trim() && !loading
                 ? "bg-[#111827] text-white hover:bg-[#C67B3D] cursor-pointer hover:scale-105"
                 : "bg-[#F7F2EA] text-[#64748B]/30 cursor-not-allowed"
-            }`}
+              }`}
           >
             <ArrowUp className="w-5 h-5" />
           </button>

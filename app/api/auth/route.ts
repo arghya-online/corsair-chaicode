@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   const storedState = request.cookies.get("oauth_state")?.value;
 
-  // Always clear the cookie — on every exit path
+  // Always clear the cookie - on every exit path
   const clearCookie = new NextResponse(null);
   clearCookie.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
 

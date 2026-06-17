@@ -115,14 +115,14 @@ export function PricingClient({ user }: PricingClientProps) {
       priceMonthly: 0,
       priceYearly: 0,
       badge: "Free Tier",
-      desc: "For builders organizing personal projects.",
+      desc: "For individuals exploring Zentra's core features.",
       cta: "Start Free",
       popular: false,
       features: [
-        "Up to 3 integrations linked",
-        "50 AI pilot actions / month",
-        "Standard database tasks list",
-        "Community forum support"
+        "1 integration connected (Gmail Inbox)",
+        "Limit of 4 chat messages in active memory",
+        "AI email search & reply card drafting",
+        "Google Calendar features blocked"
       ],
       id: "free" as const
     },
@@ -131,16 +131,16 @@ export function PricingClient({ user }: PricingClientProps) {
       priceMonthly: 399,
       priceYearly: 319,
       badge: "Most Popular",
-      desc: "For power users seeking unlimited capabilities and automation.",
+      desc: "For professionals seeking full calendar coordination capabilities.",
       cta: "Upgrade to Alpha",
       popular: true,
       features: [
-        "Unlimited active integrations",
-        "Unlimited AI actions & drafting",
-        "Priority processing (0.2s latency)",
-        "Automated inbox briefing summaries",
-        "Custom workspace prompt control",
-        "Priority email co-pilot support"
+        "2 integrations connected (Gmail + Google Calendar)",
+        "Limit of 20 chat messages in active memory",
+        "Check schedules, free slots & build events",
+        "Delete calendar events directly via chat",
+        "Draft and send reply emails via chat",
+        "Standard developer email support"
       ],
       id: "alpha" as const
     },
@@ -148,17 +148,17 @@ export function PricingClient({ user }: PricingClientProps) {
       name: "Gama",
       priceMonthly: 999,
       priceYearly: 799,
-      badge: "Enterprise Context",
-      desc: "For teams and professionals requiring dedicated resources.",
+      badge: "Unlimited",
+      desc: "For power users requiring unlimited conversational capacity.",
       cta: "Upgrade to Gama",
       popular: false,
       features: [
         "Everything included in Alpha",
-        "Shared organizational AI context",
-        "Custom API access integrations",
-        "Audit logs & compliance trials",
-        "Dedicated account manager",
-        "99.9% guaranteed uptime SLA"
+        "Unlimited chat messages (no message caps)",
+        "Full access to all Gmail and Calendar tools",
+        "Secure sandbox multi-tenant isolation",
+        "Encrypted credential storage in PostgreSQL",
+        "Direct email priority support"
       ],
       id: "gama" as const
     }
@@ -368,10 +368,10 @@ export function PricingClient({ user }: PricingClientProps) {
         <h3 className="font-serif text-[24px] font-normal text-center mb-10 text-[#111827]">Frequently Asked Questions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
           {[
-            { q: "Can I cancel my plan at any time?", a: "Yes. Zentra operates outcome-based schedules. If you cancel, your access continues until the end of your billing cycle." },
-            { q: "What counts as an AI Action?", a: "An AI action includes inbox classification, drafting contextual replies, or resolving meeting calendar conflicts autonomously." },
-            { q: "Do you offer custom integrations?", a: "Yes. Enterprise/Team plans support custom API integrations with other private services through our developer SDK." },
-            { q: "Is my email secure with Zentra?", a: "100%. Zentra sits behind Corsair OAuth verification. We never store credentials or share your training context." }
+            { q: "Can I cancel my plan at any time?", a: "Yes. Zentra operates monthly billing. If you cancel, your plan remains active until the end of your prepaid billing cycle." },
+            { q: "What are the chat message limits?", a: "The Free plan restricts active chat memory payloads to 4 user messages. The Alpha plan expands this limit to 20 user messages, and the Gama plan provides unlimited messages." },
+            { q: "Which integrations are currently supported?", a: "Zentra natively supports connecting Gmail (Inbox reading, searching, drafting reply cards, and sending emails) and Google Calendar (checking free slots, creating, and deleting events). Google Calendar is only available on paid tiers." },
+            { q: "Is my email secure with Zentra?", a: "100%. Zentra is powered by Clerk authentication and Google OAuth via the Corsair integration framework. All tokens and synced data are securely isolated in a self-hosted PostgreSQL database and encrypted." }
           ].map((faq, idx) => (
             <div key={idx} className="space-y-2 p-5 rounded-2xl bg-white/40 border border-[rgba(198,123,61,0.08)] backdrop-blur-xs">
               <span className="text-[13.5px] font-bold text-[#111827] flex items-center gap-2">

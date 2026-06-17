@@ -12,19 +12,19 @@ export default async function HowItWorksPage() {
       num: "01",
       icon: Key,
       title: "Connect Securely",
-      desc: "Authenticate your Google Accounts via official OAuth consent. Zentra links with read/write permissions directly on your device, ensuring total credential safety.",
+      desc: "Authenticate your Gmail and Google Calendar integrations using secure standard Google OAuth. Your tokens are encrypted and isolated on our server via the Corsair sandboxing system.",
     },
     {
       num: "02",
       icon: MessageSquareCode,
-      title: "Sync and Parse",
-      desc: "Zentra reads active inbox conversations and metadata, generating offline vectors. When you prompt Zentra, it retrieves context and spots meeting conflicts instantly.",
+      title: "Query on Demand",
+      desc: "Interact with the Zentra AI Assistant in natural language. Gemini AI invokes Gmail or Calendar tools in real-time to query your recent threads or analyze schedule slots.",
     },
     {
       num: "03",
       icon: Sparkles,
-      title: "Automate and Quiet",
-      desc: "Our engine executes background briefs. Let Zentra draft replies, schedules breaks, and organize priorities so your inbox becomes an assistant.",
+      title: "Draft & Schedule",
+      desc: "Review compiled summaries, let Zentra compose drafts for your approval, send email replies directly, or create and delete calendar events effortlessly.",
     },
   ];
 

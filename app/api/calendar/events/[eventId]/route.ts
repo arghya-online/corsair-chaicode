@@ -6,7 +6,7 @@ interface RouteContext {
   params: Promise<{ eventId: string }>;
 }
 
-// PUT /api/calendar/events/[eventId] — update an event
+// PUT /api/calendar/events/[eventId] - update an event
 export async function PUT(request: NextRequest, context: RouteContext) {
   try {
     const user = await getCurrentUser();
@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-// DELETE /api/calendar/events/[eventId] — delete an event
+// DELETE /api/calendar/events/[eventId] - delete an event
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const user = await getCurrentUser();

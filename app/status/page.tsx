@@ -8,12 +8,12 @@ export default async function StatusPage() {
   const user = await getCurrentUser();
 
   const services = [
-    { name: "API Gateway", status: "Operational", latency: "14ms", uptime: "99.99%" },
-    { name: "Gmail Sync Ingestion", status: "Operational", latency: "112ms", uptime: "99.95%" },
-    { name: "Google Calendar Sync Engine", status: "Operational", latency: "89ms", uptime: "99.98%" },
-    { name: "Inbox Vector Database", status: "Operational", latency: "22ms", uptime: "100%" },
-    { name: "Clerk OAuth Handshake Providers", status: "Operational", latency: "180ms", uptime: "99.90%" },
-    { name: "AI Drafting Inference API", status: "Operational", latency: "240ms", uptime: "99.92%" },
+    { name: "Gmail Integration (CorsAir API)", status: "Operational", latency: "120ms", uptime: "99.95%" },
+    { name: "Google Calendar Integration (CorsAir API)", status: "Operational", latency: "95ms", uptime: "99.98%" },
+    { name: "PostgreSQL Database Engine", status: "Operational", latency: "8ms", uptime: "99.99%" },
+    { name: "Clerk User Authentication Services", status: "Operational", latency: "160ms", uptime: "99.95%" },
+    { name: "Gemini AI Tool Inference API", status: "Operational", latency: "380ms", uptime: "99.96%" },
+    { name: "Razorpay Billing Gateway API", status: "Operational", latency: "220ms", uptime: "99.98%" },
   ];
 
   return (

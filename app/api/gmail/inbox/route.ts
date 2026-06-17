@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         new Date(a.updatedAt ?? a.createdAt).getTime(),
     );
 
-    // Shape the response — pull fields from either top-level or nested `data`
+    // Shape the response - pull fields from either top-level or nested `data`
     const messages = sorted.map((msg) => {
       const d = msg.data ?? {};
       return {

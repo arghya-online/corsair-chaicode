@@ -10,17 +10,17 @@ export default async function TermsPage() {
     {
       num: "01",
       title: "Authorized Account Scope",
-      desc: "By linking Google accounts to Zentra, you grant Zentra the right to retrieve message descriptors, compose smart reply drafts, and modify calendar slots under your direct instructions.",
+      desc: "By linking Google accounts, you grant Zentra the permission to view email threads, compose draft replies, and send replies under your direction, as well as manage calendar events (on paid plans).",
     },
     {
       num: "02",
       title: "Service Availabilities",
-      desc: "Zentra is an AI productivity workspace. While we strive for 99.9% uptime, background synchronization speeds, vector search latency, and AI inference composing depend on active API gateway configurations.",
+      desc: "Zentra is an AI productivity workspace. We strive to maintain continuous service availability; however, synchronization speeds and AI response generation depend directly on Google API and Gemini API services.",
     },
     {
       num: "03",
       title: "Prohibited Usages",
-      desc: "You may not run reverse-compilation tasks against the Zentra command parsing schemas, execute malicious message spam scripts, or run automated crawlers against Zentra gateways.",
+      desc: "You may not attempt to reverse-engineer Zentra's core systems, execute unauthorized bulk email spamming through the interface, or abuse the Gemini AI tokens beyond personal usage limits.",
     },
   ];
 

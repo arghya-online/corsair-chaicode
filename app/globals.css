@@ -5,39 +5,39 @@
 /* ─── CSS Custom Properties ─────────────────────────────────────────────── */
 :root {
   /* Surface stack */
-  --bg-base:         #F7F3EC;
-  --bg-surface:      #FBF8F2;
-  --bg-card:         #FFFDF9;
-  --bg-sidebar:      #F3EEE6;
+  --bg-base:         #F9F6F0; /* Warm ivory base */
+  --bg-surface:      #FCF9F3; /* Light sandstone surface */
+  --bg-card:         #FFFDF9; /* Cream card base */
+  --bg-sidebar:      #F5ECE0; /* Warm clay-cream sidebar */
   --bg-elevated:     #FFFFFF;
 
   /* Text */
-  --text-primary:    #111827;
-  --text-secondary:  #64748B;
-  --text-muted:      #9BA8B6;
-  --text-accent:     #C47A3C;
+  --text-primary:    #1E140C; /* Rich dark roasted espresso */
+  --text-secondary:  #6E5F52; /* Warm earth slate */
+  --text-muted:      #A29486; /* Warm grey-beige */
+  --text-accent:     #CB7E3E; /* Rich warm copper terracotta */
 
   /* Accent */
-  --accent:          #C47A3C;
-  --accent-light:    #E6C5A5;
-  --accent-soft:     rgba(196, 122, 60, 0.09);
-  --accent-glow:     rgba(196, 122, 60, 0.18);
+  --accent:          #CB7E3E;
+  --accent-light:    #E9CDAF;
+  --accent-soft:     rgba(203, 126, 62, 0.09);
+  --accent-glow:     rgba(203, 126, 62, 0.18);
 
   /* Success / Sage */
   --success:         #6D8A68;
   --success-soft:    rgba(109, 138, 104, 0.09);
 
   /* Borders */
-  --border:          rgba(17, 24, 39, 0.06);
-  --border-med:      rgba(17, 24, 39, 0.10);
-  --border-strong:   rgba(17, 24, 39, 0.15);
+  --border:          rgba(30, 20, 12, 0.06);
+  --border-med:      rgba(30, 20, 12, 0.10);
+  --border-strong:   rgba(30, 20, 12, 0.15);
 
   /* Shadows */
-  --shadow-xs:    0 1px 3px rgba(17,24,39,0.04);
-  --shadow-sm:    0 2px 8px rgba(17,24,39,0.04), 0 1px 2px rgba(17,24,39,0.03);
-  --shadow-md:    0 4px 16px rgba(17,24,39,0.05), 0 2px 6px rgba(17,24,39,0.04);
-  --shadow-lg:    0 8px 32px rgba(17,24,39,0.07), 0 4px 12px rgba(17,24,39,0.04);
-  --shadow-hover: 0 8px 24px rgba(17,24,39,0.08), 0 4px 10px rgba(17,24,39,0.05);
+  --shadow-xs:    0 1px 3px rgba(30,20,12,0.04);
+  --shadow-sm:    0 2px 8px rgba(30,20,12,0.04), 0 1px 2px rgba(30,20,12,0.03);
+  --shadow-md:    0 4px 16px rgba(30,20,12,0.05), 0 2px 6px rgba(30,20,12,0.04);
+  --shadow-lg:    0 8px 32px rgba(30,20,12,0.07), 0 4px 12px rgba(30,20,12,0.04);
+  --shadow-hover: 0 8px 24px rgba(30,20,12,0.08), 0 4px 10px rgba(30,20,12,0.05);
 
   /* Radius */
   --r-sm:   8px;
@@ -51,16 +51,16 @@
   --foreground:           var(--text-primary);
   --card:                 var(--bg-card);
   --card-foreground:      var(--text-primary);
-  --border:               rgba(17, 24, 39, 0.06);
-  --input:                rgba(17, 24, 39, 0.07);
-  --ring:                 rgba(196, 122, 60, 0.25);
-  --primary:              #111827;
+  --border:               rgba(30, 20, 12, 0.06);
+  --input:                rgba(30, 20, 12, 0.07);
+  --ring:                 rgba(203, 126, 62, 0.25);
+  --primary:              #1E140C;
   --primary-foreground:   #FFFFFF;
-  --secondary:            #F3EEE6;
-  --secondary-foreground: #64748B;
-  --muted:                #F7F3EC;
-  --muted-foreground:     #64748B;
-  --accent:               #C47A3C;
+  --secondary:            #F5ECE0;
+  --secondary-foreground: #6E5F52;
+  --muted:                #F9F6F0;
+  --muted-foreground:     #6E5F52;
+  --accent:               #CB7E3E;
   --accent-foreground:    #FFFFFF;
   --destructive:          #B45309;
   --destructive-foreground: #FFFFFF;
@@ -69,31 +69,31 @@
 
 /* ─── Tailwind @theme ────────────────────────────────────────────────────── */
 @theme {
-  --font-serif:            'Playfair Display', Georgia, serif;
+  --font-serif:            'Cormorant Garamond', 'Playfair Display', Georgia, serif;
 
   /* Cream/warm backgrounds */
-  --color-cream:           #F7F3EC;
-  --color-cream-DEFAULT:   #F7F3EC;
+  --color-cream:           #F9F6F0;
+  --color-cream-DEFAULT:   #F9F6F0;
   --color-cream-50:        #FFFDF9;
-  --color-cream-100:       #FBF8F2;
-  --color-cream-200:       #F7F3EC;
-  --color-cream-300:       #EDE7DE;
-  --color-cream-400:       #E0D8CC;
+  --color-cream-100:       #FCF9F3;
+  --color-cream-200:       #F9F6F0;
+  --color-cream-300:       #F2EADF;
+  --color-cream-400:       #E8DEC9;
 
   /* Sidebar */
-  --color-sidebar:         #F3EEE6;
+  --color-sidebar:         #F5ECE0;
 
   /* Accent = copper/terracotta */
-  --color-accent:          #C47A3C;
-  --color-accent-light:    #E6C5A5;
-  --color-accent-soft:     rgba(196, 122, 60, 0.09);
-  --color-accent-glow:     rgba(196, 122, 60, 0.18);
+  --color-accent:          #CB7E3E;
+  --color-accent-light:    #E9CDAF;
+  --color-accent-soft:     rgba(203, 126, 62, 0.09);
+  --color-accent-glow:     rgba(203, 126, 62, 0.18);
 
   /* Legacy peach (kept for backward compat) */
-  --color-peach:           #C47A3C;
-  --color-peach-soft:      rgba(196, 122, 60, 0.09);
-  --color-peach-text:      #C47A3C;
-  --color-peach-dark:      #A8622A;
+  --color-peach:           #CB7E3E;
+  --color-peach-soft:      rgba(203, 126, 62, 0.09);
+  --color-peach-text:      #CB7E3E;
+  --color-peach-dark:      #B26427;
 
   /* Sage */
   --color-sage:            #6D8A68;
@@ -111,25 +111,25 @@
   --color-blush-text:      #B45309;
 
   /* Butter / lavender (kept compat) */
-  --color-butter:          #C47A3C;
-  --color-butter-soft:     rgba(196, 122, 60, 0.09);
-  --color-lavender:        #C47A3C;
-  --color-lavender-soft:   rgba(196, 122, 60, 0.09);
-  --color-lavender-text:   #C47A3C;
+  --color-butter:          #CB7E3E;
+  --color-butter-soft:     rgba(203, 126, 62, 0.09);
+  --color-lavender:        #CB7E3E;
+  --color-lavender-soft:   rgba(203, 126, 62, 0.09);
+  --color-lavender-text:   #CB7E3E;
 
   /* Text / espresso scale */
-  --color-espresso:        #111827;
-  --color-espresso-600:    #111827;
-  --color-espresso-500:    #1E293B;
-  --color-espresso-400:    #64748B;
-  --color-espresso-300:    #94A3B8;
-  --color-espresso-200:    #CBD5E1;
-  --color-espresso-100:    rgba(17, 24, 39, 0.06);
+  --color-espresso:        #1E140C;
+  --color-espresso-600:    #1E140C;
+  --color-espresso-500:    #2E2015;
+  --color-espresso-400:    #6E5F52;
+  --color-espresso-300:    #A29486;
+  --color-espresso-200:    #D5CFC9;
+  --color-espresso-100:    rgba(30, 20, 12, 0.06);
 
   /* Shadows */
-  --shadow-card:           0 2px 8px rgba(17,24,39,0.04), 0 1px 2px rgba(17,24,39,0.03);
-  --shadow-card-hover:     0 8px 24px rgba(17,24,39,0.08), 0 4px 10px rgba(17,24,39,0.05);
-  --shadow-focus:          0 0 0 3px rgba(196, 122, 60, 0.2);
+  --shadow-card:           0 2px 8px rgba(30,20,12,0.04), 0 1px 2px rgba(30,20,12,0.03);
+  --shadow-card-hover:     0 8px 24px rgba(30,20,12,0.08), 0 4px 10px rgba(30,20,12,0.05);
+  --shadow-focus:          0 0 0 3px rgba(203, 126, 62, 0.2);
 
   --radius-pill: 9999px;
 }
@@ -144,8 +144,8 @@ html {
 }
 
 body {
-  background-color: #F7F3EC;
-  color: #111827;
+  background-color: #F9F6F0;
+  color: #1E140C;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
@@ -155,7 +155,7 @@ body {
 
 /* ─── Serif headline class ───────────────────────────────────────────────── */
 .font-display {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
 }
 
 /* ─── Subtle warm paper texture overlay ────────────────────────────────── */
@@ -176,9 +176,9 @@ body {
 /* ─── Dashboard surface with radial warm glow ───────────────────────────── */
 .dashboard-surface {
   background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(196,122,60,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(203,126,62,0.04) 0%, transparent 60%),
     radial-gradient(ellipse 60% 40% at 80% 100%, rgba(109,138,104,0.03) 0%, transparent 50%),
-    #F7F3EC;
+    #F9F6F0;
 }
 
 /* ─── Premium card ───────────────────────────────────────────────────────── */

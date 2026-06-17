@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTenant } from "@/src/server/lib/tenant";
 import { getCurrentUser } from "@/src/actions/auth";
 
-// GET /api/calendar/availability — Get free/busy availability windows
+// GET /api/calendar/availability - Get free/busy availability windows
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser();

@@ -333,7 +333,7 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
           ) : (
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
-                {gmailConnected ? (data?.unreadCount ?? 0) : "—"}
+                {gmailConnected ? (data?.unreadCount ?? 0) : "-"}
               </span>
               <span className="text-[12px] text-[#64748B]">
                 priorities unread
@@ -360,7 +360,7 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
           ) : (
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-serif text-[#111827] font-semibold leading-none">
-                {calConnected ? (data?.eventsTodayCount ?? 0) : "—"}
+                {calConnected ? (data?.eventsTodayCount ?? 0) : "-"}
               </span>
               <span className="text-[12px] text-[#64748B]">Events today</span>
             </div>
@@ -519,9 +519,9 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
                   const startStr = ev.start?.dateTime ?? ev.start?.date;
                   const timeLabel = startStr
                     ? new Date(startStr).toLocaleTimeString([], {
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })
                     : "All Day";
                   return (
                     <div key={ev.id} className="relative space-y-1">

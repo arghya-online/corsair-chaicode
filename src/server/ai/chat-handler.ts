@@ -236,7 +236,7 @@ export async function runChat(messages: any[], tenant: Tenant, userPlan: string 
   }
 
   return {
-    reply: "Sorry, I couldn't finish that — try rephrasing.",
+    reply: "Sorry, I couldn't finish that - try rephrasing.",
     messages: convo,
   };
 }

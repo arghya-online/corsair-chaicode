@@ -16,7 +16,7 @@ export default async function AboutPage() {
     {
       icon: ShieldCheck,
       title: "Isolated Security",
-      desc: "Trust is the prerequisite of calm. We built Zentra to isolate and process credentials on-device, prioritizing user data ownership over database monetization.",
+      desc: "Trust is the prerequisite of calm. Zentra encrypts and isolates your credentials using secure environment-level keys within sandboxed database partitions, prioritizing data privacy.",
     },
     {
       icon: Heart,
@@ -59,7 +59,7 @@ export default async function AboutPage() {
               Every day, professional builders spend hours navigating fragmented browser tabs, managing context switches between their inbox and calendar, and checking for updates. This constant mental overhead drains cognitive energy.
             </p>
             <p className="text-[14.5px] text-[#64748B] leading-relaxed">
-              Zentra solves this by creating a single, calm workspace powered by smart inbox vectors. We connect directly to your Google integrations and let you write drafts, coordinate calendars, and search records using conversational AI.
+              Zentra solves this by creating a single, calm workspace. We connect directly to your Google integrations and let you search emails, draft response cards, and coordinate calendar events using simple natural language.
             </p>
           </div>
 
@@ -75,7 +75,7 @@ export default async function AboutPage() {
               "We shapes our spaces; thereafter, our spaces shape us. If our software interfaces are cluttered and frantic, our daily work becomes fractured. Quiet workspace designs promote calm, deep outcomes."
             </div>
             <div className="text-[12px] text-[#64748B] font-semibold uppercase tracking-wider">
-              — Zentra Architecture Team
+              - Zentra Architecture Team
             </div>
           </div>
         </div>

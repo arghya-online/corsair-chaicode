@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTenant } from "@/src/server/lib/tenant";
 import { getCurrentUser } from "@/src/actions/auth";
 
-// POST /api/calendar/sync — Fetches latest events from Google Calendar API and syncs to local DB
+// POST /api/calendar/sync - Fetches latest events from Google Calendar API and syncs to local DB
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser();
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     const tenant = await getTenant();
 
-    // Pull events using getMany — Corsair syncs them into the local DB
+    // Pull events using getMany - Corsair syncs them into the local DB
     const result = await tenant.googlecalendar.api.events.getMany({
       calendarId: "primary",
       maxResults: 250,
