@@ -25,6 +25,8 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ComposeModal } from "@/src/components/gmail/ComposeModal";
 import { EventModal } from "@/src/components/shared/EventModal";
+import { getTodos, addTodoAction, toggleTodoAction, deleteTodoAction } from "@/src/actions/todos";
+import { CheckSquare, Square, Trash2 } from "lucide-react";
 
 interface NextEventData {
   summary: string;
@@ -50,13 +52,29 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
   const [data, setData] = useState<StatsData | null>(null);
   const [recentEmails, setRecentEmails] = useState<any[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
+  const [todos, setTodos] = useState<any[]>([]);
+  const [todoInput, setTodoInput] = useState("");
+  const [checkedCalendarEvents, setCheckedCalendarEvents] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [todoLoading, setTodoLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
 
   // Modals state
   const [composeOpen, setComposeOpen] = useState(false);
   const [eventOpen, setEventOpen] = useState(false);
+
+  // Load checked calendar events from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("zentra_checked_events");
+    if (saved) {
+      try {
+        setCheckedCalendarEvents(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse checked events:", e);
+      }
+    }
+  }, []);
 
   const fetchStats = async () => {
     try {
@@ -84,8 +102,17 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
       const res = await fetch("/api/calendar/events");
       if (res.ok) {
         const d = await res.json();
-        setCalendarEvents(d.slice(0, 4));
+        setCalendarEvents((d.events ?? []).slice(0, 4));
       }
+    } catch {
+      /* silent */
+    }
+  };
+
+  const fetchTodos = async () => {
+    try {
+      const items = await getTodos();
+      setTodos(items);
     } catch {
       /* silent */
     }
@@ -97,8 +124,65 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
       fetchStats(),
       fetchRecentEmails(),
       fetchCalendarEvents(),
+      fetchTodos(),
     ]);
     setLoading(false);
+  };
+
+  const handleAddTodo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!todoInput.trim() || todoLoading) return;
+
+    const originalInput = todoInput.trim();
+    setTodoInput("");
+    setTodoLoading(true);
+
+    const res = await addTodoAction(originalInput);
+    setTodoLoading(false);
+
+    if (res.success && res.todo) {
+      setTodos((prev) => [res.todo, ...prev]);
+      toast.success("Task added.");
+    } else {
+      setTodoInput(originalInput);
+      toast.error(res.error ?? "Failed to add task.");
+    }
+  };
+
+  const handleToggleTodo = async (id: string, currentCompleted: boolean) => {
+    const nextCompleted = !currentCompleted;
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, completed: nextCompleted } : t))
+    );
+
+    const res = await toggleTodoAction(id, nextCompleted);
+    if (!res.success) {
+      setTodos((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, completed: currentCompleted } : t))
+      );
+      toast.error("Failed to update task.");
+    }
+  };
+
+  const handleDeleteTodo = async (id: string) => {
+    const prevTodos = [...todos];
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+
+    const res = await deleteTodoAction(id);
+    if (!res.success) {
+      setTodos(prevTodos);
+      toast.error("Failed to delete task.");
+    } else {
+      toast.success("Task deleted.");
+    }
+  };
+
+  const handleToggleCalendarEvent = (eventId: string) => {
+    setCheckedCalendarEvents((prev) => {
+      const updated = { ...prev, [eventId]: !prev[eventId] };
+      localStorage.setItem("zentra_checked_events", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -397,6 +481,170 @@ export function OverviewClient({ firstName }: OverviewClientProps) {
                 {calConnected ? "Connected" : "Offline"}
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Workspace Focus Board ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Daily Focus Checklist (Span 7) */}
+        <div className="lg:col-span-7 space-y-4 text-left">
+          <h3 className="font-serif text-[20px] font-normal text-[#111827]">
+            Daily Focus Checklist
+          </h3>
+          <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs space-y-4">
+            <form onSubmit={handleAddTodo} className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Add a task to your daily list..."
+                value={todoInput}
+                onChange={(e) => setTodoInput(e.target.value)}
+                className="flex-1 bg-[#FAFAFA] border border-[rgba(17,24,39,0.08)] rounded-xl px-4 py-3 text-sm text-[#0D0D0D] focus:outline-none focus:border-[#C67B3D] focus:ring-1 focus:ring-[#C67B3D] placeholder-[#64748B]/40 transition-colors text-xs sm:text-sm"
+                disabled={todoLoading}
+              />
+              <button
+                type="submit"
+                className="bg-[#C67B3D] text-white px-6 rounded-xl text-[11px] font-bold hover:bg-[#A35F2B] transition-colors uppercase cursor-pointer disabled:opacity-50"
+                disabled={todoLoading}
+              >
+                Add
+              </button>
+            </form>
+
+            <div className="space-y-4">
+              {loading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-10 w-full bg-[#FAFAFA] rounded animate-pulse" />
+                  <Skeleton className="h-10 w-full bg-[#FAFAFA] rounded animate-pulse" />
+                </div>
+              ) : todos.length === 0 ? (
+                <p className="text-xs text-[#64748B] italic py-2">
+                  No focus items added. Keep your list focused on key priorities today.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {todos.map((todo) => (
+                    <li
+                      key={todo.id}
+                      className="flex items-center justify-between bg-[#FAFAFA] border border-[rgba(17,24,39,0.05)] hover:border-[#C67B3D]/30 p-3.5 rounded-xl group transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleTodo(todo.id, todo.completed)}
+                          className="text-[#64748B] hover:text-[#C67B3D] transition-colors cursor-pointer"
+                        >
+                          {todo.completed ? (
+                            <CheckSquare className="w-5 h-5 text-[#C67B3D]" />
+                          ) : (
+                            <Square className="w-5 h-5" />
+                          )}
+                        </button>
+                        <span
+                          className={`text-xs font-medium transition-all ${
+                            todo.completed ? "line-through text-[#64748B]" : "text-[#111827]"
+                          }`}
+                        >
+                          {todo.text}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTodo(todo.id)}
+                        className="text-xs text-[#64748B]/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Schedule Tasks (Span 5) */}
+        <div className="lg:col-span-5 space-y-4 text-left">
+          <h3 className="font-serif text-[20px] font-normal text-[#111827]">
+            Schedule Tasks
+          </h3>
+          <div className="p-6 rounded-[24px] bg-white border border-[rgba(17,24,39,0.06)] shadow-xs space-y-4">
+            {!calConnected ? (
+              <div className="py-8 text-center text-[#64748B]">
+                <Calendar className="w-8 h-8 mx-auto mb-2 text-[#64748B]/40" />
+                <p className="text-[13px] font-bold">Calendar not connected</p>
+                <p className="text-[12px] text-[#64748B] mt-1">
+                  Connect Google Calendar to auto-generate tasks from your schedule.
+                </p>
+                <a
+                  href="/api/connect?plugin=googlecalendar"
+                  className="inline-block mt-4 px-4 py-2 bg-[#111827] text-white rounded-xl text-[12px] font-bold"
+                >
+                  Connect Calendar
+                </a>
+              </div>
+            ) : loading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-12 w-full bg-[#FAFAFA] rounded animate-pulse" />
+                <Skeleton className="h-12 w-full bg-[#FAFAFA] rounded animate-pulse" />
+              </div>
+            ) : calendarEvents.length === 0 ? (
+              <div className="py-8 text-center text-[#64748B] text-[13px] italic">
+                No events scheduled for today. Take this time to focus on your list!
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block mb-2">
+                  Auto-Generated Tasks for Today
+                </span>
+                <ul className="flex flex-col gap-2">
+                  {calendarEvents.map((ev) => {
+                    const isChecked = !!checkedCalendarEvents[ev.id];
+                    const startStr = ev.start?.dateTime ?? ev.start?.date;
+                    const timeLabel = startStr
+                      ? new Date(startStr).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })
+                      : "All Day";
+
+                    return (
+                      <li
+                        key={ev.id}
+                        className="flex items-start justify-between bg-[#FAFAFA] border border-[rgba(17,24,39,0.05)] p-3.5 rounded-xl transition-all"
+                      >
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleCalendarEvent(ev.id)}
+                            className="text-[#64748B] hover:text-[#C67B3D] transition-colors cursor-pointer mt-0.5"
+                          >
+                            {isChecked ? (
+                              <CheckSquare className="w-5 h-5 text-[#C67B3D]" />
+                            ) : (
+                              <Square className="w-5 h-5" />
+                            )}
+                          </button>
+                          <div className="min-w-0 flex-1 text-left">
+                            <span
+                              className={`text-xs font-bold block leading-snug truncate ${
+                                isChecked ? "line-through text-[#64748B]" : "text-[#111827]"
+                              }`}
+                            >
+                              {ev.summary}
+                            </span>
+                            <span className="text-[10px] text-[#C67B3D] font-medium flex items-center gap-1 mt-0.5">
+                              <Clock className="w-3 h-3" />
+                              {timeLabel}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

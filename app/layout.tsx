@@ -20,7 +20,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Zentra — Premium AI Workspace",
+  title: "Zentra",
   description: "AI-native workspace integrating your inbox, calendar, and codebase",
 };
 

@@ -20,7 +20,8 @@ import {
   Calendar,
   Activity,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  Link2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -125,6 +126,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
     { label: "Home", icon: LayoutGrid, href: "/dashboard" },
     { label: "Inbox", icon: Mail, href: "/dashboard/communications", badge: true },
     { label: "Calendar", icon: Calendar, href: "/dashboard/calendar" },
+    { label: "Connections", icon: Link2, href: "/dashboard/connections" },
     { label: "Activity", icon: Activity, href: "/dashboard/activity" },
     { label: "AI Assistant", icon: Sparkles, href: "/dashboard/assistant" },
     { label: "Settings", icon: Settings, href: "/dashboard/settings" },

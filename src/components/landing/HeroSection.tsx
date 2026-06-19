@@ -18,7 +18,7 @@ export function HeroSection({ user }: HeroSectionProps) {
   const { isSignedIn } = useAuth();
 
   return (
-    <section className="relative h-screen min-h-[800px] w-full flex items-center justify-center px-6 overflow-hidden select-none bg-[#111827]">
+    <section className="relative h-screen min-h-[750px] w-full flex items-center justify-center px-6 overflow-hidden select-none bg-[#111827]">
       {/* Immersive Background Image (hero_bharat.png) */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
@@ -26,45 +26,44 @@ export function HeroSection({ user }: HeroSectionProps) {
       />
 
       {/* Subtle Dark Overlay for premium look & readability */}
-      <div
-        className="absolute inset-0 bg-black/55 z-10"
-      />
+      <div className="absolute inset-0 bg-black/60 z-10" />
 
-      <div className="w-full max-w-6xl text-center z-20 flex flex-col items-center justify-center h-full pt-16">
+      {/* Central Content */}
+      <div className="w-full max-w-5xl text-center z-20 flex flex-col items-center justify-center h-full pt-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="space-y-8 md:space-y-10 flex flex-col items-center"
+          transition={{ duration: 1.0, ease: "easeOut" }}
+          className="space-y-6 md:space-y-8 flex flex-col items-center"
         >
-          {/* Eyebrow Label */}
-          <div className="font-sans text-[15px] font-bold tracking-[0.25em] text-[#FCFAF7] bg-white/10 backdrop-blur-sm px-5 py-2 rounded-full border border-white/10 mt-4">
-            Zentra AI
+          {/* Eyebrow Label (Badge) */}
+          <div className="font-sans text-[11px] sm:text-[12px] font-bold tracking-[0.2em] text-[#FCFAF7] bg-white/10 backdrop-blur-md px-4.5 py-2 rounded-full border border-white/15 uppercase shadow-sm">
+            AI Workspace for Gmail & Google Calendar
           </div>
 
-          {/* Massive Serif Headline */}
-          <h1 className="text-[54px] sm:text-[76px] md:text-[96px] lg:text-[112px] xl:text-[120px] leading-[1.02] font-serif font-normal text-[#FCFAF7] tracking-tight max-w-5xl whitespace-pre-line">
-            Built for {"\n"}Focused Minds.
+          {/* Balanced Serif Headline */}
+          <h1 className="text-[38px] sm:text-[56px] md:text-[72px] lg:text-[84px] xl:text-[92px] leading-[1.08] font-serif font-normal text-[#FCFAF7] tracking-tight max-w-4xl whitespace-pre-line">
+            The fastest way to <span className="font-serif font-normal text-amber-600">understand </span>your work.
           </h1>
 
           {/* Supporting Text */}
-          <p className="text-[18px] sm:text-[21px] leading-relaxed text-[#FCFAF7]/85 max-w-2xl font-sans font-light px-4">
-            Email. Calendar. Meetings. AI assistance. All within one beautifully crafted workspace.
+          <p className="text-[14px] sm:text-[16px] md:text-[18px] leading-relaxed text-[#FCFAF7]/80 max-w-2xl font-sans font-light px-4">
+            Ask questions, find decisions, track commitments, and get instant answers across Gmail and Google Calendar.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto px-6">
+          <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto px-6 z-30">
             {!isSignedIn && (
               <>
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
+                  className="inline-flex items-center justify-center rounded-xl bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-8 h-13 text-[14px] font-bold transition-all active:scale-[0.98] shadow-lg font-sans cursor-pointer hover:shadow-[0_8px_25px_rgba(252,250,247,0.15)]"
                 >
                   Start Free
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center rounded-full bg-white/10 border border-white/20 hover:bg-white/20 text-[#FCFAF7] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] font-sans backdrop-blur-sm"
+                  className="inline-flex items-center justify-center rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 text-[#FCFAF7] px-8 h-13 text-[14px] font-bold transition-all active:scale-[0.98] font-sans backdrop-blur-md cursor-pointer"
                 >
                   Sign In
                 </Link>
@@ -73,7 +72,7 @@ export function HeroSection({ user }: HeroSectionProps) {
             {isSignedIn && (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-full bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-10 py-4 text-[16px] sm:text-[17px] font-medium transition-all active:scale-[0.98] shadow-md font-sans"
+                className="inline-flex items-center justify-center rounded-xl bg-[#FCFAF7] hover:bg-[#F7F3EC] text-[#111827] px-8 h-13 text-[14px] font-bold transition-all active:scale-[0.98] shadow-lg font-sans cursor-pointer hover:shadow-[0_8px_25px_rgba(252,250,247,0.15)]"
               >
                 Open Dashboard
               </Link>
@@ -81,16 +80,16 @@ export function HeroSection({ user }: HeroSectionProps) {
           </div>
 
           {/* Trust Row */}
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 pt-12 max-w-3xl text-white/70 font-sans text-[15px]">
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 pt-10 max-w-3xl text-white/55 font-sans text-[11px] sm:text-[12px] uppercase tracking-wider font-bold">
             {[
               "Gmail Native",
               "AI Search",
               "Smart Drafts",
               "Calendar Sync"
             ].map((indicator, idx) => (
-              <div key={idx} className="flex items-center gap-2.5 font-medium">
-                <span className="w-5 h-5 rounded-full bg-[#C1783F]/20 flex items-center justify-center text-[#C1783F]">
-                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+              <div key={idx} className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#C1783F]/15 flex items-center justify-center text-[#C1783F] flex-shrink-0">
+                  <Check className="w-3 h-3 stroke-[3]" />
                 </span>
                 <span>{indicator}</span>
               </div>

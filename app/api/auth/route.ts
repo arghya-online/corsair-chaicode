@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { processOAuthCallback } from "corsair/oauth";
 import { corsair } from "@/src/server/corsair";
 
-
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -23,7 +22,6 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get("error");
 
   const storedState = request.cookies.get("oauth_state")?.value;
-
   // Always clear the cookie - on every exit path
   const clearCookie = new NextResponse(null);
   clearCookie.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
